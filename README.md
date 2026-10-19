@@ -11,7 +11,7 @@
 La web és una enciclopèdia amb portada i seccions:
 
 - **Els bolets:** una fitxa per bolet (50), amb fotos de cada edat, el mapa d'on surt a Catalunya i els bessons perillosos. Primer, **els clàssics**: rovelló, pinetell, cep, rossinyol, trompeta de la mort i camagroc.
-- **Mapa interactiu:** tria fins a quatre bolets i mira on surten; apropa't per veure pobles i parcs naturals.
+- **Mapa interactiu:** toca una zona (o «On sóc?») i surt la llista de bolets que s'hi han trobat, separats en comestibles i tòxics; o tria fins a quatre bolets i mira on surten.
 - **Quan sortir:** quants dies després de la pluja surt cada comestible, amb una calculadora.
 - **Cara a cara:** els bessons perillosos, amb dibuixos esquemàtics i fotos.
 - **Aprèn a mirar:** les parts d'un bolet, l'edat i els colors.
