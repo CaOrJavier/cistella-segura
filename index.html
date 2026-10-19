@@ -49,6 +49,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { scroll-behavior: smooth; scroll-padding-top: 64px; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
 body { background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.58; }
@@ -108,6 +109,8 @@ img { display: block; }
 
 /* ---------- sense internet ---------- */
 .offline { padding-top: 26px; }
+.pill.dl-pill { color: var(--moss); border-color: color-mix(in srgb, var(--moss) 45%, var(--line)); }
+.btn.dl { border-color: var(--moss); color: var(--moss); }
 .off-box { background: var(--leaf); border: 2px solid var(--moss); border-radius: 14px; padding: 16px; display: grid; gap: 14px; }
 .off-box h2 { font-size: 1.6rem; margin: 2px 0 6px; }
 .off-opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 10px; }
@@ -588,6 +591,7 @@ html.printing { --paper: #ffffff; --leaf: #ffffff; --leaf-2: #eef0ea; }
     <a class="brand" href="#coberta">Cistella <em>Segura</em></a>
     <button type="button" class="pill book-pill" data-open-book="">Llibre</button>
     <a class="pill" href="#index">Índex</a>
+    <a class="pill dl-pill" href="#offline" data-offline-link hidden>⬇ Descarrega</a>
     <a class="pill sos" href="#cap-11">SOS</a>
   </div>
 </header>
@@ -604,6 +608,7 @@ html.printing { --paper: #ffffff; --leaf: #ffffff; --leaf-2: #eef0ea; }
         <button type="button" class="btn primary" data-open-book="">Obre el llibre</button>
         <button type="button" class="btn" id="resume" hidden>Continua</button>
         <a class="btn" href="#cap-1">Llegeix la guia</a>
+        <a class="btn dl" href="#offline" data-offline-link hidden>⬇ Descarrega-la per al bosc</a>
       </div>
     </div>
     <div class="mosaic" id="mosaic"></div>
@@ -2135,12 +2140,16 @@ function renderCredits() {
 /* ---------------- sense internet: descàrregues ---------------- */
 // Sense la descàrrega de Claude (enllaç públic, navegador normal): enllaços directes als fitxers.
 function offlineLinks() {
-  $("#offline").hidden = false;
+  $("#offline").hidden = false; $$("[data-offline-link]").forEach(a => a.hidden = false);
   $$(".off-btn").forEach(btn => {
     const a = document.createElement("a");
     a.className = "off-btn"; a.href = btn.dataset.dl; a.target = "_blank"; a.rel = "noopener";
     a.setAttribute("download", btn.dataset.name); a.innerHTML = btn.innerHTML;
     btn.replaceWith(a);
+    fetch(a.href, { method: "HEAD" }).then(r => {
+      const n = Number(r.headers.get("content-length"));
+      if (r.ok && n) a.querySelector("[data-size]").textContent = `(${(n / 1048576).toFixed(0)} MB)`;
+    }).catch(() => {});
   });
   $("#off-msg").textContent = "Si el mòbil l'obre en lloc de desar-lo, fes servir el botó de compartir o «Desa» del navegador per guardar-lo.";
 }
@@ -2151,7 +2160,7 @@ async function setupOffline() {
     try { dl = await window.claude.use("downloads"); } catch (_) { dl = null; }
   }
   if (!dl) { offlineLinks(); return; }
-  $("#offline").hidden = false;
+  $("#offline").hidden = false; $$("[data-offline-link]").forEach(a => a.hidden = false);
   const msg = $("#off-msg");
   $$(".off-btn").forEach(async btn => {
     try {
