@@ -8,12 +8,17 @@
 
 ## Què hi ha
 
-- 49 bolets, cadascun a la seva pàgina: jove, en el seu punt, vell i passat, ja collit, on surt a Catalunya (mapa) i amb quin bessó perillós no l'has de confondre.
-- Al principi del llibre: les parts d'un bolet i els senyals de perill per descartar-lo en 10 segons.
-- Dibuixos esquemàtics a cada cara a cara: els números assenyalen on has de mirar.
-- Quan sortir: quants dies després de la pluja surt cada comestible, amb una calculadora.
-- Les meves troballes: 18 bolets d'una sortida pel Montnegre-Corredor (18/10/2026).
-- Cara a cara, descarts ràpids, mites falsos, test i què fer en cas d'intoxicació (112 · 91 562 04 20).
+La web és una enciclopèdia amb portada i seccions:
+
+- **Els bolets:** una fitxa per bolet (50), amb fotos de cada edat, el mapa d'on surt a Catalunya i els bessons perillosos. Primer, **els clàssics**: rovelló, pinetell, cep, rossinyol, trompeta de la mort i camagroc.
+- **Mapa interactiu:** tria fins a quatre bolets i mira on surten; apropa't per veure pobles i parcs naturals.
+- **Quan sortir:** quants dies després de la pluja surt cada comestible, amb una calculadora.
+- **Cara a cara:** els bessons perillosos, amb dibuixos esquemàtics i fotos.
+- **Aprèn a mirar:** les parts d'un bolet, l'edat i els colors.
+- **Seguretat:** regles, descarts ràpids, mites, abans de menjar-te'l i a la cuina.
+- **Les meves troballes:** 18 bolets d'una sortida pel Montnegre-Corredor (18/10/2026).
+- **Entrena l'ull** (test) i **SOS** (112 · 91 562 04 20).
+- **El llibre:** una pàgina per bolet per passar amb el dit, també en PDF.
 
 > **Avís:** és una eina d'aprenentatge i no substitueix la revisió d'un micòleg. Si dubtes, no te'l mengis.
 
