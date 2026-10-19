@@ -570,6 +570,29 @@ html.printing { --paper: #ffffff; --leaf: #ffffff; --leaf-2: #eef0ea; }
 .tb-links { font-size: .9rem; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .tb-links a { font-weight: 700; text-decoration: none; padding: 4px 10px; border-radius: 99px; background: var(--leaf-2); color: var(--ink); }
 .tb-files { font-size: .74rem; color: var(--muted); }
+.vs-draw { display: grid; gap: 10px; grid-template-columns: repeat(var(--n, 2), minmax(0, 1fr)); }
+.dib { margin: 0; display: grid; gap: 4px; justify-items: center; align-content: start; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 6px 4px 8px; }
+.dib-svg { width: 100%; max-width: 220px; height: auto; color: var(--ink); }
+.dib figcaption { display: grid; gap: 3px; justify-items: center; text-align: center; }
+.dib figcaption b { font-family: var(--display); font-size: 1rem; line-height: 1.15; }
+.dib { min-width: 0; }
+.dib .chip { white-space: normal; text-align: center; }
+@media (max-width: 560px) {
+  .vs-draw { gap: 6px; }
+  .vs-draw[style*="--n:3"] .dib figcaption b { font-size: .86rem; }
+  .vs-draw[style*="--n:3"] .dib .chip { font-size: .58rem; padding: 2px 6px; gap: 4px; }
+  .vs-draw[style*="--n:3"] .dib .chip::before { width: 6px; height: 6px; }
+}
+.dib-help { font-size: .82rem; color: var(--muted); margin-top: -4px; }
+.mk { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-size: .68rem; font-weight: 800; margin-right: 6px; vertical-align: 1px; letter-spacing: 0; }
+.fig-wide { margin: 0 0 18px; background: var(--leaf); border: 1px solid var(--line); border-radius: 14px; padding: 12px; display: grid; gap: 8px; max-width: 640px; }
+.dib-wide { width: 100%; height: auto; color: var(--ink); }
+.fig-wide figcaption { font-size: .92rem; color: var(--muted); }
+.printing .vs-draw { display: block; }
+.printing .dib { display: inline-block; width: calc(50% - 4px); margin: 0 0 8px; vertical-align: top; break-inside: avoid; }
+.printing .dib + .dib { margin-left: 8px; }
+.printing .vs-draw[style*="--n:3"] .dib { width: calc(33.33% - 5.4px); }
+.printing .fig-wide { break-inside: avoid; display: block; }
 .vs-note { font-size: .93rem; padding: 10px 12px; border-radius: 8px; background: var(--leaf-2); }
 .printing .tb-card, .printing .tb-rov, .printing .pl-calc { box-shadow: none; }
 .printing .pl-calc, .printing .tb-jump { display: none !important; }
@@ -709,6 +732,7 @@ html.printing { --paper: #ffffff; --leaf: #ffffff; --leaf-2: #eef0ea; }
     <div class="wrap">
       <header class="ch-head"><span class="ch-no">Capítol 2</span><h2>Com es llegeix un bolet</h2>
         <p class="ch-lede">Abans de mirar el color, aprèn on mirar. Aquestes parts són les pistes que trobaràs a totes les pàgines del llibre.</p></header>
+      <figure class="fig-wide" id="fig-parts"></figure>
       <div class="pgrid" id="anatomia"></div>
       <div class="key" id="clau">
         <div><span class="label">Clau ràpida</span><h3>Gira el bolet: què té sota el barret?</h3></div>
@@ -824,6 +848,7 @@ html.printing { --paper: #ffffff; --leaf: #ffffff; --leaf-2: #eef0ea; }
     <div class="wrap">
       <header class="ch-head"><span class="ch-no">Capítol 10</span><h2>Descarts ràpids i mites</h2>
         <p class="ch-lede">No hi ha cap regla per saber si un bolet és bo. Però sí que n'hi ha per saber quan deixar-lo. Si en compleix una, no va a la cistella.</p></header>
+      <figure class="fig-wide" id="fig-mortal"></figure>
       <div class="discard">
         <div class="dc"><span class="x" aria-hidden="true">✕</span><b>Té volva: un sac a la base</b><span>Amanites. Hi ha la farinera borda i la farinera pudent.</span></div>
         <div class="dc"><span class="x" aria-hidden="true">✕</span><b>Làmines blanques i anell</b><span>Combinació típica de les amanites mortals.</span></div>
@@ -1969,7 +1994,11 @@ function renderTroballes() {
     <div class="rule"><b>4 · Olor i arbre</b><p>Apunta l'olor i quin arbre tenia al costat.</p></div>`;
 }
 
-function renderAnatomy() { $("#anatomia").innerHTML = ANATOMIA.map(a => pcard(a)).join(""); }
+function renderAnatomy() {
+  $("#fig-parts").innerHTML = FIG_PARTS + `<figcaption>Les parts que has de mirar en cada bolet. La volva sovint queda enterrada: per això cal arrencar sencers els bolets que no coneixes.</figcaption>`;
+  $("#fig-mortal").innerHTML = FIG_MORTAL + `<figcaption><b>La combinació mortal.</b> Làmines blanques, anell i volva en sac: és una amanita. Si en veus les tres, o fins i tot només la volva, fora de la cistella.</figcaption>`;
+  $("#anatomia").innerHTML = ANATOMIA.map(a => pcard(a)).join("");
+}
 function renderColors() { $("#colors").innerHTML = COLORS.map(c => pcard(c, `<span class="what ${c.w}">${esc(c.wt)}</span>`)).join(""); }
 function renderAge() {
   $("#edat").innerHTML = EDAT.map(e => `<div class="age-block"><h3>${esc(e.t)}</h3><div class="strip">${e.s.map(([id, i]) => stageCard(id, i)).join("")}</div></div>`).join("");
@@ -1994,18 +2023,275 @@ function renderKey() {
   $("#key-res").innerHTML = `<p style="grid-column:1/-1"><b>${items.length} bolets</b> amb ${esc(FORMA_TXT[KEY].toLowerCase())}. Els vermells i ambre no es mengen.</p>` + items.map(scard).join("");
 }
 $("#key-opts").addEventListener("click", e => { const b = e.target.closest(".key-opt"); if (!b) return; KEY = KEY === b.dataset.k ? null : b.dataset.k; renderKey(); });
+/* ---------------- dibuixos esquemàtics ---------------- */
+// Un bolet de perfil fet amb formes simples. Els colors són els del bolet (es veuen igual en clar i fosc);
+// el contorn i els textos fan servir currentColor. Les marques numerades apunten al tret que cal mirar.
+let DIB_N = 0;
+const LN = 'stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"';
+const WHITE = "#fbfaf6";
+const CAP_PTS = [[-.55, .25], [-.22, .6], [.18, .68], [.5, .32], [-.02, .3], [-.38, .5], [.32, .55], [.66, .12], [-.7, .1]];
+function agaric(o, cx, G) {
+  const w = o.w ?? 48, h = o.h ?? 28, sh = o.sh ?? 80, sw = o.sw ?? 16, cb = G - sh, P = [], A = {};
+  const funnel = o.shape === "funnel", top = funnel ? cb + h * .7 : cb;
+  const capPt = ([rx, ry]) => [cx + rx * w, cb - h * ry * (1 - .55 * rx * rx) * (o.shape === "flat" ? .7 : 1)];
+  // peu
+  P.push(`<path d="M${cx - sw / 2},${top} L${cx - sw / 2},${G - 3} Q${cx},${G + 2} ${cx + sw / 2},${G - 3} L${cx + sw / 2},${top} Z" fill="${o.stem}" ${LN}/>`);
+  if (o.bulb) P.push(`<ellipse cx="${cx}" cy="${G - 8}" rx="${sw * .95}" ry="9" fill="${o.stem}" ${LN}/>`);
+  const y0 = top + (o.ring && o.ring !== "cortina" ? (o.ringY ?? 16) + 14 : 8);
+  for (let y = y0; y < G - 12; y += o.stemMark === "net" ? 6 : 8) {
+    const L = cx - sw / 2 + 1.5, R = cx + sw / 2 - 1.5;
+    if (o.stemMark === "snake") P.push(`<path d="M${L},${y} l${(R - L) / 4},3 l${(R - L) / 4},-3 l${(R - L) / 4},3 l${(R - L) / 4},-3" fill="none" stroke="#6b4a2e" stroke-width="1.3"/>`);
+    else if (o.stemMark === "net") P.push(`<path d="M${L},${y} L${R},${y + 5} M${R},${y} L${L},${y + 5}" stroke="${o.net}" stroke-width="1.1"/>`);
+    else if (o.stemMark === "pits") { if ((y - y0) % 16 === 0) P.push(`<ellipse cx="${cx + ((y / 8) % 2 ? -sw * .18 : sw * .18)}" cy="${y + 3}" rx="${sw * .16}" ry="3" fill="${o.pit || "rgba(140,50,10,.55)"}"/>`); }
+    else if (o.stemMark === "scaly") P.push(`<path d="M${cx - sw * .25},${y + 3} l${sw * .12},-3 l${sw * .12},3 M${cx + sw * .05},${y + 6} l${sw * .12},-3 l${sw * .12},3" fill="none" stroke="${o.scale || "#7a4a32"}" stroke-width="1.1"/>`);
+    else if (o.stemMark === "twist") P.push(`<path d="M${L},${y + 6} L${R},${y}" stroke="rgba(90,60,30,.45)" stroke-width="1"/>`);
+    else if (o.stemMark === "spots") { if ((y - y0) % 16 === 0) P.push(`<circle cx="${cx + sw * .15}" cy="${y + 2}" r="1.8" fill="${o.stain}"/>`); }
+  }
+  A.stem = [cx + sw / 2, top + (G - top) * .55];
+  A.net = A.stem; A.stemL = [cx - sw / 2, A.stem[1]];
+  A.base = [cx + sw * (o.bulb ? .95 : .5), G - 6];
+  if (o.base) P.push(`<path d="M${cx - sw / 2},${G - 12} L${cx - sw / 2},${G - 3} Q${cx},${G + 2} ${cx + sw / 2},${G - 3} L${cx + sw / 2},${G - 12} Z" fill="${o.base}" ${LN}/>`);
+  // anell o cortina
+  const ry = top + (o.ringY ?? 16), rf = o.ringFill || WHITE;
+  A.ring = [cx + sw / 2 + 2, ry + 6];
+  if (o.ring === "skirt") P.push(`<path d="M${cx - sw / 2},${ry} L${cx - sw * 1.05},${ry + 11} Q${cx},${ry + 15} ${cx + sw * 1.05},${ry + 11} L${cx + sw / 2},${ry} Z" fill="${rf}" ${LN}/>`), A.ring = [cx + sw * 1.05, ry + 10];
+  if (o.ring === "ragged") P.push(`<path d="M${cx - sw / 2},${ry} L${cx - sw * .95},${ry + 9} L${cx - sw * .6},${ry + 6} L${cx - sw * .3},${ry + 12} L${cx + sw * .1},${ry + 6} L${cx + sw * .5},${ry + 11} L${cx + sw * .95},${ry + 8} L${cx + sw / 2},${ry} Z" fill="${rf}" ${LN}/>`), A.ring = [cx + sw * .95, ry + 8];
+  if (o.ring === "double") P.push(`<rect x="${cx - sw * .9}" y="${ry}" width="${sw * 1.8}" height="9" rx="3" fill="${rf}" ${LN}/><line x1="${cx - sw * .9}" y1="${ry + 4.5}" x2="${cx + sw * .9}" y2="${ry + 4.5}" stroke="currentColor" stroke-width="1"/>`), A.ring = [cx + sw * .9, ry + 5];
+  if (o.ring === "thin") P.push(`<path d="M${cx - sw * .8},${ry} L${cx + sw * .8},${ry} L${cx + sw * .6},${ry + 4} L${cx - sw * .6},${ry + 4} Z" fill="${rf}" ${LN}/>`), A.ring = [cx + sw * .8, ry + 2];
+  // volva
+  const vf = o.volvaFill || WHITE;
+  A.volva = [cx + sw * 1.3, G - 12];
+  if (o.volva === "sac") P.push(`<path d="M${cx - sw * .95},${G - 22} L${cx - sw * 1.35},${G - 3} Q${cx},${G + 4} ${cx + sw * 1.35},${G - 3} L${cx + sw * .95},${G - 22} L${cx + sw * .55},${G - 15} L${cx + sw * .2},${G - 24} L${cx - sw * .25},${G - 16} L${cx - sw * .6},${G - 23} Z" fill="${vf}" ${LN}/>`);
+  if (o.volva === "rings") { P.push(`<ellipse cx="${cx}" cy="${G - 9}" rx="${sw}" ry="10" fill="${o.stem}" ${LN}/>`); for (let k = 0; k < 3; k++) P.push(`<path d="M${cx - sw * .9},${G - 15 + k * 4} Q${cx},${G - 10 + k * 4} ${cx + sw * .9},${G - 15 + k * 4}" fill="none" stroke="currentColor" stroke-width="1" stroke-opacity=".7"/>`); A.volva = [cx + sw, G - 10]; }
+  // sota el barret
+  const U = [];
+  if (funnel) {
+    U.push(`<path d="M${cx - w},${cb} C${cx - w * .7},${cb + h * .5} ${cx - sw},${top - h * .25} ${cx - sw / 2},${top} L${cx + sw / 2},${top} C${cx + sw},${top - h * .25} ${cx + w * .7},${cb + h * .5} ${cx + w},${cb} Z" fill="${o.under}" ${LN}/>`);
+    const n = o.under2 === "folds" ? 5 : 9;
+    for (let i = 1; i < n; i++) for (const sg of [-1, 1]) {
+      const t = i / n, x1 = cx + sg * w * (1 - t * .85), x2 = cx + sg * sw * .35;
+      U.push(o.under2 === "folds"
+        ? `<path d="M${x1},${cb + 2} Q${(x1 + x2) / 2 + sg * 4},${cb + h * .45} ${x2},${top - 1} M${(x1 * 2 + x2) / 3 + sg * 2},${cb + h * .2} l${sg * 6},-4" fill="none" stroke="rgba(90,50,0,.55)" stroke-width="1.8"/>`
+        : `<path d="M${x1},${cb + 2} Q${(x1 + x2) / 2 + sg * 4},${cb + h * .45} ${x2},${top - 1}" fill="none" stroke="rgba(0,0,0,.3)" stroke-width=".8"/>`);
+    }
+    U.push(`<ellipse cx="${cx}" cy="${cb}" rx="${w}" ry="6" fill="${o.cap}" ${LN}/><ellipse cx="${cx}" cy="${cb + .5}" rx="${w * .45}" ry="2.4" fill="rgba(0,0,0,.14)"/>`);
+    A.cap = [cx + w * .7, cb - 3]; A.gills = [cx + w * .5, cb + h * .32]; A.edge = [cx + w, cb];
+  } else {
+    const dec = o.decurrent, gd = o.gd ?? 9, inner = dec ? cb + 16 : cb + gd * .9;
+    U.push(dec ? `<path d="M${cx - w},${cb} Q${cx - sw * 1.2},${cb + 3} ${cx - sw / 2},${cb + 16} L${cx + sw / 2},${cb + 16} Q${cx + sw * 1.2},${cb + 3} ${cx + w},${cb} Z" fill="${o.under}" ${LN}/>`
+      : `<path d="M${cx - w},${cb} Q${cx},${cb + gd * 2} ${cx + w},${cb} Z" fill="${o.under}" ${LN}/>`);
+    if (o.under2 === "pores") {
+      for (let x = cx - w + 5; x < cx + w - 4; x += 4.5) for (const dy of [2.6, 6]) {
+        const lim = gd * 2 * (1 - ((x - cx) / w) ** 2) * .5; if (dy < lim) U.push(`<circle cx="${x}" cy="${cb + dy}" r="1.15" fill="rgba(0,0,0,.3)"/>`);
+      }
+    } else {
+      const n = o.distant ? 4 : o.crowded ? 12 : 7, sp = o.under2 === "folds";
+      for (let i = 0; i < n; i++) for (const sg of [-1, 1]) {
+        const x1 = cx + sg * (w - 3 - i * (w - sw) / n), x2 = cx + sg * sw * .5;
+        U.push(`<path d="M${x1},${cb + .5} L${x1 + (x2 - x1) * (dec ? 1 : .25)},${dec ? inner - 1 : cb + gd * (1 - ((x1 - cx) / w) ** 2) * .95}" stroke="${o.gillLine || "rgba(0,0,0,.3)"}" stroke-width="${o.distant || sp ? 1.6 : .8}"/>`);
+      }
+      if (o.stain) for (const dx of [-.55, .3, .7]) U.push(`<circle cx="${cx + dx * w}" cy="${cb + 2.5}" r="1.6" fill="${o.stain}"/>`);
+    }
+    A.gills = [cx + w * .62, cb + (dec ? 5 : gd * .55)]; A.edge = [cx + w + 1, cb];
+    // barret
+    const d = o.shape === "umbo" ? `M${cx - w},${cb} C${cx - w * .9},${cb - h * .9} ${cx - w * .3},${cb - h} ${cx},${cb - h * 1.35} C${cx + w * .3},${cb - h} ${cx + w * .9},${cb - h * .9} ${cx + w},${cb} Z`
+      : o.shape === "flat" ? `M${cx - w},${cb} C${cx - w * .9},${cb - h * .7} ${cx - w * .35},${cb - h * .8} ${cx - w * .15},${cb - h * .95} Q${cx},${cb - h * 1.5} ${cx + w * .15},${cb - h * .95} C${cx + w * .35},${cb - h * .8} ${cx + w * .9},${cb - h * .7} ${cx + w},${cb} Z`
+      : o.shape === "bell" ? `M${cx - w},${cb} C${cx - w * .95},${cb - h * 1.1} ${cx - w * .45},${cb - h * 1.5} ${cx},${cb - h * 1.5} C${cx + w * .45},${cb - h * 1.5} ${cx + w * .95},${cb - h * 1.1} ${cx + w},${cb} Z`
+      : `M${cx - w},${cb} C${cx - w},${cb - h * 1.33} ${cx + w},${cb - h * 1.33} ${cx + w},${cb} Z`;
+    U.push(`<path d="${d}" fill="${o.cap}" ${LN}/>`);
+    const m = o.capMark || "";
+    if (m.includes("zones")) for (const k of [.72, .45]) U.push(`<path d="M${cx - w * k},${cb - 1} C${cx - w * k},${cb - h * 1.2 * k} ${cx + w * k},${cb - h * 1.2 * k} ${cx + w * k},${cb - 1}" fill="none" stroke="${o.zone || "rgba(150,50,0,.6)"}" stroke-width="2"/>`);
+    if (m.includes("fibrils")) for (const t of [-.8, -.5, -.2, .2, .5, .8]) U.push(`<path d="M${cx + t * w * .12},${cb - h * .92} L${cx + t * w * .92},${cb - 1}" stroke="rgba(0,0,0,.22)" stroke-width=".9"/>`);
+    if (m.includes("striate")) for (let x = cx - w + 3; x < cx + w - 2; x += 5) U.push(`<path d="M${x},${cb - 1} L${x},${cb - 6}" stroke="rgba(0,0,0,.3)" stroke-width=".9"/>`);
+    if (m.includes("cracks")) U.push(`<path d="${CAP_PTS.slice(0, 7).map((p, i) => { const [x, y] = capPt(p); return (i ? "L" : "M") + x + "," + y; }).join(" ")} M${capPt(CAP_PTS[4]).join(",")} L${capPt(CAP_PTS[2]).join(",")}" fill="none" stroke="rgba(0,0,0,.3)" stroke-width="1"/>`);
+    for (const p of CAP_PTS) {
+      const [x, y] = capPt(p);
+      if (m.includes("warts")) U.push(`<circle cx="${x}" cy="${y}" r="2.7" fill="${WHITE}" stroke="currentColor" stroke-width=".6"/>`);
+      if (m.includes("scales")) U.push(`<path d="M${x - 3.5},${y + 1} l3.5,-2.5 l3.5,2.5" fill="none" stroke="${o.scale || "#5a4030"}" stroke-width="1.5"/>`);
+      if (m.includes("felt")) U.push(`<path d="M${x - 2},${y} l4,1" stroke="rgba(0,0,0,.3)" stroke-width="1"/>`);
+    }
+    if (m.includes("stains")) for (const p of [CAP_PTS[0], CAP_PTS[3], CAP_PTS[6], CAP_PTS[7]]) { const [x, y] = capPt(p); U.push(`<circle cx="${x}" cy="${y}" r="2.6" fill="${o.stain || "#3f7a4a"}"/>`); }
+    if (m.includes("hairy")) for (const sg of [-1, 1]) U.push(`<path d="M${cx + sg * w},${cb - 4} q${sg * 4},2 ${sg * 2},6 M${cx + sg * (w - 4)},${cb} q${sg * 4},2 ${sg * 2},6 M${cx + sg * (w - 9)},${cb + 1} q${sg * 3},2 ${sg * 1},5" fill="none" stroke="currentColor" stroke-width="1"/>`);
+    A.cap = capPt([.45, .55]); A.capL = capPt([-.45, .55]); A.size = [cx + w, cb - h];
+    A.gillsL = [cx - w * .62, A.gills[1]]; A.edgeL = [cx - w - 1, cb];
+  }
+  if (o.ring === "cortina") { const c = []; for (const k of [.95, .75, .55, .35]) for (const sg of [-1, 1]) c.push(`M${cx + sg * w * k},${cb + 1} Q${cx + sg * (sw + w * k * .3)},${cb + 14} ${cx + sg * sw / 2},${cb + 26}`); U.push(`<path d="${c.join(" ")}" fill="none" stroke="${o.cortinaFill || "#9a4e1e"}" stroke-width="1.3" stroke-dasharray="3 2"/>`); A.ring = [cx + sw * .9, cb + 18]; }
+  if (o.milk) {
+    const mx = cx + Math.max(w * .42, sw / 2 + 7), my = top + (funnel ? 4 : 9);
+    const drop = (x, y) => `<path d="M${x},${y} q-3.5,6 0,8.5 q3.5,-2.5 0,-8.5 Z" fill="${o.milk === "none" ? "none" : o.milk}" stroke="currentColor" stroke-width=".9"${o.milk === "none" ? ' stroke-dasharray="2 1.6"' : ""}/>`;
+    U.push(drop(mx, my) + drop(mx + 5, my + 10)); A.milk = [mx + 6, my + 16];
+  }
+  return { svg: P.join("") + U.join(""), A, top: o.shape === "funnel" ? cb - 8 : undefined, capTop: o.shape === "bell" || o.shape === "flat" ? cb - h * 1.5 : o.shape === "umbo" ? cb - h * 1.35 : cb - h };
+}
+function ballParts(o, cx, G, id) {
+  const P = [], A = {};
+  const d = o.ball === "pear"
+    ? `M${cx - 36},${G - 60} C${cx - 38},${G - 104} ${cx + 38},${G - 104} ${cx + 36},${G - 60} C${cx + 32},${G - 36} ${cx + 14},${G - 22} ${cx + 12},${G - 2} L${cx - 12},${G - 2} C${cx - 14},${G - 22} ${cx - 32},${G - 36} ${cx - 36},${G - 60} Z`
+    : `M${cx - 42},${G - 38} C${cx - 44},${G - 86} ${cx + 44},${G - 86} ${cx + 42},${G - 38} C${cx + 40},${G - 13} ${cx + 18},${G - 5} ${cx},${G - 5} C${cx - 18},${G - 5} ${cx - 40},${G - 13} ${cx - 42},${G - 38} Z`;
+  P.push(`<clipPath id="${id}"><rect x="${cx}" y="0" width="90" height="210"/></clipPath>`);
+  if (o.ball !== "pear") P.push(`<path d="M${cx - 6},${G - 5} l-4,6 M${cx + 4},${G - 5} l3,6" stroke="currentColor" stroke-width="1.2"/>`);
+  P.push(`<path d="${d}" fill="${o.fill}"/>`);
+  const pts = o.ball === "pear" ? [[-26, 70], [-14, 84], [-28, 52], [-12, 62], [-20, 40], [-8, 46], [-30, 82]] : [[-30, 50], [-16, 66], [-32, 30], [-14, 40], [-22, 20], [-6, 56]];
+  for (const [dx, dy] of pts) P.push(o.skin === "warts"
+    ? `<path d="M${cx + dx - 2.5},${G - dy + 2} l2.5,-5 l2.5,5 Z" fill="${WHITE}" stroke="currentColor" stroke-width=".7"/>`
+    : `<path d="M${cx + dx - 6},${G - dy} l5,-5 l7,2 l-1,6 l-6,2 Z" fill="none" stroke="rgba(0,0,0,.4)" stroke-width="1.1"/>`);
+  P.push(`<path d="${d}" fill="${o.inside}" clip-path="url(#${id})"/>`);
+  if (o.marble) for (const [dx, dy] of [[12, 60], [22, 40], [10, 28], [26, 62]]) P.push(`<path d="M${cx + dx},${G - dy} q5,-4 9,0" fill="none" stroke="${o.marble}" stroke-width="1.1" clip-path="url(#${id})"/>`);
+  P.push(`<line x1="${cx}" y1="${G - (o.ball === "pear" ? 93 : 74)}" x2="${cx}" y2="${G - (o.ball === "pear" ? 2 : 5)}" stroke="currentColor" stroke-width="1.2" stroke-dasharray="3 2"/>`);
+  P.push(`<path d="${d}" fill="none" ${LN}/>`);
+  A.skin = [cx - 34, G - 62]; A.inside = [cx + 26, G - 50];
+  return { svg: P.join(""), A, capTop: G - (o.ball === "pear" ? 93 : 74) };
+}
+// o: aspecte del bolet · marks: {número: part} · label: text per a lectors de pantalla
+function shroom(o, marks, label, vyForce) {
+  const W = 160, H = 200, cx = 80, id = "dib" + (++DIB_N);
+  let G = 182; const out = [], s = (o.s || 1) * 1.2; // 1.2: tots una mica més grans dins del requadre
+  const tf = ([x, y]) => [cx + (x - cx) * s, G + (y - G) * s];
+  if (o.wood) {
+    out.push(`<rect x="10" y="${G - 12}" width="140" height="18" rx="9" fill="#8a6a4a" ${LN}/><ellipse cx="141" cy="${G - 3}" rx="6" ry="9" fill="#c4a27a" ${LN}/>`);
+    G -= 12;
+    for (const dx of [-40, 38]) { const r = agaric(o, cx + dx, G); out.push(`<g transform="translate(${cx + dx},${G}) scale(.62) translate(${-(cx + dx)},${-G})">${r.svg}</g>`); }
+  } else {
+    out.push(`<line x1="6" y1="${G}" x2="154" y2="${G}" stroke="currentColor" stroke-opacity=".4" stroke-width="1.2"/>`);
+    if (o.needles) for (let x = 12; x < 150; x += 11) out.push(`<path d="M${x},${G - 1} l9,-${2 + (x % 3)}" stroke="#9a7a3a" stroke-width="1.3"/>`);
+  }
+  if (o.spore) out.push(`<rect x="6" y="${G - 24}" width="30" height="20" rx="2" fill="${o.spore}" ${LN}/>`);
+  if (o.cut) out.push(`<path d="M6,${G - 8} A15,15 0 0 1 36,${G - 8} Z" fill="${o.cut}" ${LN}/>`);
+  const r = o.ball ? ballParts(o, cx, G, id) : agaric(o, cx, G);
+  out.push(s === 1 ? r.svg : `<g transform="translate(${cx},${G}) scale(${s}) translate(${-cx},${-G})">${r.svg}</g>`);
+  const A = Object.fromEntries(Object.entries(r.A).map(([k, p]) => [k, tf(p)]));
+  if (o.spore) A.spore = [6, G - 14];
+  if (o.cut) A.cut = [8, G - 14];
+  if (o.wood) A.wood = [128, G + 8];
+  if (o.needles) A.ground = [cx + 46, G - 3];
+  else A.ground = [cx + 46, G];
+  if (o.cm) {
+    const w = (o.w ?? 48) * s, y = G + (r.capTop - G) * s - 9;
+    out.push(`<path d="M${cx - w},${y} L${cx + w},${y} M${cx - w},${y - 4} L${cx - w},${y + 4} M${cx + w},${y - 4} L${cx + w},${y + 4}" stroke="currentColor" stroke-width="1.2"/><text x="${cx}" y="${y - 5}" text-anchor="middle" font-size="11" fill="currentColor">${esc(o.cm)}</text>`);
+    A.size = [cx + w, y];
+  }
+  // retalla l'aire de dalt: el requadre comença just sobre el bolet
+  let topY = G + ((r.top ?? r.capTop) - G) * s;
+  if (o.cm) topY -= 22;
+  const vy = vyForce ?? Math.max(0, Math.floor(Math.min(topY, ...Object.values(A).map(p => p[1])) - 14));
+  // marques: columna dreta o esquerra segons on cau el tret, sense trepitjar-se
+  const cols = { L: [], R: [] };
+  for (const [n, part] of Object.entries(marks || {})) { const p = A[part]; if (p) cols[p[0] < cx ? "L" : "R"].push([n, p]); }
+  for (const [side, list] of Object.entries(cols)) {
+    list.sort((a, b) => a[1][1] - b[1][1]);
+    let last = -99;
+    for (const [n, [x, y]] of list) {
+      const my = Math.min(H - 10, Math.max(vy + 10, y, last + 20)); last = my;
+      const mx = side === "R" ? W - 10 : 10;
+      out.push(`<line x1="${x}" y1="${y}" x2="${mx + (side === "R" ? -8 : 8)}" y2="${my}" style="stroke:var(--accent)" stroke-width="1.3"/><circle cx="${x}" cy="${y}" r="2" style="fill:var(--accent)"/><circle cx="${mx}" cy="${my}" r="9" style="fill:var(--accent)"/><text x="${mx}" y="${my + 4}" text-anchor="middle" font-size="12" font-weight="700" style="fill:var(--accent-ink)">${n}</text>`);
+    }
+  }
+  return `<svg class="dib-svg" viewBox="0 ${vy} ${W} ${H - vy}" role="img" aria-label="${esc(label)}">${out.join("")}</svg>`;
+}
+// Dibuix amb etiquetes de text als costats (parts d'un bolet, combinació mortal)
+function labeledFig(o, labels, label) {
+  const r = agaric(o, 80, 182), k = 1.25, ox = 180 - 80 * k, W = 360, out = [];
+  const T = ([x, y]) => [ox + x * k, y * k - 182 * k + 192];          // terra a y = 192
+  const top = T([0, r.capTop])[1], vy = Math.max(0, Math.floor(top - 12)), H = 206;
+  out.push(`<line x1="${ox + 10 * k}" y1="192" x2="${ox + 150 * k}" y2="192" stroke="currentColor" stroke-opacity=".4" stroke-width="1.2"/>`);
+  out.push(`<g transform="translate(${ox},${192 - 182 * k}) scale(${k})">${r.svg}</g>`);
+  const cols = { L: [], R: [] };
+  for (const [part, txt, side] of labels) { const pt = r.A[part]; if (pt) cols[side].push([txt, T(pt)]); }
+  for (const [side, list] of Object.entries(cols)) {
+    list.sort((a, b) => a[1][1] - b[1][1]);
+    let last = -99;
+    for (const [txt, [x, y]] of list) {
+      const ty = Math.min(H - 18, Math.max(vy + 14, y, last + 32)); last = ty;
+      const tx = side === "R" ? W - 104 : 104;
+      const [t1, t2] = String(txt).split("|"), anc = side === "R" ? "start" : "end";
+      out.push(`<line x1="${x}" y1="${y}" x2="${tx + (side === "R" ? -5 : 5)}" y2="${ty - 4}" stroke="currentColor" stroke-opacity=".6" stroke-width="1"/><circle cx="${x}" cy="${y}" r="2.4" fill="currentColor"/>`);
+      out.push(`<text x="${tx}" y="${ty}" text-anchor="${anc}" font-size="13.5" font-weight="700" fill="currentColor">${esc(t1)}</text>`);
+      if (t2) out.push(`<text x="${tx}" y="${ty + 15}" text-anchor="${anc}" font-size="11.5" fill="currentColor" fill-opacity=".75">${esc(t2)}</text>`);
+    }
+  }
+  return `<svg class="dib-wide" viewBox="0 ${vy} ${W} ${H - vy}" role="img" aria-label="${esc(label)}">${out.join("")}</svg>`;
+}
+
+// Aspecte de cada bolet als cara a cara (mateix ordre que les columnes) i on apunta cada fila de la taula.
+const O = { // colors reals aproximats
+  rov: { cap: "#d9732b", under: "#e48a3c", stem: "#e39545", decurrent: true, stemMark: "pits", milk: "#e8681a" }
+};
+const VS_DIB = {
+  "Rovelló o lactari de llet blanca?": [
+    [{ ...O.rov, capMark: "zones stains" }, { 1: "milk", 2: "edge", 3: "cap" }],
+    [{ cap: "#e9c2ad", under: "#f3e7d3", stem: "#efdcc8", decurrent: true, capMark: "zones hairy", zone: "rgba(170,90,70,.45)", milk: WHITE }, { 1: "milk", 2: "edge", 3: "cap" }]],
+  "Rovelló sense cercles o rússula?": [
+    [{ ...O.rov, capMark: "stains" }, { 1: "milk", 2: "stem", 3: "gills", 4: "cap" }],
+    [{ cap: "#d9512f", under: WHITE, stem: WHITE, milk: "none" }, { 1: "milk", 2: "stem", 3: "gills", 4: "cap" }]],
+  "Pet de llop o escleroderma?": [
+    [{ ball: "pear", fill: "#f1ecdf", skin: "warts", inside: WHITE }, { 1: "skin", 2: "inside" }],
+    [{ ball: "round", fill: "#c99a55", skin: "scales", inside: "#2f2436", marble: "#d9cfe0" }, { 1: "skin", 2: "inside" }]],
+  "Cep, matagent o molleric amarg?": [
+    [{ cap: "#8a5a33", under: "#e6dfb4", under2: "pores", stem: "#dcc79c", stemMark: "net", net: WHITE, bulb: true, sw: 22, cut: WHITE }, { 1: "gills", 2: "cut", 3: "net" }],
+    [{ cap: "#d9d5c9", under: "#d23b2f", under2: "pores", stem: "#e7a24a", stemMark: "net", net: "#b8231b", bulb: true, sw: 22, cut: "#3c6fd0" }, { 1: "gills", 2: "cut", 3: "net" }],
+    [{ cap: "#9a6b45", under: "#ecc6c6", under2: "pores", stem: "#c9a77a", stemMark: "net", net: "#4b3726", sw: 18, cut: WHITE }, { 1: "gills", 2: "cut", 3: "net" }]],
+  "Rossinyol o gírgola d'olivera?": [
+    [{ shape: "funnel", cap: "#f2b632", under: "#f2b632", under2: "folds", stem: "#f2b632", w: 46, h: 30, sh: 66, sw: 14 }, { 1: "gills", 2: "ground" }],
+    [{ shape: "funnel", cap: "#e8741c", under: "#f08a24", stem: "#e8741c", w: 40, h: 26, sh: 60, sw: 12, wood: true }, { 1: "gills", 2: "wood" }],
+    [{ shape: "funnel", cap: "#e9852c", under: "#f39a3a", stem: "#e08a3a", w: 38, h: 24, sh: 56, sw: 9, needles: true }, { 1: "gills", 2: "ground" }]],
+  "Cama-sec o clitocibe blanc?": [
+    [{ shape: "umbo", cap: "#d9b88a", under: "#efe0c4", stem: "#d9c09a", w: 34, h: 16, sh: 70, sw: 7, distant: true, gd: 7, stemMark: "twist" }, { 1: "cap", 2: "gills", 3: "stem" }],
+    [{ shape: "flat", cap: "#f1efe8", under: "#f4f2ea", stem: "#ece9df", w: 34, h: 12, sh: 46, sw: 9, decurrent: true, crowded: true, capMark: "felt" }, { 1: "cap", 2: "gills", 3: "stem" }]],
+  "Fredolic o fredolic metzinós?": [
+    [{ shape: "umbo", cap: "#7d7a76", under: "#ece9e3", stem: "#ebe7df", w: 32, h: 18, sh: 58, sw: 9, capMark: "felt" }, { 1: "cap", 2: "stem" }],
+    [{ cap: "#b9b5ad", under: "#ece9e3", stem: "#ebe7df", w: 50, h: 26, sh: 64, sw: 19, capMark: "scales", scale: "#4d4a46" }, { 1: "cap", 2: "stem" }]],
+  "Cama de perdiu o cortinari?": [
+    [{ shape: "umbo", cap: "#b5653a", under: "#7d3f27", stem: "#d9925c", w: 40, h: 20, sh: 70, sw: 12, decurrent: true, distant: true, gillLine: "rgba(0,0,0,.45)" }, { 1: "gills", 2: "cap" }],
+    [{ shape: "umbo", cap: "#c0662b", under: "#b4551e", stem: "#d8a06b", w: 40, h: 22, sh: 70, sw: 12, capMark: "fibrils", gd: 8 }, { 1: "gills", 2: "cap" }]],
+  "Apagallums o lepiota?": [
+    [{ shape: "flat", cap: "#e6d7bd", capMark: "scales", scale: "#7a5236", under: WHITE, stem: "#e3d3b8", stemMark: "snake", ring: "double", bulb: true, w: 54, h: 20, sh: 104, sw: 10, cm: "15–30 cm" }, { 1: "size", 2: "stem", 3: "ring" }],
+    [{ shape: "flat", cap: "#efdcd0", capMark: "scales", scale: "#9a4a3a", under: WHITE, stem: "#f0e2d8", stemMark: "scaly", w: 46, h: 18, sh: 78, sw: 9, s: .55, cm: "2–8 cm" }, { 1: "size", 2: "stem", 3: "ring" }],
+    [{ shape: "flat", cap: "#d8c2a6", capMark: "scales", scale: "#6b4630", under: WHITE, stem: "#eadfd0", ring: "double", bulb: true, w: 50, h: 20, sh: 84, sw: 12, s: .8, cm: "10–15 cm" }, { 1: "size", 2: "stem", 3: "ring" }]],
+  "Carlet o fals carlet?": [
+    [{ cap: "#d79a9a", capMark: "stains", stain: "#8a2f3c", under: "#f7f1ea", stem: "#f6efe8", stemMark: "spots", decurrent: true }, { 1: "cap", 2: "gills" }],
+    [{ cap: "#d9d2c3", under: "#e9b49a", stem: WHITE, w: 52, sw: 18, gd: 9 }, { 1: "cap", 2: "gills" }]],
+  "Ou de reig, reig bord o farinera borda?": [
+    [{ cap: "#e8681a", capMark: "striate", under: "#f5c542", stem: "#f5c542", ring: "skirt", ringFill: "#f5c542", volva: "sac" }, { 1: "cap", 2: "gills", 3: "ring", 4: "volva" }],
+    [{ cap: "#d62828", capMark: "warts", under: WHITE, stem: WHITE, ring: "skirt", volva: "rings" }, { 1: "cap", 2: "gills", 3: "ring", 4: "volva" }],
+    [{ cap: "#a8ab6c", capMark: "fibrils", under: WHITE, stem: WHITE, ring: "skirt", volva: "sac" }, { 1: "cap", 2: "gills", 3: "ring", 4: "volva" }]],
+  "Llora o farinera borda?": [
+    [{ cap: "#8fb07a", capMark: "cracks", under: WHITE, stem: WHITE, sw: 18 }, { 1: "cap", 2: "ring", 3: "volva", 4: "stem" }],
+    [{ cap: "#a8ab6c", capMark: "fibrils", under: WHITE, stem: WHITE, ring: "skirt", volva: "sac" }, { 1: "cap", 2: "ring", 3: "volva", 4: "stem" }]],
+  "Camperol, bola de neu pudent o farinera pudent?": [
+    [{ cap: "#f6f3ec", under: "#c98b7f", stem: "#f3f0e8", ring: "thin", sh: 56, sw: 15 }, { 1: "gills", 2: "base" }],
+    [{ cap: "#ece8e0", under: "#cfaaa3", stem: "#f3f0e8", ring: "skirt", base: "#f2d21b", sh: 70, sw: 14 }, { 1: "gills", 2: "base" }],
+    [{ shape: "bell", cap: WHITE, under: WHITE, stem: WHITE, ring: "skirt", volva: "sac", w: 40, h: 26 }, { 1: "gills", 2: "volva" }]],
+  "Farinera o Amanita proxima?": [
+    [{ cap: WHITE, under: WHITE, stem: WHITE, ring: "ragged", ringFill: "#f3ead6", volva: "sac", w: 50, sw: 19 }, { 1: "volva", 2: "ring" }],
+    [{ cap: "#f4efe4", under: WHITE, stem: WHITE, ring: "skirt", volva: "sac", volvaFill: "#d98a4a", w: 50, sw: 18 }, { 1: "volva", 2: "ring" }]],
+  "Pimpinella morada o cortinari?": [
+    [{ cap: "#8a6aa8", under: "#b9a2d1", stem: "#a58bc4", spore: "#f1dcd6", sw: 18 }, { 1: "ring", 2: "spore", 3: "gills" }],
+    [{ cap: "#9a6a9c", under: "#b4551e", stem: "#c7a7c4", ring: "cortina", spore: "#9a4e1e", sw: 16 }, { 1: "ring", 2: "spore", 3: "gills" }]]
+};
+const FIG_PARTS = labeledFig({ cap: "#c69a62", under: WHITE, stem: "#f3efe6", ring: "skirt", volva: "sac", w: 52, h: 30, sh: 92 },
+  [["capL", "Barret|color i pell", "L"], ["gillsL", "Làmines|o porus, a sota", "L"], ["stemL", "Peu", "L"], ["edge", "Vora", "R"], ["ring", "Anell|una faldilla", "R"], ["volva", "Volva|sac a la base", "R"]],
+  "Esquema de les parts d'un bolet: barret, làmines, anell, peu i volva");
+const FIG_MORTAL = labeledFig({ cap: "#a8ab6c", capMark: "fibrils", under: WHITE, stem: WHITE, ring: "skirt", volva: "sac", w: 50, h: 30, sh: 92 },
+  [["capL", "Barret llis|verd, groc o blanc", "L"], ["gills", "1 · Làmines|blanques", "R"], ["ring", "2 · Anell|una faldilla", "R"], ["volva", "3 · Volva|sac, sovint enterrat", "R"]],
+  "Esquema d'una amanita mortal: làmines blanques, anell i volva en sac");
+
 function renderVS() {
   const D = { 1: "Fàcil de distingir", 2: "Cal fixar-s'hi", 3: "Difícil · risc greu" };
   $("#vs").innerHTML = COMPARA.map(c => {
-    const bs = c.cols.map(id => BY[id]);
+    const bs = c.cols.map(id => BY[id]), dib = VS_DIB[c.t];
+    const marked = new Set(dib ? dib.flatMap(([, m]) => Object.keys(m).map(Number)) : []);
+    // mateix retall per a tots els dibuixos de la parella: el terra queda alineat
+    const vy = dib ? Math.min(...dib.map(([o, m]) => Number(shroom(o, m, "").match(/viewBox="0 (\d+)/)[1]))) : 0;
     return `<article class="vs">
       <div class="vs-head"><h3>${esc(c.t)}</h3><span class="diff d${c.d}">${D[c.d]}</span></div>
       <p class="vs-key">${esc(c.clau)}</p>
       ${c.nota ? `<p class="vs-note">${esc(c.nota)}${c.link ? ` <a href="#${c.link}">Veure-la →</a>` : ""}</p>` : ""}
+      ${dib ? `<div class="vs-draw" style="--n:${bs.length}">${bs.map((b, k) => `<figure class="dib">${shroom(dib[k][0], dib[k][1], `Esquema: ${b.nom}`, vy)}<figcaption><b>${esc(b.nom)}</b><span class="chip ${b.estat}">${ESTAT_TXT[b.estat]}</span></figcaption></figure>`).join("")}</div>
+      <p class="dib-help">Esquema. Els números assenyalen on has de mirar i són les files de la taula.</p>` : ""}
       <div class="vs-photos" style="--n:${bs.length}">${bs.map(b => `<figure>${photoBtn(b.id, 0)}<figcaption><a href="#b-${b.id}">${esc(b.nom)}</a><span class="chip ${b.estat}">${ESTAT_TXT[b.estat]}</span></figcaption></figure>`).join("")}</div>
       <table class="cmp">
         <thead><tr><th scope="col"><span class="sr">Tret</span></th>${bs.map(b => `<th scope="col">${esc(b.nom)}</th>`).join("")}</tr></thead>
-        <tbody>${c.rows.map(r => `<tr><th scope="row">${esc(r[0])}</th>${r.slice(1).map((v, k) => `<td data-k="${esc(bs[k].nom)}">${esc(v)}</td>`).join("")}</tr>`).join("")}
+        <tbody>${c.rows.map((r, ri) => `<tr><th scope="row">${marked.has(ri + 1) ? `<span class="mk" aria-hidden="true">${ri + 1}</span>` : ""}${esc(r[0])}</th>${r.slice(1).map((v, k) => `<td data-k="${esc(bs[k].nom)}">${esc(v)}</td>`).join("")}</tr>`).join("")}
           <tr class="res"><th scope="row">Resultat</th>${bs.map(b => `<td data-k="${esc(b.nom)}" class="c-${b.estat}">${ESTAT_TXT[b.estat]}${b.qualitat ? " · " + esc(b.qualitat) : ""}</td>`).join("")}</tr>
         </tbody></table>
     </article>`;
