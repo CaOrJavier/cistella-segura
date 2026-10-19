@@ -739,6 +739,71 @@ html.printing { --paper: #ffffff; --leaf: #ffffff; --leaf-2: #eef0ea; }
 .zl-n { font-family: var(--display); font-weight: 800; font-size: 1.15rem; color: var(--muted); }
 .zl-hint { color: var(--muted); padding: 8px 0; }
 .zl-note { font-size: .82rem; color: var(--muted); margin-top: 12px; }
+
+/* avui al bosc */
+.home-avui { margin-top: 18px; }
+.ha { display: grid; gap: 4px; padding: 14px 16px; border-radius: 14px; background: var(--leaf); border: 2px solid var(--moss); text-decoration: none; color: var(--ink); }
+.ha b { font-family: var(--display); font-size: 1.35rem; }
+.ha-z { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .92rem; }
+.ha-z span { display: inline-flex; align-items: center; gap: 6px; }
+.ha-z i, .bosc-zones i { width: 11px; height: 11px; border-radius: 50%; background: var(--lv); flex: none; }
+.ha-go { font-weight: 700; color: var(--accent); font-size: .9rem; }
+.tile-avui { width: 76px; height: 76px; border-radius: 10px; display: grid; place-items: center; background: color-mix(in srgb, var(--care) 18%, var(--leaf)); color: var(--care); }
+.tile-avui svg { width: 46px; height: 46px; }
+.avui-estat { color: var(--muted); font-size: .9rem; margin-bottom: 12px; }
+.linkbtn { all: unset; cursor: pointer; color: var(--accent); font-weight: 700; text-decoration: underline; }
+.avui-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: center; margin-bottom: 18px; }
+.avui-map { width: 100%; height: auto; color: var(--ink); background: var(--leaf); border: 1px solid var(--line); border-radius: 14px; }
+.avui-llegenda { display: grid; gap: 6px; }
+.avui-llegenda span { display: inline-flex; gap: 8px; align-items: center; }
+.avui-llegenda i { width: 14px; height: 14px; border-radius: 50%; }
+.avui-llegenda p { font-size: .86rem; color: var(--muted); margin-top: 6px; }
+.zcs { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 12px; }
+.zc { background: var(--leaf); border: 1px solid var(--line); border-top: 5px solid var(--lv); border-radius: 14px; padding: 12px 14px; display: grid; gap: 8px; align-content: start; scroll-margin-top: 70px; }
+.zc header { display: flex; justify-content: space-between; gap: 8px; align-items: start; }
+.zc h3 { font-size: 1.25rem; }
+.zc header small { color: var(--muted); font-size: .82rem; }
+.zc .lv { font-size: .75rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; padding: 3px 10px; border-radius: 99px; background: var(--lv); color: #fff; white-space: nowrap; }
+.zc-txt { font-size: .93rem; }
+.zc-dades { display: flex; flex-wrap: wrap; gap: 2px 14px; font-size: .86rem; color: var(--muted); align-items: center; }
+.avui-reg { margin-bottom: 12px; }
+.zc .spark { max-width: 150px; margin-left: auto; }
+.zc-dades b { color: var(--ink); }
+.spark { width: 100%; max-width: 300px; height: auto; color: var(--ink); }
+.zc-toca div { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+.zc-toca a, .bosc-chips a, .bosc-zones a { font-size: .85rem; font-weight: 700; text-decoration: none; color: var(--ink); padding: 5px 11px; border-radius: 99px; background: var(--ok-bg); }
+.zc-peu { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; align-items: center; border-top: 1px dotted var(--line); padding-top: 8px; font-size: .8rem; }
+.zc-peu span { display: flex; flex-wrap: wrap; gap: 4px 10px; }
+.zc-peu span a { color: var(--muted); }
+.zc-mapa { font-weight: 700; }
+/* explora */
+.bosc { display: grid; gap: 14px; }
+.bosc-head { display: grid; gap: 8px; }
+.bosc-head h2 { font-size: clamp(1.9rem, 5vw, 2.8rem); font-weight: 800; }
+.bosc-fotos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.bosc-fotos img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 10px; }
+.bosc-dades { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+.bosc-dades div { background: var(--leaf); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; }
+.bosc-dades dt { font-size: .7rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--moss); }
+.bosc-dades dd { margin: 0; font-family: var(--display); font-size: 1.1rem; }
+.bosc-ul { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
+.bosc-zones, .bosc-chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.bosc-zones a { display: inline-flex; gap: 6px; align-items: center; background: var(--leaf); border: 1px solid var(--line); }
+.bosc-chips { margin-top: 8px; }
+.bosc-chips a { background: var(--leaf-2); }
+.pl-zona { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: .9rem; color: var(--muted); }
+.pl-zona select { font: inherit; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); min-height: 40px; }
+.pl-zmsg { font-size: .9rem; }
+.pl-zmsg:empty { display: none; }
+@media (max-width: 640px) { .avui-top { grid-template-columns: minmax(0, 1fr); } }
+.printing [data-view="avui"], .printing [data-view="bosc"], .printing .home-avui, .printing .pl-zona, .printing .pl-zmsg, .printing .bosc-chips { display: none !important; }
+.printing .bosc { display: block; break-before: page; }
+.printing .bosc > * + * { margin-top: 10px; }
+.printing .bosc-fotos { display: none; }
+.printing .bosc-dades, .printing .bosc-zones { display: block; } .printing .bosc-dades div { display: inline-block; margin: 0 6px 6px 0; }
+.printing .bosc .cards { display: block; }
+.pchip { display: inline-block; margin: 0 6px 5px 0; padding: 2px 9px; border-radius: 99px; font-weight: 700; font-size: .85rem; text-decoration: none; color: var(--ink); background: var(--leaf-2); }
+.pchip.comestible { background: var(--ok-bg); } .pchip.toxic { background: var(--warn-bg); } .pchip.mortal { background: var(--deadly-bg); }
 </style>
 
 <header class="bar">
@@ -779,6 +844,7 @@ html.printing { --paper: #ffffff; --leaf: #ffffff; --leaf-2: #eef0ea; }
     <span>Informació Toxicològica (24 h): <b>91 562 04 20</b></span>
   </div>
 </div>
+<div class="wrap"><div class="home-avui" id="home-avui" hidden></div></div>
 <section class="home-sec">
   <div class="wrap">
     <div class="sec-head"><h2>Els clàssics</h2><a href="#/bolets">Tots els bolets →</a></div>
@@ -812,6 +878,17 @@ html.printing { --paper: #ffffff; --leaf: #ffffff; --leaf-2: #eef0ea; }
   </div>
 </section>
 </div>
+<div class="view" data-view="avui">
+  <section class="chapter" id="cap-avui">
+    <div class="wrap">
+      <header class="ch-head"><span class="ch-no">Avui al bosc</span><h2>On pot haver-hi bolets?</h2>
+        <p class="ch-lede">La pluja i la temperatura dels últims dies a 26 zones boletaires, i què toca buscar-hi segons els dies que fa que va ploure fort.</p></header>
+      <p class="avui-estat" id="avui-estat" aria-live="polite"></p>
+      <div id="avui"></div>
+      <p class="note-box">És una orientació. Els bolets depenen també de l'altitud, l'orientació i el sòl de cada lloc. «Ara toca buscar» surt del calendari de «Quan sortir», dels boscos de la zona i dels bolets que s'hi han trobat a 15 km.</p>
+    </div>
+  </section>
+</div>
 <div class="view" data-view="bolets">
   <section class="chapter" id="cap-5">
     <div class="wrap">
@@ -833,6 +910,15 @@ html.printing { --paper: #ffffff; --leaf: #ffffff; --leaf-2: #eef0ea; }
       <p style="color:var(--muted);font-size:.9rem">A cada pàgina del llibre hi ha el botó "L'he trobat al bosc". Es guarda en aquest navegador.</p>
       <div class="stamps" id="stamps"></div>
     </div>
+    </div>
+  </section>
+</div>
+<div class="view" data-view="explora">
+  <section class="chapter" id="cap-explora">
+    <div class="wrap">
+      <header class="ch-head"><span class="ch-no">Explora</span><h2>Tipus de bosc</h2>
+        <p class="ch-lede">Cada bosc té els seus bolets. Aprèn a reconèixer on ets, què hi pots trobar i amb què no ho has de confondre.</p></header>
+      <div id="boscos"></div>
     </div>
   </section>
 </div>
@@ -889,6 +975,8 @@ html.printing { --paper: #ffffff; --leaf: #ffffff; --leaf-2: #eef0ea; }
           <button type="button" class="quick" data-ago="14">Fa dues setmanes</button>
           <button type="button" class="quick" data-ago="">Esborra</button>
         </div>
+        <label class="pl-zona"><span>O agafa la pluja de la teva zona:</span><select id="pl-zona"><option value="">Tria una zona…</option></select></label>
+        <p class="pl-zmsg" id="pl-zmsg" aria-live="polite"></p>
         <div class="pl-res" id="pl-res" aria-live="polite"></div>
       </div>
       <div id="pluja"></div>
@@ -937,6 +1025,26 @@ html.printing { --paper: #ffffff; --leaf: #ffffff; --leaf-2: #eef0ea; }
       </div>
     </div>
   </section>
+  <section class="chapter" id="cap-norma">
+    <div class="wrap">
+      <header class="ch-head"><span class="ch-no">Seguretat</span><h2>Normativa i bones pràctiques</h2>
+        <p class="ch-lede">Collir bolets és permès a gairebé tot Catalunya, però no a tot arreu ni de qualsevol manera. Les normes canvien segons el municipi i l'espai natural.</p></header>
+      <div class="rules">
+        <div class="rule key"><b>Abans de sortir, mira les normes de la zona</b><p>Consulta la web de l'ajuntament o del parc natural. Les normes canvien d'un lloc a l'altre i d'un any a l'altre.</p></div>
+        <div class="rule"><b>La majoria de boscos són privats</b><p>El propietari pot limitar o prohibir la collita. Respecta els cartells i les tanques.</p></div>
+        <div class="rule"><b>Hi ha boscos amb permís</b><p>En algunes comarques hi ha zones regulades on cal un permís o tiquet, sovint per dia. S'indica amb cartells a l'entrada.</p></div>
+        <div class="rule"><b>Parcs i reserves naturals</b><p>Molts parcs tenen normes pròpies, i a les reserves integrals no es pot collir res.</p></div>
+        <div class="rule"><b>Quantitats</b><p>On hi ha límits, solen ser d'uns pocs quilos per persona i dia. Cull només el que menjaràs.</p></div>
+        <div class="rule"><b>Cistella i ganivet, mai rastells</b><p>Remenar la fullaraca mata el miceli: l'any que ve no hi sortirà res.</p></div>
+        <div class="rule"><b>Deixa el bosc com l'has trobat</b><p>No arrenquis plantes ni trenquis branques, tapa els forats i no deixis deixalles.</p></div>
+        <div class="rule"><b>Deixa els petits i els vells</b><p>Els petits encara han de créixer, i els vells escampen les espores per a l'any que ve.</p></div>
+        <div class="rule"><b>Cotxe i pistes</b><p>Aparca sense tapar pistes ni camins i no entris a les pistes tancades amb barrera.</p></div>
+        <div class="rule"><b>Temporada de caça</b><p>A la tardor hi ha batudes de senglar: porta roba de colors vius i respecta els cartells de «Batuda».</p></div>
+      </div>
+      <p class="note-box">Aquesta guia no recull la normativa de cada lloc. Si dubtes, pregunta a l'ajuntament o a l'oficina del parc.</p>
+    </div>
+  </section>
+
   <section class="chapter" id="cap-9">
     <div class="wrap">
       <header class="ch-head"><span class="ch-no">Capítol 10</span><h2>Descarts ràpids i mites</h2>
@@ -1035,6 +1143,12 @@ html.printing { --paper: #ffffff; --leaf: #ffffff; --leaf-2: #eef0ea; }
     <nav class="crumbs" id="sp-crumbs" aria-label="Ets a"></nav>
     <div id="sp-view"></div>
     <nav class="sp-nav" id="sp-nav" aria-label="Altres fitxes"></nav>
+  </div>
+</div>
+<div class="view" data-view="bosc">
+  <div class="wrap sp-wrap">
+    <nav class="crumbs" id="bosc-crumbs" aria-label="Ets a"></nav>
+    <div id="bosc-view"></div>
   </div>
 </div>
 <div class="view" data-view="mapa">
@@ -1877,7 +1991,7 @@ function leafSpecies(b, n, mode) {
         ${b.conf.map(c => { const t = c.id && BY[c.id]; const f = t ? fotos(c.id)[0] : null;
           return `<div class="twin">${f ? `<img src="${P(f.th)}" alt="${esc(t.nom)}" loading="${LOAD}">` : `<span></span>`}<div><p>${esc(c.t)}</p>${t ? (PRINT ? `<a class="go" href="#p-${c.id}">Fitxa: ${esc(t.nom)} →</a>` : (web ? `<a class="go" href="#/bolet/${c.id}">Fitxa: ${esc(t.nom)} →</a>` : `<button type="button" class="go" data-goto="${c.id}">Pàgina ${pageNo(c.id)} →</button>`)) : ""}</div></div>`; }).join("")}
       </section>
-      <section class="sec"><h3>On viu</h3>${mapSVG(b)}${web ? `<a class="go map-go" href="#/mapa/${b.id}">Obre-ho al mapa interactiu →</a>` : ""}<p>${esc(b.habitat)}</p></section>
+      <section class="sec"><h3>On viu</h3>${mapSVG(b)}${web ? `<a class="go map-go" href="#/mapa/${b.id}">Obre-ho al mapa interactiu →</a>` : ""}<p>${esc(b.habitat)}</p>${web && boscosDe(b.id).length ? `<div class="bosc-chips"><span class="label">Boscos on surt</span>${boscosDe(b.id).map(x => `<a href="#/bosc/${x.id}">${esc(x.nom)}</a>`).join("")}</div>` : ""}</section>
       <section class="sec"><h3>D'on ve el nom</h3><p><i>${esc(b.etim)}</i></p></section>
       ${b.nota ? `<section class="sec"><h3>Consell</h3><p>${esc(b.nota)}</p></section>` : ""}
       <button type="button" class="found" data-id="${b.id}" aria-pressed="${FOUND.has(b.id)}">${FOUND.has(b.id) ? "✓ L'he trobat" : "L'he trobat al bosc"}</button>
@@ -1971,8 +2085,8 @@ function renderResume() {
 }
 
 /* ---------------- web: seccions ---------------- */
-const CHAPTERS = [["cap-5", "Els bolets"], ["cap-2", "Com es llegeix un bolet"], ["cap-3", "L'edat d'un bolet"], ["cap-4", "Colors que canvien"],
-  ["cap-pluja", "Quan sortir: la pluja i els dies"], ["cap-6", "Cara a cara"], ["cap-1", "Abans de sortir"], ["cap-9", "Descarts ràpids i mites"],
+const CHAPTERS = [["cap-5", "Els bolets"], ["cap-explora", "Tipus de bosc"], ["cap-2", "Com es llegeix un bolet"], ["cap-3", "L'edat d'un bolet"], ["cap-4", "Colors que canvien"],
+  ["cap-pluja", "Quan sortir: la pluja i els dies"], ["cap-6", "Cara a cara"], ["cap-1", "Abans de sortir"], ["cap-norma", "Normativa i bones pràctiques"], ["cap-9", "Descarts ràpids i mites"],
   ["cap-10", "Abans de menjar-te'l"], ["cap-7", "A la cuina i a casa"], ["cap-troballes", "Les meves troballes"], ["cap-8", "Entrena l'ull"], ["cap-11", "Si algú es troba malament"]];
 function renderTOC() {
   // Al PDF, "Capítol N" segons l'ordre del document; a la web, el nom de la secció.
@@ -2032,7 +2146,7 @@ const PLUJA = {
   ovoidea:      [7, 14, 10, "Vol calor humida: surt després de tempestes d'estiu i setembre."],
   reig:         [8, 14, 11, "Necessita calor i pluja: agost–octubre. Amb fred no surt."],
   cep:          [8, 14, 10, "Els de tardor 10–14 dies; els d'estiu, amb calor, 7–10. Si fa fred, tarden més."],
-  carlet:       [10, 16, 12, "Pinedes humides, a mitjan tardor."],
+  carlet:       [10, 16, 12, "Alzinars i rouredes humits, a mitjan tardor."],
   rovello:      [10, 18, 14, "Pinedes de pi blanc i pinyer. Les pluges d'octubre són les bones; si fa fred, tarda més."],
   pinetell:     [10, 18, 14, "Pinedes de pi roig i pinyer, a muntanya mitjana. Amb fred, tarda uns dies més."],
   rossinyol:    [10, 18, 13, "Estiu i tardor, amb humitat mantinguda. Un cop surt, en fa durant setmanes."],
@@ -2094,6 +2208,26 @@ function renderCalc() {
       `<p style="color:var(--muted);font-size:.86rem">Compta també la temporada: el calendari mira el mes d'avui. Si ha tornat a ploure fort després, posa la data nova.</p>`;
   }
   renderPluja();
+}
+function plZonaInit() {
+  const sel = $("#pl-zona");
+  sel.innerHTML += ZONES.map(z => `<option value="${z.id}">${esc(z.nom)}</option>`).join("");
+  sel.addEventListener("change", async e => {
+    const id = e.target.value, msg = $("#pl-zmsg"); if (!id) return;
+    msg.textContent = "Mirant quan va ploure…";
+    await meteoLoad();
+    const x = ZA().find(v => v.z.id === id);
+    if (!x) { msg.textContent = "Cal connexió a internet per saber-ho."; return; }
+    // La pluja que fa sortir bolets ara: la més recent que ja té 3 dies o més (si n'hi ha); si no, l'última.
+    const ep = x.a.eps.find(v => v.dies >= 3) || x.a.eps[0];
+    const dl = v => v.dies === 0 ? "avui" : v.dies === 1 ? "ahir" : `fa ${v.dies} dies`;
+    if (!ep) { msg.textContent = `A ${x.z.nom} no hi ha hagut cap pluja forta en les últimes tres setmanes.`; store.set("cistella-pluja", ""); }
+    else {
+      msg.textContent = `A ${x.z.nom} van caure ${ep.mm.toFixed(0)} l/m² ${dl(ep)}` + (x.a.eps[0] !== ep ? ` i ${x.a.eps[0].mm.toFixed(0)} l/m² més ${dl(x.a.eps[0])}.` : ".") + " Dades d'Open-Meteo.";
+      store.set("cistella-pluja", new Date(Date.parse(todayISO()) - ep.dies * DAY).toISOString().slice(0, 10));
+    }
+    renderCalc();
+  });
 }
 $("#pl-date").addEventListener("change", e => { store.set("cistella-pluja", e.target.value || ""); renderCalc(); });
 $("#pl-calc").addEventListener("click", e => {
@@ -2763,6 +2897,9 @@ const SECCIO = {
   inici: { t: "Inici" },
   bolets: { t: "Els bolets", d: "Una fitxa per bolet, amb fotos, mapa i bessons perillosos.", f: ["rovello", 0] },
   mapa: { t: "Mapa", d: "Toca una zona i mira què hi surt, o on surt cada bolet.", map: true },
+  avui: { t: "Avui al bosc", d: "On ha plogut i quins bolets toca buscar a cada zona.", avui: true },
+  explora: { t: "Tipus de bosc", d: "Pinedes, fagedes, rouredes, alzinars… i els bolets de cada un.", f: ["cep", 1] },
+  bosc: { t: "Bosc" },
   pluja: { t: "Quan sortir", d: "Quants dies després de ploure surt cada bolet.", f: ["trompeta", 0] },
   "cara-a-cara": { t: "Cara a cara", d: "Els bessons perillosos, comparats amb dibuixos i fotos.", f: ["phalloides", 0] },
   aprendre: { t: "Aprèn a mirar", d: "Les parts d'un bolet, com canvia amb l'edat i els colors.", f: ["llora", 0] },
@@ -2772,7 +2909,7 @@ const SECCIO = {
   sos: { t: "Si algú es troba malament", d: "Telèfons i què fer en cas d'intoxicació.", sos: true },
   bolet: { t: "Fitxa" }
 };
-const TILES = ["bolets", "mapa", "pluja", "cara-a-cara", "aprendre", "seguretat", "troballes", "test", "sos"];
+const TILES = ["avui", "bolets", "mapa", "explora", "pluja", "cara-a-cara", "aprendre", "seguretat", "troballes", "test", "sos"];
 function miniMap(ids) {
   if (!MAPA.w) return "";
   const dots = ids.flatMap((id, c) => { const p = MAPA.pts[id] || [], o = []; for (let i = 0; i < p.length; i += 2) o.push(`<circle cx="${p[i]}" cy="${p[i + 1]}" r="2.6" style="fill:${IM_COL[c]}"/>`); return o; });
@@ -2785,7 +2922,9 @@ function renderHome() {
   }).join("");
   $("#tiles").innerHTML = TILES.map(k => {
     const t = SECCIO[k], f = t.f && fotos(t.f[0])[t.f[1]];
-    const media = t.map ? `<span class="tile-map">${miniMap(["rovello", "cep"])}</span>` : t.sos ? `<span class="tile-sos">112</span>` : f ? `<img src="${P(f.th)}" alt="" loading="${LOAD}">` : "";
+    const media = t.map ? `<span class="tile-map">${miniMap(["rovello", "cep"])}</span>` : t.sos ? `<span class="tile-sos">112</span>`
+      : t.avui ? `<span class="tile-avui"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 15a4 4 0 0 1-.6-8A5.5 5.5 0 0 1 17 8a3.5 3.5 0 0 1 .5 7z" fill="currentColor" opacity=".85"/><path d="M8 18l-1 3M12 18l-1 3M16 18l-1 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>`
+      : f ? `<img src="${P(f.th)}" alt="" loading="${LOAD}">` : "";
     return `<a class="tile${t.sos ? " sos" : ""}" href="#/${k}">${media}<span class="tx"><b>${esc(t.t)}</b><small>${esc(t.d)}</small></span></a>`;
   }).join("");
 }
@@ -2830,12 +2969,15 @@ function route() {
   else if (h === "llibre") { openBook(); }
   else if (h) { const el = document.getElementById(h), vw = el && el.closest(".view"); if (vw) { v = vw.dataset.view; target = el; } }
   if (v === "bolet" && !BY[arg]) v = "bolets";
+  if (v === "bosc" && !BOSC[arg]) v = "explora";
   if (BK.open && v !== CUR) closeBook();
   $$(".view").forEach(x => x.classList.toggle("on", x.dataset.view === v));
-  $$("[data-nav]").forEach(a => a.classList.toggle("here", a.dataset.nav === v || (v === "bolet" && a.dataset.nav === "bolets")));
+  $$("[data-nav]").forEach(a => a.classList.toggle("here", a.dataset.nav === v || (v === "bolet" && a.dataset.nav === "bolets") || (v === "bosc" && a.dataset.nav === "explora")));
   if (v === "bolet") renderSpecies(arg);
+  if (v === "bosc") renderBosc(arg);
+  if (v === "avui") renderAvui();
   if (v === "mapa") { if (arg) imSetSel(arg.split(",")); imSetMode(arg ? "bolet" : "zona"); if (!arg && IM.zona && IM.k === 1) imFocus(); imRender(); }
-  document.title = v === "inici" ? "Cistella Segura" : `${v === "bolet" ? BY[arg].nom : SECCIO[v].t} · Cistella Segura`;
+  document.title = v === "inici" ? "Cistella Segura" : `${v === "bolet" ? BY[arg].nom : v === "bosc" ? BOSC[arg].nom : SECCIO[v].t} · Cistella Segura`;
   CUR = v;
   if (target) setTimeout(() => target.scrollIntoView({ block: "start", behavior: "instant" }), 30);
   else window.scrollTo({ top: 0, behavior: "instant" });
@@ -3045,6 +3187,253 @@ function imInit() {
   window.addEventListener("resize", () => { clearTimeout(IM.t); IM.t = setTimeout(imRender, 150); });
 }
 
+/* ---------------- tipus de bosc (Explora) ---------------- */
+// Cada bosc: dades ràpides, com reconèixer-lo, on provar-ho (zones) i quins bolets hi surten.
+const BOSCOS = [
+  { id: "pinyer", nom: "Pinedes de pi pinyer i pi blanc", curt: "La costa i la muntanya baixa: el regne del rovelló.", alt: "0–800 m", sol: "Sorrenc o calcari, sec a l'estiu",
+    quan: "D'octubre a desembre. Cal una pluja de debò (30 l/m² o més): els rovellons surten unes dues setmanes després. Si la tardor és seca, no surt res.",
+    indic: ["Pinassa gruixuda i molsa a les obagues", "Brucs, romaní, estepes i coscolls", "Fondalades i peus de marge on es guarda la humitat"],
+    bons: ["rovello", "molleric", "llenega", "camadeperdiu", "fredolic", "pimpinella", "apagallums"], compte: ["lactllet", "equestre", "hygrophoropsis", "emetica", "paxillus", "escleroderma"],
+    consells: ["Busca a les obagues i al peu dels marges, on la pinassa conserva la humitat.", "Si a la costa no ha plogut prou, prova més a l'interior o més amunt."] },
+  { id: "piroig", nom: "Pinedes de pi roig i pinassa", curt: "Muntanya mitjana: pinetells, ceps i rossinyols.", alt: "800–1.600 m", sol: "Àcid o calcari, fresc",
+    quan: "De setembre a novembre, una o dues setmanes després d'una bona pluja. Amb fred, tarden més.",
+    indic: ["Pi roig: l'escorça de la part alta del tronc és taronja", "Obagues amb molsa i falgueres", "Clarianes humides i marges de pista"],
+    bons: ["pinetell", "cep", "rossinyol", "camagroc", "llengua", "fredolic", "camadeperdiu", "molleric", "llenega"], compte: ["muscaria", "pantherina", "lactllet", "pardinum", "hygrophoropsis", "paxillus"],
+    consells: ["Si fa calor, puja de cota; si fa fred, baixa a les valls.", "On hi ha camagrocs en surten molts: mira bé al voltant."] },
+  { id: "pinegre", nom: "Pinedes de pi negre", curt: "Alta muntanya: surten abans que a baix.", alt: "1.600–2.300 m", sol: "Àcid, pedregós i fred",
+    quan: "D'agost a octubre. Les tempestes d'estiu i les nits fresques els fan sortir abans que a la muntanya mitjana.",
+    indic: ["Pins baixos i retorçats, amb pinyes petites", "Neret (rododendre) i nabius a terra", "Prats alpins a prop"],
+    bons: ["cep", "pinetell", "camagroc", "molleric", "llengua"], compte: ["muscaria", "orellanus", "lactllet", "pardinum"],
+    consells: ["Comença la temporada aquí a l'agost i baixa de cota a mesura que fa fred.", "Vigila el temps: a l'alta muntanya les tempestes arriben de pressa."] },
+  { id: "avet", nom: "Avetoses", curt: "Boscos foscos i humits: pocs bolets, però bons.", alt: "1.200–1.900 m", sol: "Fresc i ombrívol, molt humit",
+    quan: "De setembre a octubre, amb humitat mantinguda. Aguanten bé les setmanes seques.",
+    indic: ["Avets: agulles planes, blanques per sota", "Molt d'ombra i molsa", "Obagues del Pirineu"],
+    bons: ["cep", "trompeta", "llengua", "rossinyol", "camagroc"], compte: ["muscaria", "pantherina", "orellanus", "galerina"],
+    consells: ["Busca on entra una mica de llum: clarianes i marges.", "La galerina creix sobre fusta morta d'avet: no cullis bolets marrons petits de soca."] },
+  { id: "faig", nom: "Fagedes", curt: "Fulla morta gruixuda: trompetes i ceps.", alt: "800–1.500 m", sol: "Fresc i ric en fullaraca",
+    quan: "De setembre a novembre, una o dues setmanes després de pluja. Necessiten humitat mantinguda.",
+    indic: ["Troncs llisos i grisos", "Catifa gruixuda de fulla seca", "Boira freqüent i obagues"],
+    bons: ["cep", "trompeta", "rossinyol", "llengua", "llora", "pimpinella"], compte: ["phalloides", "entoloma", "tylopilus", "pardinum", "formosa", "inocybe"],
+    consells: ["Les trompetes es camuflen a la fulla: quan en trobis una, mira al voltant.", "A les fagedes també hi ha farinera borda: arrenca sencers els que no coneguis."] },
+  { id: "roure", nom: "Rouredes", curt: "Bona tardor per a ceps, reigs i llores.", alt: "500–1.300 m", sol: "Divers, millor fresc",
+    quan: "De setembre a novembre. Els reigs volen calor i pluja a final d'estiu; els ceps, la tardor.",
+    indic: ["Fulles lobulades, que es queden seques a l'arbre a l'hivern", "Sotabosc de boix o d'heura", "Marges i clarianes assolellades"],
+    bons: ["cep", "reig", "llora", "rossinyol", "trompeta", "llengua", "carlet", "apagallums"], compte: ["phalloides", "satanas", "entoloma", "pantherina", "lepiota", "lactllet"],
+    consells: ["És el bosc de la farinera borda: aprèn-te-la abans de collir-hi res amb làmines.", "Els ous de reig, mai tancats: cal veure'ls oberts."] },
+  { id: "castanyer", nom: "Castanyedes", curt: "Sòl àcid i humit: ceps, rossinyols i reigs.", alt: "400–1.200 m", sol: "Àcid i humit",
+    quan: "De final d'estiu a novembre, una o dues setmanes després d'una bona pluja.",
+    indic: ["Fulles llargues i dentades", "Eriçons de castanya a terra", "Molsa, rierols i fullaraca humida"],
+    bons: ["cep", "reig", "rossinyol", "llora", "trompeta", "llengua"], compte: ["phalloides", "pantherina", "omphalotus", "lepiota", "orellanus"],
+    consells: ["Mira les obagues i els fondals, a prop dels rierols.", "Si trobes un ram taronja sobre una soca, és gírgola d'olivera: tòxica."] },
+  { id: "alzina", nom: "Alzinars", curt: "Irregulars: molt bons si plou i no fa fred.", alt: "0–1.000 m", sol: "Calcari o àcid, sovint sec",
+    quan: "De setembre a desembre, després de pluges generoses amb temperatures suaus. Pocs anys són bons.",
+    indic: ["Fulla petita, dura i sempre verda", "Bosc fosc i dens", "Sotabosc d'arboç, marfull o heura"],
+    bons: ["cep", "reig", "llora", "carlet", "rossinyol", "trompeta", "pimpinella"], compte: ["phalloides", "satanas", "omphalotus", "entoloma", "lactllet", "pantherina", "lepiota"],
+    consells: ["Els anys bons, els alzinars donen ceps negres i reigs.", "Hi ha molts bessons perillosos: mira cada exemplar amb el seu cara a cara."] },
+  { id: "surera", nom: "Suredes", curt: "Gavarres, Ardenya i Montnegre: reigs i ceps negres.", alt: "0–600 m", sol: "Àcid (granit i llicorella)",
+    quan: "De setembre a novembre, amb tardors llargues i humides.",
+    indic: ["Alzines sureres: escorça gruixuda, de suro", "Bruc i arboç", "Sauló (granit desfet) a terra"],
+    bons: ["reig", "cep", "rossinyol", "llora", "trompeta"], compte: ["phalloides", "pantherina", "omphalotus", "escleroderma"],
+    consells: ["Al Montnegre és on vas trobar rússules i boletus: mira «Les meves troballes».", "Arrenca sencers els bolets blancs: a les suredes hi ha amanites mortals."] },
+  { id: "prat", nom: "Prats i pastures", curt: "Cama-secs, camperols i pets de llop.", alt: "0–2.300 m", sol: "Herba, sovint amb bestiar",
+    quan: "Primavera i tardor, pocs dies després de ploure. Els de muntanya, ja a l'estiu.",
+    indic: ["Rotllanes d'herba més fosca", "Bestiar a prop", "Marges de camins i clarianes"],
+    bons: ["camasec", "camperol", "bolaneu", "apagallums", "pgegant", "putriformis", "tinta"], compte: ["clitocybe", "xanthodermus", "lepiota", "inocybe", "rhacodes"],
+    consells: ["Als prats hi ha bolets blancs petits molt tòxics: aprèn bé el cama-sec abans.", "Talla per la meitat tots els bolets en forma de bola."] }
+];
+const BOSC = Object.fromEntries(BOSCOS.map(b => [b.id, b]));
+// Zones boletaires: punt de referència per a la meteo i tipus de bosc
+const ZONES = [
+  ["montseny", "Montseny", "Vallès i Osona", 41.79, 2.43, ["faig", "castanyer", "alzina", "roure"]],
+  ["guilleries", "Guilleries", "Osona i la Selva", 41.88, 2.51, ["castanyer", "roure", "alzina"]],
+  ["montnegre", "Montnegre i el Corredor", "Maresme i Vallès", 41.65, 2.58, ["surera", "alzina", "castanyer", "pinyer"]],
+  ["gavarres", "Gavarres", "Baix Empordà i Gironès", 41.93, 2.93, ["surera", "alzina", "pinyer"]],
+  ["garrotxa", "Fageda d'en Jordà", "Garrotxa", 42.13, 2.53, ["faig", "roure"]],
+  ["altagarrotxa", "Alta Garrotxa", "Garrotxa", 42.27, 2.62, ["roure", "alzina", "faig"]],
+  ["collsacabra", "Collsacabra", "Osona", 42.02, 2.38, ["faig", "roure", "prat"]],
+  ["camprodon", "Vall de Camprodon", "Ripollès", 42.32, 2.35, ["faig", "piroig", "prat"]],
+  ["ribes", "Vall de Ribes", "Ripollès", 42.30, 2.17, ["piroig", "faig", "prat"]],
+  ["llucanes", "Lluçanès", "Osona", 42.02, 2.03, ["piroig", "roure"]],
+  ["catllaras", "Catllaràs", "Berguedà", 42.18, 1.92, ["piroig", "faig"]],
+  ["peguera", "Rasos de Peguera", "Berguedà", 42.13, 1.78, ["piroig", "pinegre", "prat"]],
+  ["cadi", "Cadí-Moixeró", "Berguedà i Cerdanya", 42.26, 1.77, ["piroig", "pinegre", "avet"]],
+  ["cerdanya", "Cerdanya", "La Molina i Alp", 42.34, 1.95, ["pinegre", "piroig", "prat"]],
+  ["portcomte", "Port del Comte", "Solsonès i Alt Urgell", 42.17, 1.55, ["pinegre", "piroig", "prat"]],
+  ["solsones", "Solsonès", "Busa i la Vall de Lord", 42.05, 1.62, ["piroig", "roure"]],
+  ["alturgell", "Alt Urgell", "Organyà i la Seu", 42.27, 1.40, ["piroig", "alzina"]],
+  ["pallars", "Pallars Sobirà", "Sort i Llessui", 42.46, 1.12, ["piroig", "avet", "faig", "prat"]],
+  ["aneu", "Valls d'Àneu", "Pallars Sobirà", 42.63, 1.12, ["pinegre", "avet", "prat"]],
+  ["aran", "Val d'Aran", "Aran", 42.72, 0.80, ["avet", "faig", "pinegre", "prat"]],
+  ["boi", "Vall de Boí", "Alta Ribagorça", 42.52, 0.82, ["pinegre", "avet", "prat"]],
+  ["prades", "Muntanyes de Prades", "Baix Camp i Conca de Barberà", 41.33, 1.02, ["piroig", "alzina", "roure"]],
+  ["ports", "Els Ports", "Terra Alta i Baix Ebre", 40.82, 0.32, ["piroig", "faig", "alzina"]],
+  ["montsant", "Montsant", "Priorat", 41.29, 0.84, ["alzina", "pinyer"]],
+  ["santllorenc", "Sant Llorenç del Munt", "Vallès Occidental", 41.65, 2.01, ["alzina", "pinyer"]],
+  ["garraf", "Garraf i Penedès", "Litoral", 41.30, 1.82, ["pinyer"]]
+].map(([id, nom, lloc, lat, lon, boscos]) => ({ id, nom, lloc, lat, lon, boscos }));
+const REGIONS = { pirineu: ["Pirineu", "aran boi aneu pallars cerdanya camprodon ribes"], prepirineu: ["Prepirineu", "alturgell portcomte solsones peguera catllaras cadi llucanes collsacabra garrotxa altagarrotxa"],
+  centre: ["Centre i costa", "montseny guilleries montnegre gavarres santllorenc garraf"], sud: ["Sud", "prades ports montsant"] };
+ZONES.forEach(z => { z.regio = Object.keys(REGIONS).find(k => REGIONS[k][1].split(" ").includes(z.id)); });
+let AVUI_R = "totes";
+const ZONE = Object.fromEntries(ZONES.map(z => [z.id, z]));
+const boscosDe = id => BOSCOS.filter(b => b.bons.includes(id) || b.compte.includes(id));
+
+/* ---------------- avui al bosc: pluja i temperatura per zones ---------------- */
+// Dades diàries d'Open-Meteo (sense clau). Es guarden 3 h al navegador i, sense connexió, es mostren les últimes.
+const NIVELLS = [["Sec", "#b5473a"], ["Baix", "#d9822b"], ["Mitjà", "#c9a227"], ["Alt", "#3f8f4f"]];
+const MET = { data: null, t: 0, err: null, loading: null };
+function meteoAnalisi(d) {
+  const P = d.daily.precipitation_sum.map(v => v || 0), T = d.daily.temperature_2m_mean, last = P.length - 1;
+  const sum = (a, b) => P.slice(a, b + 1).reduce((x, y) => x + y, 0);
+  const rain5 = sum(last - 4, last), rain21 = sum(0, last);
+  const t3 = (T[last] + T[last - 1] + T[last - 2]) / 3;
+  // Episodis: dies seguits de pluja (1 mm o més) que sumen 20 l/m² o més. Els bolets surten dies després de cada un.
+  const eps = [];
+  for (let i = 0; i <= last; i++) {
+    if (P[i] < 1) continue;
+    let j = i; while (j < last && P[j + 1] >= 1) j++;
+    const mm = sum(i, j); if (mm >= 20) eps.push({ mm, dies: last - j });
+    i = j;
+  }
+  eps.reverse();                                   // el més recent primer
+  const sc = dd => dd <= 2 ? 2 : dd <= 20 ? 3 : dd <= 30 ? 1 : 0;
+  let s = eps.length ? Math.max(...eps.map(e => sc(e.dies))) : (rain21 >= 25 ? 1 : 0);
+  const adj = t3 >= 6 && t3 <= 18 ? 0 : (t3 >= 3 && t3 < 6) || (t3 > 18 && t3 <= 22) ? -1 : -2;
+  const nivell = Math.max(0, Math.min(3, s + adj));
+  const e0 = eps[0], e1 = eps.find(e => e.dies >= 3);
+  let txt = !e0 ? (rain21 >= 25 ? "Ha plogut poc a poc: pot haver-hi alguna cosa a les obagues." : "Fa massa que no plou de debò.")
+    : e0.dies <= 2 && e1 && e1.dies <= 20 ? "Ha tornat a ploure sobre el bosc mullat: ja n'hi ha i en sortiran més."
+    : e0.dies <= 2 ? "Acaba de ploure fort. D'aquí uns dies començaran a sortir."
+    : e0.dies <= 9 ? "Bon moment per als ràpids; la resta està a punt."
+    : e0.dies <= 20 ? "Bon moment per als de tardor que fan esperar."
+    : "La pluja ja queda lluny: només queden els tardans.";
+  if (t3 > 18) txt += " Fa calor: puja de cota o busca obagues.";
+  else if (t3 < 6) txt += " Fa fred: busca a cotes baixes i valls.";
+  return { P, rain5, rain21, t3, eps, dies: e0 ? e0.dies : null, epMm: e0 ? e0.mm : 0, nivell, txt, dates: d.daily.time };
+}
+async function meteoLoad(force) {
+  if (MET.loading) return MET.loading;
+  const cache = store.get("cistella-meteo", null);
+  if (!force && cache && Date.now() - cache.t < 3 * 3600e3) { MET.data = cache.d; MET.t = cache.t; return; }
+  const url = "https://api.open-meteo.com/v1/forecast?latitude=" + ZONES.map(z => z.lat).join(",") + "&longitude=" + ZONES.map(z => z.lon).join(",")
+    + "&daily=precipitation_sum,temperature_2m_mean&past_days=21&forecast_days=1&timezone=Europe%2FMadrid";
+  MET.loading = (async () => {
+    try {
+      const r = await fetch(url); if (!r.ok) throw new Error(r.status);
+      const j = await r.json(), arr = Array.isArray(j) ? j : [j];
+      MET.data = arr.map(x => ({ daily: { time: x.daily.time, precipitation_sum: x.daily.precipitation_sum, temperature_2m_mean: x.daily.temperature_2m_mean } }));
+      MET.t = Date.now(); MET.err = null;
+      store.set("cistella-meteo", { t: MET.t, d: MET.data });
+    } catch (e) {
+      MET.err = e; if (cache) { MET.data = cache.d; MET.t = cache.t; }
+    } finally { MET.loading = null; }
+  })();
+  return MET.loading;
+}
+const ZA = () => MET.data ? ZONES.map((z, i) => ({ z, a: MET.data[i] ? meteoAnalisi(MET.data[i]) : null })).filter(x => x.a) : [];
+function araToca(z, a) {
+  if (!a.eps.length) return [];
+  const mes = new Date().getMonth() + 1, prop = new Set(z.boscos.flatMap(b => BOSC[b].bons)), [x0, y0] = proj(z.lon, z.lat), R = 15 / KM;
+  const obs = id => { const p = MAPA_INT.pts[id] || []; let n = 0; for (let i = 0; i < p.length; i += 2) if (Math.hypot(p[i] - x0, p[i + 1] - y0) <= R) n++; return n; };
+  return Object.keys(PLUJA).filter(id => BY[id] && prop.has(id) && BY[id].mesos.includes(mes) && a.eps.some(e => e.dies >= PLUJA[id][0] - 1 && e.dies <= PLUJA[id][1] + 2))
+    .map(id => [id, obs(id)]).sort((p, q) => q[1] - p[1]).slice(0, 6).map(([id]) => id);
+}
+function haFa(t) { const m = Math.round((Date.now() - t) / 60000); return m < 2 ? "ara mateix" : m < 60 ? `fa ${m} min` : m < 48 * 60 ? `fa ${Math.round(m / 60)} h` : `fa ${Math.round(m / 1440)} dies`; }
+function sparkRain(P, dates) {
+  const w = 132, h = 28, n = P.length, bw = w / n, mx = Math.max(30, ...P);
+  return `<svg class="spark" viewBox="0 0 ${w} ${h + 9}" role="img" aria-label="Pluja diària dels últims ${n} dies">${P.map((v, i) => { const bh = v ? Math.max(1.5, v / mx * h) : 0; return bh ? `<rect x="${(i * bw + .5).toFixed(1)}" y="${(h - bh).toFixed(1)}" width="${(bw - 1).toFixed(1)}" height="${bh.toFixed(1)}" rx="1" style="fill:var(--care)"><title>${dates[i]}: ${v.toFixed(1)} mm</title></rect>` : ""; }).join("")}<line x1="0" y1="${h + .5}" x2="${w}" y2="${h + .5}" stroke="currentColor" stroke-opacity=".3"/><text x="0" y="${h + 8.5}" font-size="7" fill="currentColor" fill-opacity=".6">fa ${n - 1} dies</text><text x="${w}" y="${h + 8.5}" font-size="7" text-anchor="end" fill="currentColor" fill-opacity=".6">avui</text></svg>`;
+}
+function zonaCard({ z, a }) {
+  const [nom, col] = NIVELLS[a.nivell], toca = araToca(z, a);
+  return `<article class="zc" id="z-${z.id}" style="--lv:${col}">
+    <header><div><h3>${esc(z.nom)}</h3><small>${esc(z.lloc)}</small></div><span class="lv">${nom}</span></header>
+    <p class="zc-txt">${esc(a.txt)}</p>
+    <div class="zc-dades">
+      <span><b>${a.rain5.toFixed(0)} mm</b> en 5 dies</span>
+      <span>${!a.eps.length ? "Sense pluja forta en 3 setmanes" : "Pluja forta: " + a.eps.slice(0, 2).map(e => `<b>${e.mm.toFixed(0)} mm</b> ${e.dies === 0 ? "avui" : e.dies === 1 ? "ahir" : `fa ${e.dies} dies`}`).join(" i ")}</span>
+      <span><b>${a.t3.toFixed(0)} °C</b> de mitjana</span>
+      ${sparkRain(a.P, a.dates)}
+    </div>
+    ${toca.length ? `<div class="zc-toca"><span class="label">Ara toca buscar</span><div>${toca.map(id => `<a href="#/bolet/${id}">${esc(BY[id].nom)}</a>`).join("")}</div></div>` : ""}
+    <div class="zc-peu"><span>${z.boscos.map(b => `<a href="#/bosc/${b}">${esc(BOSC[b].nom.replace(/^Pinedes de /, "Pi ").replace(/^Prats i pastures$/, "Prats"))}</a>`).join("")}</span><a class="zc-mapa" href="#/mapa" data-zona="${z.id}">Què s'hi ha trobat →</a></div>
+  </article>`;
+}
+function avuiMap(list) {
+  if (!MAPA.w) return "";
+  return `<svg class="avui-map" viewBox="0 0 ${MAPA.w} ${MAPA.h}" role="img" aria-label="Mapa de les zones amb el seu nivell">${MAPA.prov.map(d => `<path d="${d}" style="fill:var(--leaf-2)" stroke="currentColor" stroke-opacity=".35" stroke-width=".8"/>`).join("")}
+    ${list.map(({ z, a }) => { const [x, y] = proj(z.lon, z.lat); return `<a href="#z-${z.id}" data-allreg=""><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5.5" style="fill:${NIVELLS[a.nivell][1]}" stroke="var(--leaf)" stroke-width="1.2"><title>${esc(z.nom)}: ${NIVELLS[a.nivell][0]}</title></circle></a>`; }).join("")}
+    ${MAPA_INT.pobles.filter(p => p[3] === 0).map(([x, y, t]) => `<circle cx="${x}" cy="${y}" r="1.8" fill="currentColor"/><text x="${x + 3}" y="${y + 3}" font-size="7.5" fill="currentColor" style="stroke:var(--leaf-2)" stroke-width="2" paint-order="stroke">${t}</text>`).join("")}</svg>`;
+}
+async function renderAvui() {
+  const box = $("#avui"), st = $("#avui-estat");
+  if (!MET.data) st.textContent = "Carregant la pluja i la temperatura de cada zona…";
+  await meteoLoad();
+  const list = ZA();
+  if (!list.length) { st.innerHTML = `No s'han pogut carregar les dades: cal connexió a internet. <button type="button" class="btn" id="avui-retry">Torna-ho a provar</button>`; box.innerHTML = ""; return; }
+  st.innerHTML = `Dades d'Open-Meteo, ${haFa(MET.t)}${MET.err ? " (ara no hi ha connexió: són les últimes que vas carregar)" : ""}. <button type="button" class="linkbtn" id="avui-retry">Actualitza</button>`;
+  const order = [...list].sort((p, q) => q.a.nivell - p.a.nivell || (p.a.dies ?? 99) - (q.a.dies ?? 99));
+  const counts = [3, 2, 1, 0].map(l => list.filter(x => x.a.nivell === l).length);
+  box.innerHTML = `<div class="avui-top">${avuiMap(list)}<div class="avui-llegenda">${[3, 2, 1, 0].map((l, i) => `<span><i style="background:${NIVELLS[l][1]}"></i><b>${NIVELLS[l][0]}</b> ${counts[i]}</span>`).join("")}
+      <p>Toca un punt per anar a la zona. El nivell surt dels dies que fa que va ploure fort (20 l/m² o més en un o dos dies) i de la temperatura dels últims 3 dies.</p></div></div>
+    <div class="seg avui-reg" role="group" aria-label="Regió">${[["totes", "Totes"], ...Object.entries(REGIONS).map(([k, v]) => [k, v[0]])].map(([k, t]) => `<button type="button" data-reg="${k}" aria-pressed="${AVUI_R === k}">${t}</button>`).join("")}</div>
+    <div class="zcs">${order.filter(x => AVUI_R === "totes" || x.z.regio === AVUI_R).map(zonaCard).join("")}</div>`;
+}
+function renderHomeAvui() {
+  const el = $("#home-avui"); if (!el) return;
+  const pinta = () => {
+    const list = ZA(); if (!list.length) { el.hidden = true; return; }
+    const top = [...list].sort((p, q) => q.a.nivell - p.a.nivell || (p.a.dies ?? 99) - (q.a.dies ?? 99)).slice(0, 4);
+    const verds = list.filter(x => x.a.nivell === 3).length;
+    el.hidden = false;
+    el.innerHTML = `<a class="ha" href="#/avui"><span class="label">Avui al bosc</span><b>${verds ? `${verds} ${verds === 1 ? "zona" : "zones"} en verd` : "Cap zona en verd"}</b>
+      <span class="ha-z">${top.map(({ z, a }) => `<span style="--lv:${NIVELLS[a.nivell][1]}"><i></i>${esc(z.nom)}</span>`).join("")}</span><span class="ha-go">Mira totes les zones →</span></a>`;
+  };
+  if (MET.data) pinta(); else meteoLoad().then(pinta);
+}
+document.addEventListener("click", e => {
+  const r = e.target.closest("#avui-retry"); if (r) { meteoLoad(true).then(renderAvui); return; }
+  const rg = e.target.closest("[data-reg]"); if (rg) { AVUI_R = rg.dataset.reg; renderAvui(); return; }
+  const ar = e.target.closest("[data-allreg]"); if (ar && AVUI_R !== "totes") { AVUI_R = "totes"; renderAvui(); }
+  const zm = e.target.closest("[data-zona]");
+  if (zm) { const z = ZONE[zm.dataset.zona]; if (z) { const [x, y] = proj(z.lon, z.lat); IM.zona = [x, y]; store.set("cistella-zona", IM.zona); IM.k = 1; } }
+});
+
+/* ---------------- Explora: pàgines de cada bosc ---------------- */
+function boscCard(b) {
+  const f = fotos(b.bons[0])[0];
+  return `<a class="tile" href="#/bosc/${b.id}">${f ? `<img src="${P(f.th)}" alt="" loading="${LOAD}">` : ""}<span class="tx"><b>${esc(b.nom)}</b><small>${esc(b.alt)} · ${esc(b.curt)}</small></span></a>`;
+}
+function boscHTML(b, full) {
+  const zs = ZONES.filter(z => z.boscos.includes(b.id));
+  const za = Object.fromEntries(ZA().map(x => [x.z.id, x.a]));
+  // En paper, noms enllaçats a la fitxa (les fotos ja hi són); a la web, targetes.
+  const card = id => !BY[id] ? "" : PRINT ? `<a class="pchip ${BY[id].estat}" href="#p-${id}">${esc(BY[id].nom)}</a>` : scard(BY[id]);
+  return `<article class="bosc"${full ? ` id="bosc-${b.id}"` : ""}>
+    <header class="bosc-head"><div class="bosc-fotos">${b.bons.slice(0, 3).map(id => { const f = fotos(id)[0]; return f ? `<img src="${P(f.th)}" alt="${esc(BY[id].nom)}" loading="${LOAD}">` : ""; }).join("")}</div>
+      <h2>${esc(b.nom)}</h2><p class="ch-lede">${esc(b.curt)}</p></header>
+    <dl class="bosc-dades"><div><dt>Altitud</dt><dd>${esc(b.alt)}</dd></div><div><dt>Sòl</dt><dd>${esc(b.sol)}</dd></div></dl>
+    <section class="sec"><h3>Quan funciona</h3><p>${esc(b.quan)}</p></section>
+    <section class="sec"><h3>Com el reconeixes</h3><ul class="bosc-ul">${b.indic.map(t => `<li>${esc(t)}</li>`).join("")}</ul></section>
+    ${zs.length ? `<section class="sec"><h3>On provar-ho</h3><div class="bosc-zones">${zs.map(z => `<a href="#/avui" data-goz="${z.id}"${za[z.id] ? ` style="--lv:${NIVELLS[za[z.id].nivell][1]}"` : ""}>${za[z.id] ? "<i></i>" : ""}${esc(z.nom)}</a>`).join("")}</div></section>` : ""}
+    <section class="sec"><h3>Bolets que hi surten</h3><div class="cards">${b.bons.map(card).join("")}</div></section>
+    <section class="sec"><h3>Compte amb</h3><div class="cards">${b.compte.map(card).join("")}</div></section>
+    <section class="sec"><h3>Consells</h3><ul class="bosc-ul">${b.consells.map(t => `<li>${esc(t)}</li>`).join("")}</ul></section>
+  </article>`;
+}
+function renderExplora() {
+  $("#boscos").innerHTML = PRINT ? BOSCOS.map(b => boscHTML(b, true)).join("") : `<div class="tiles">${BOSCOS.map(boscCard).join("")}</div>`;
+}
+function renderBosc(id) {
+  const b = BOSC[id];
+  $("#bosc-crumbs").innerHTML = `<a href="#/explora">Tipus de bosc</a><span aria-hidden="true">›</span><span>${esc(b.nom)}</span>`;
+  $("#bosc-view").innerHTML = boscHTML(b, false);
+  if (!MET.data) meteoLoad().then(() => { if (location.hash === "#/bosc/" + id) $("#bosc-view").innerHTML = boscHTML(b, false); });
+}
+document.addEventListener("click", e => {
+  const g = e.target.closest("[data-goz]");
+  if (g) { e.preventDefault(); location.hash = "#/avui"; setTimeout(() => { const el = $("#z-" + g.dataset.goz); if (el) el.scrollIntoView({ block: "start" }); }, 600); }
+});
+
 /* ---------------- versió PDF ---------------- */
 function setupPrint() {
   document.documentElement.dataset.theme = "light";
@@ -3088,9 +3477,10 @@ $("#sos-cols").innerHTML = sosHTML();
 renderCredits();
 renderResume();
 renderHome();
+renderExplora();
 renderMenu();
 renderSubnav();
 imInit();
-if (PRINT) setupPrint(); else { setupOffline(); route(); }
+if (PRINT) setupPrint(); else { setupOffline(); route(); renderHomeAvui(); plZonaInit(); }
 </script>
 </body></html>
