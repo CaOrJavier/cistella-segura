@@ -396,7 +396,7 @@
       <header class="sp-head">
         <div class="kick"><span class="pill">${e.pill}</span>${lvl}${b.qualitat ? `<span class="q">${esc(b.qualitat)}</span>` : ""}</div>
         <h1 class="name">${esc(b.nom)}</h1>
-        <p class="lat"><i>${esc(b.lat)}</i>${aka ? `<span class="aka"> · ${esc(aka)}</span>` : ""}</p>
+        <p class="lat"><i>${esc(b.lat)}</i>${typeof NOMS_ES !== "undefined" && NOMS_ES[b.id] ? `<span class="es"> · ${esc(NOMS_ES[b.id])}</span>` : ""}${aka ? `<span class="aka"> · també ${esc(aka.charAt(0).toLowerCase() + aka.slice(1))}</span>` : ""}</p>
         ${b.conte ? `<p class="lede">${esc(b.conte)}</p>` : ""}
       </header>
       ${photosHTML(PICK[b.id])}

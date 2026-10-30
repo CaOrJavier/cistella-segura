@@ -269,6 +269,11 @@ html.libro-bolsillo {
 .libro-bolsillo .ley .pill { font-size: 5pt; }
 .libro-bolsillo .ley .v > b { font-size: 6pt; }
 .libro-bolsillo .secs > b { font-size: 5.5pt; }
+.ley .rasgos.en-linea { display: inline-flex; gap: 1.4mm; }
+.ley .rasgos .mk { top: 0; width: 2.8mm; height: 2.8mm; }
+.ley-ic { gap: 1.2mm; }
+.ley-ic svg { width: 3mm; height: 3mm; fill: #4d6b45; }
+.ley-ic svg:last-child { fill: #6b5a45; }
 
 /* =========================================================
    PORTADA DEL CUADERNO: título, nueve fotos (comestibles, tóxicas, mortales) y urgencias
@@ -293,3 +298,80 @@ html.libro-bolsillo {
 .cvm-sos b { font-family: var(--display); font-size: 9.6pt; font-weight: 800; line-height: 1.05; color: var(--deadly); }
 .cvm-sos span { font-size: 6.4pt; line-height: 1.3; color: var(--ink-2); text-align: right; }
 .cvm-sos strong { font-size: 7.6pt; font-weight: 700; color: var(--ink); }
+
+/* =========================================================
+   FICHA DEL CUADERNO (pensada para leerse bien impresa, sobre todo en A5)
+   ========================================================= */
+/* cabecera en poco alto: nombre a la izquierda; etiqueta y dificultad a la derecha */
+.hb-top { display: flex; align-items: baseline; justify-content: space-between; gap: 2mm; }
+.hb-top h1.name { margin: 0; font-size: 18pt; }
+.hb-top h1.name.largo { font-size: 14.5pt; }
+.hb-k { flex: none; display: flex; align-items: center; gap: 1.3mm; font-size: 5.8pt; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); position: relative; top: -1.2mm; }
+.hb .lat { margin-top: .5mm; display: flex; gap: 2mm; align-items: center; justify-content: space-between; }
+.hb .lat .q { margin-left: auto; white-space: nowrap; }
+.hb .lat .mes { flex: none; }
+/* recuadro de peligro y tabla de las parejas, con menos relleno */
+.libro-bolsillo .fb .perill, .libro-bolsillo .pareja .perill { padding: .8mm 1.6mm; margin-top: .9mm; }
+.libro-bolsillo .pareja .cmp th, .libro-bolsillo .pareja .cmp td { padding: .35mm .8mm; }
+/* nombre largo: la etiqueta encima y el nombre en todo el ancho */
+.hb-k-arriba { display: flex; margin-bottom: .6mm; }
+.hb-k-arriba .hb-k { top: 0; }
+.hb-largo .hb-top h1.name { font-size: 16pt; }
+/* la foto principal, encuadrada un poco por arriba: así se ve el sombrero */
+.libro-bolsillo .fb .ph img, .libro-bolsillo .pareja .ph img { object-position: 50% 32%; }
+.rasgos li.alarma b, .rasgos li.alarma .mk { color: var(--deadly); }
+.dc-mes svg { flex: none; width: 2.9mm; height: 2.9mm; fill: #6b5a45; position: relative; top: .3mm; }
+/* parejas: una sola fila con lo que tienen las dos, la altitud y (si no van arriba) los meses */
+.fila2 { display: flex; flex-wrap: wrap; align-items: center; column-gap: 3mm; row-gap: .6mm; padding: .9mm 0; border-top: .3mm solid var(--line); border-bottom: .3mm solid var(--line); margin-bottom: 1.2mm; }
+.rasgos.en-linea { flex-wrap: nowrap; column-gap: 2.2mm; }
+.rasgos.en-linea li { flex: 0 0 auto; }
+.fila2 .dc-f { margin: 0; }
+.fila2 .mes { margin-left: auto; }
+.cc-ca { font-family: var(--display); font-style: italic; font-weight: 500; color: var(--ink-2); }
+.libro-bolsillo .st-mortal .hb { padding-bottom: 1.2mm; }
+/* fotos: un número en cada una; los textos, debajo, en oscuro sobre blanco */
+.libro-bolsillo .ph { margin-bottom: 1.1mm; }
+.ph-n { position: absolute; left: 1mm; top: 1mm; z-index: 1; width: 3.3mm; height: 3.3mm; border-radius: 50%; background: #fff; color: var(--ink); display: grid; place-items: center; font-size: 5.8pt; font-weight: 700; line-height: 1; box-shadow: 0 0 0 .25mm rgb(0 0 0 / .25); }
+.ph-caps { font-size: 6.1pt; line-height: 1.22; color: var(--ink-2); margin: 0 0 1.3mm; }
+.libro-bolsillo .fb.tight .ph { min-height: 24mm; }
+.libro-bolsillo .pareja.tight .ph { min-height: 22mm; }
+/* «Compruebe»: una línea destacada con raya a la izquierda (sin caja: ocupa menos) */
+.libro-bolsillo .fb .truc, .libro-bolsillo .pareja .truc { margin-top: 1mm; padding: .5mm 0 .5mm 1.6mm; border: 0; border-left: .9mm solid var(--warn); border-radius: 0; background: none; }
+.libro-bolsillo .st-mortal.fb .truc { border-left-color: var(--deadly); font-weight: 600; }
+.ph-caps .pc { margin-right: 1.6mm; display: inline-block; max-width: 100%; }
+.pc-n { display: inline-grid; place-items: center; width: 2.9mm; height: 2.9mm; border-radius: 50%; background: var(--ink-2); color: #fff; font-size: 5.2pt; font-weight: 700; line-height: 1; margin-right: .7mm; vertical-align: .1mm; }
+/* recuadro: «Cómo es» y «Dónde y cuándo», uno al lado del otro */
+.ficha2 { display: grid; grid-template-columns: 1fr 1fr; column-gap: 3mm; padding: 1mm 0 .9mm; border-top: .3mm solid var(--line); border-bottom: .3mm solid var(--line); margin-bottom: 1.2mm; }
+.f2-col h3 { font-size: 5.6pt; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--st, var(--accent)); margin-bottom: .4mm; }
+.edible .f2-col h3 { color: var(--ok); }
+.rasgos { display: flex; flex-wrap: wrap; column-gap: 2.6mm; row-gap: .3mm; font-size: 6.3pt; line-height: 1.18; color: var(--ink); }
+.rasgos li { flex: 1 0 100%; display: flex; align-items: baseline; gap: .9mm; }
+.rasgos li.r-no { flex: 0 0 auto; color: var(--muted); }
+.rasgos b { font-weight: 700; }
+.mk { flex: none; display: inline-block; width: 2.5mm; height: 2.5mm; position: relative; top: .35mm; }
+.mk svg { width: 100%; height: 100%; display: block; }
+.r-si .mk { color: var(--ok); }
+.r-no .mk { color: var(--deadly); }
+.r-medio .mk { color: var(--warn); }
+.r-dato .mk { width: 1.3mm; height: 1.3mm; border-radius: 50%; background: var(--ink-2); top: -.1mm; margin: 0 .6mm 0 .6mm; }
+/* volva y anillo, en rojo cuando están: en las amanitas es la señal de peligro */
+.rasgos li.r-si:is(.alarma) b { color: var(--deadly); }
+.dc-f { display: flex; align-items: flex-start; gap: 1.1mm; font-size: 6.3pt; line-height: 1.18; margin-bottom: .35mm; color: var(--ink); }
+.dc-f svg { flex: none; width: 2.9mm; height: 2.9mm; fill: #4d6b45; position: relative; top: .05mm; }
+.dc-f:has(svg path[d^="M.4 10.9"]) svg { fill: #6b5a45; }
+.dc-mes { margin-top: .5mm; }
+.dc .d-mas { font-size: 6pt; line-height: 1.22; color: var(--ink-2); margin-top: .6mm; }
+/* se confunde con: tarjetas con la foto grande */
+.conf.cards ul { display: grid; grid-template-columns: repeat(var(--k, 3), minmax(0, 1fr)); gap: 1.7mm; }
+.conf.cards.k1 ul { --k: 1; } .conf.cards.k2 ul { --k: 2; } .conf.cards.k3 ul { --k: 3; }
+.conf.cards li.cfc { padding: 0; margin: 0; display: flex; flex-direction: column; gap: .8mm; min-width: 0; }
+.conf.cards li.cfc::before { content: none; }
+.conf.cards .cc-im { width: 100%; height: 13mm; object-fit: cover; border-radius: 1mm; display: block; }
+.conf.cards.k2 .cc-im { height: 14mm; }
+.conf.cards.k1 li.cfc { flex-direction: row; align-items: flex-start; gap: 2mm; }
+.conf.cards.k1 .cc-im { width: 28mm; height: 17mm; flex: none; }
+.conf.cards p { margin: 0; line-height: 1.24; }
+.conf.cards .cf-tag { white-space: nowrap; }
+/* las que no tienen foto en la base de datos: un dibujo sencillo, para que las tarjetas queden alineadas */
+.conf.cards .cc-vacio { display: grid; place-items: center; background: var(--paper-2); }
+.conf.cards .cc-vacio svg { width: auto; height: 72%; opacity: .5; }

@@ -31,13 +31,13 @@
   // (bolsillo: solo en el cuaderno de bolsillo, para que quepan dos setas por hoja; en la guía siguen por separado)
   const PAREJAS = [{
     ids: ["lactarius-sanguifluus", "lactarius-deliciosus"],
-    nombre: "Rovelló y pinetell",
-    q: "esclatasang · rovelló d'obaga", hab: "Bajo pinos",
-    lat: "<i>Lactarius sanguifluus</i> y <i>L. deliciosus</i> · níscalos, rebollones",
+    nombre: "Níscalos", cols: ["Níscalo de sangre", "Níscalo"],
+    q: "rebollón · mízcalo",
+    lat: "<i>Lactarius sanguifluus</i> y <i>L. deliciosus</i> · rovelló, pinetell",
     lede: "Casi iguales y los dos comestibles excelentes. Lo que los separa es el color del látex al cortarlos.",
-    fotos: [["lactarius-sanguifluus", "fotos/g/db970a74779d.jpg", "Rovelló: naranja vinoso, con pocas zonas."],
-      ["lactarius-deliciosus", "fotos/g/87b9e09821d1.jpg", "Pinetell: zonas bien marcadas."],
-      ["lactarius-deliciosus", "fotos/g/8bd69c6b0fd3.jpg", "Pinetell: láminas naranja vivo."]],
+    fotos: [["lactarius-sanguifluus", "fotos/g/db970a74779d.jpg", "De sangre: naranja vinoso, con pocas zonas."],
+      ["lactarius-deliciosus", "fotos/g/87b9e09821d1.jpg", "Níscalo: zonas bien marcadas."],
+      ["lactarius-deliciosus", "fotos/g/8bd69c6b0fd3.jpg", "Níscalo: láminas naranja vivo."]],
     filas: [["Látex", "Rojo vino desde el primer momento", "Naranja zanahoria; no pasa a vino"],
       ["Láminas", "Rosa vinoso o lila", "Naranja vivo"],
       ["Dónde", "Pino carrasco y piñonero, a menudo en suelo calizo; de la costa a la montaña media", "Pino silvestre y laricio: pinares más frescos y de montaña, umbrías"]],
@@ -47,12 +47,11 @@
   }, {
     bolsillo: true,
     ids: ["craterellus-cornucopioides", "craterellus-lutescens"],
-    nombre: "Trompeta de la mort y camagroc", cols: ["Trompeta de la mort", "Camagroc"],
-    q: "trompeta · rossinyol de pi",
-    lat: "<i>Craterellus cornucopioides</i> y <i>C. lutescens</i> · trompeta de los muertos, angula de monte",
+    nombre: "Trompetas negra y amarilla", cols: ["Trompeta de los muertos", "Angula de monte"],
+    lat: "<i>Craterellus cornucopioides</i> y <i>C. lutescens</i> · trompeta de la mort, camagroc",
     lede: "Huecas, en embudo y sin láminas; las dos, muy apreciadas.",
-    fotos: [["craterellus-cornucopioides", "fotos/g/fed8d2eb141c.jpg", "Trompeta de la mort: negra, en grupo."],
-      ["craterellus-lutescens", "fotos/g/0c352230905f.jpg", "Camagroc: pie amarillo y sombrero pardo."],
+    fotos: [["craterellus-cornucopioides", "fotos/g/fed8d2eb141c.jpg", "Trompeta de los muertos: negra, en grupo."],
+      ["craterellus-lutescens", "fotos/g/0c352230905f.jpg", "Angula de monte: pie amarillo y sombrero pardo."],
       ["craterellus-lutescens", "fotos/g/2f73c4a6b70e.jpg", "Por debajo, liso o con venas bajas."]],
     filas: [["Color", "Negra o gris muy oscuro, toda ella", "Sombrero pardo; pie amarillo anaranjado vivo"],
       ["Por debajo", "Gris ceniza, liso o apenas arrugado", "Rosado anaranjado o amarillo, con venas muy bajas"],
@@ -63,11 +62,10 @@
   }, {
     bolsillo: true,
     ids: ["hygrophorus-latitabundus", "hygrophorus-russula"],
-    nombre: "Llenega negra y carlet", cols: ["Llenega negra", "Carlet"],
-    q: "llenega",
-    lat: "<i>Hygrophorus latitabundus</i> y <i>H. russula</i> · babosa negra",
+    nombre: "Babosa negra y carlet", cols: ["Babosa negra", "Carlet"],
+    lat: "<i>Hygrophorus latitabundus</i> y <i>H. russula</i> · llenega negra",
     lede: "Del mismo grupo y las dos muy buenas: láminas blancas, como de cera.",
-    fotos: [["hygrophorus-latitabundus", "fotos/g/f446747575f3.jpg", "Llenega negra: oscura, brillante y viscosa."],
+    fotos: [["hygrophorus-latitabundus", "fotos/g/f446747575f3.jpg", "Babosa negra: oscura, brillante y viscosa."],
       ["hygrophorus-russula", "fotos/g/49979ba7f94f.jpg", "Carlet: rosa con manchas vinosas."],
       ["hygrophorus-latitabundus", "fotos/g/2438fe643abf.jpg", "Láminas blancas, espaciadas, como de cera."]],
     filas: [["Sombrero", "Pardo oscuro a casi negro, con mucha baba", "Rosa vinoso con manchas, poco viscoso"],
@@ -80,55 +78,52 @@
     bolsillo: true,
     ids: ["lactarius-zonarius", "lactarius-chrysorrheus"],
     nombre: "Enganyapastors", cols: ["Enganyapastors", "De llet groga"],
-    q: "pinetell bord · rovelló bord",
-    lat: "<i>Lactarius zonarius</i> y <i>L. chrysorrheus</i> (enganyapastors de llet groga)",
-    lede: "Parecen pinetells, pero su látex es blanco. Los dos son tóxicos.",
-    fotos: [["lactarius-zonarius", "fotos/g/d09e00f9142d.jpg", "Enganyapastors: zonas como el pinetell."],
+    lat: "<i>Lactarius zonarius</i> y <i>L. chrysorrheus</i> · pinetell bord, rovelló bord",
+    lede: "Parecen níscalos, pero su látex es blanco. Los dos son tóxicos.",
+    fotos: [["lactarius-zonarius", "fotos/g/d09e00f9142d.jpg", "Enganyapastors: zonas como el níscalo."],
       ["lactarius-chrysorrheus", "fotos/g/ae48bcffefe9.jpg", "De llet groga: látex blanco que amarillea."],
       ["lactarius-zonarius", "fotos/g/ee3188e47a50.jpg", "Láminas crema, nunca verdes."]],
     filas: [["Látex", "Blanco, no cambia; muy picante", "Blanco que amarillea en segundos"],
       ["Sombrero", "Crema a naranja pálido, con zonas", "Ocre salmón pálido, con zonas"]],
-    claves: ["Látex BLANCO al cortar (rovelló: rojo vino; pinetell: naranja).", "Láminas crema que no se manchan de verde.",
+    claves: ["Látex BLANCO al cortar (en los níscalos es rojo vino o naranja).", "Láminas crema que no se manchan de verde.",
       "Bajo encinas, alcornoques y robles; no bajo pinos."],
     compruebe: "Corte el pie: si el látex es blanco, descártela."
   }, {
     bolsillo: true,
     ids: ["hygrophoropsis-aurantiaca", "omphalotus-olearius"],
-    nombre: "Falsos rossinyols", cols: ["Fals rossinyol", "Gírgola d'olivera"],
-    q: "rossinyol ataronjat · bolet d'oliu",
-    lat: "<i>Hygrophoropsis aurantiaca</i> y <i>Omphalotus olearius</i> · falso rebozuelo, seta de olivo",
-    lede: "Naranjas como el rossinyol, pero con láminas finas de verdad.",
+    nombre: "Falsos rebozuelos", cols: ["Falso rebozuelo", "Seta de olivo"],
+    lat: "<i>Hygrophoropsis aurantiaca</i> y <i>Omphalotus olearius</i> · fals rossinyol, gírgola d'olivera",
+    lede: "Naranjas como el rebozuelo, pero con láminas finas de verdad.",
     causa: { "hygrophoropsis-aurantiaca": "No comestible: puede sentar mal." },
-    fotos: [["omphalotus-olearius", "fotos/g/fb8831e7a529.jpg", "Gírgola d'olivera: en ramillete sobre un tocón."],
-      ["hygrophoropsis-aurantiaca", "fotos/g/e013bbbc7601.jpg", "Fals rossinyol: pequeño y todo naranja."],
+    fotos: [["omphalotus-olearius", "fotos/g/fb8831e7a529.jpg", "Seta de olivo: en ramillete sobre un tocón."],
+      ["hygrophoropsis-aurantiaca", "fotos/g/e013bbbc7601.jpg", "Falso rebozuelo: pequeño y todo naranja."],
       ["hygrophoropsis-aurantiaca", "fotos/g/5b1ccc687ace.jpg", "Láminas finas, apretadas y ramificadas."]],
     filas: [["Tamaño", "Pequeño (2–8 cm), carne delgada y blanda", "Grande (5–15 cm) y carnoso"],
       ["Cómo sale", "Suelto, en la pinaza o sobre madera podrida de pino", "En ramilletes de pies unidos, sobre tocones y raíces de olivo, encina o castaño"]],
     claves: ["Láminas verdaderas: finas, apretadas y que bajan por el pie.", "Todo naranja: sombrero, láminas y pie.",
-      "Pase el dedo por debajo: las láminas se separan; los pliegues del rossinyol, no."],
-    compruebe: "Debajo del sombrero: láminas finas, falso; pliegues gruesos y romos, rossinyol."
+      "Pase el dedo por debajo: las láminas se separan; los pliegues del rebozuelo, no."],
+    compruebe: "Debajo del sombrero: láminas finas, falso; pliegues gruesos y romos, rebozuelo."
   }, {
     bolsillo: true,
     ids: ["amanita-pantherina", "amanita-muscaria"],
-    nombre: "Pixacà y reig bord", cols: ["Pixacà", "Reig bord"],
-    q: "reig bru",
-    lat: "<i>Amanita pantherina</i> y <i>A. muscaria</i> · amanita pantera, matamoscas",
+    nombre: "Amanita pantera y matamoscas", cols: ["Amanita pantera", "Matamoscas"],
+    lat: "<i>Amanita pantherina</i> y <i>A. muscaria</i> · pixacà, reig bord",
     lede: "Dos amanitas con verrugas blancas y el mismo veneno.",
     sintomas: "Confusión, agitación, alucinaciones y somnolencia; vómitos.",
-    fotos: [["amanita-muscaria", "fotos/g/6fe8c495e42f.jpg", "Reig bord: rojo con verrugas blancas."],
-      ["amanita-pantherina", "fotos/g/9d81561ed5de.jpg", "Pixacà: pardo con verrugas blancas."],
-      ["amanita-pantherina", "fotos/g/7c1387667a07.jpg", "Pixacà: bulbo con reborde, como un calcetín."]],
+    fotos: [["amanita-muscaria", "fotos/g/6fe8c495e42f.jpg", "Matamoscas: rojo con verrugas blancas."],
+      ["amanita-pantherina", "fotos/g/9d81561ed5de.jpg", "Amanita pantera: parda con verrugas blancas."],
+      ["amanita-pantherina", "fotos/g/7c1387667a07.jpg", "Amanita pantera: bulbo con reborde, como un calcetín."]],
     filas: [["Sombrero", "Pardo; verrugas blanco puro, en círculos", "Rojo o naranja, más grande"],
       ["Base", "Bulbo con reborde, como un calcetín", "Bulbo con anillos de volva"],
       ["Dónde", "Pinares, robledales, hayedos, encinares", "Pinares y abedulares de montaña"]],
     claves: ["Verrugas blancas en el sombrero (la lluvia puede borrarlas).", "Láminas y pie blancos; bulbo en la base."],
-    compruebe: "Láminas blancas, anillo y volva: descártela. El ou de reig tiene láminas y pie amarillos."
+    compruebe: "Láminas blancas, anillo y volva: descártela (la oronja las tiene amarillas)."
   }, {
     bolsillo: true,
     ids: ["inocybe-geophylla", "mycena-pura"],
     nombre: "Pequeñas con muscarina", cols: ["Barret de bruixa", "Mycena pura"],
     lat: "<i>Inocybe geophylla</i> y <i>Mycena pura</i>",
-    lede: "Pequeñas, blancas o lilas; las lilas se confunden con la pimpinella morada.",
+    lede: "Pequeñas, blancas o lilas; las lilas se confunden con el pie azul.",
     fotos: [["inocybe-geophylla", "fotos/g/101f0b4da93a.jpg", "Barret de bruixa: blanco, con un pico en el centro."],
       ["mycena-pura", "fotos/g/a6689cbc9203.jpg", "Mycena pura: lila, borde con rayas."],
       ["mycena-pura", "fotos/g/60cf092643de.jpg", "Mycena pura, entre la pinaza."]],
@@ -136,7 +131,7 @@
       ["Forma", "Cónico, con pico; fibras que se agrietan", "Acampanado; pie hueco y frágil"],
       ["Olor", "A tierra", "A rábano"]],
     claves: ["Pequeñas: de 1 a 5 cm.", "En la hojarasca de pinares, hayedos y bosques mixtos."],
-    compruebe: "Tamaño: la pimpinella morada es grande, carnosa y huele a fruta."
+    compruebe: "Tamaño: el pie azul es grande, carnoso y huele a fruta."
   }].filter(c => !(GUIA && c.bolsillo));
   const EN_PAREJA = new Map(PAREJAS.flatMap(c => c.ids.map((id, i) => [id, [c, i]])));
   const ESENCIAL = DB.especies.filter(e => BREVE.especies.includes(e.id) || (GUIA && (e.guias || []).includes("esencial")));
@@ -176,10 +171,16 @@
   const ORDEN = [...GROUPS.comestibles, ...GROUPS.toxicas, ...GROUPS.mortales];
 
   // ---------- nombres ----------
-  const titulo = e => cap(e.nombres.ca[0] || e.nombres.es[0]) || e.nombre;
+  // libros en castellano: el nombre principal es el castellano y el catalán va de segundo, junto al científico
+  // (si no tiene nombre popular en castellano, el principal es el catalán)
+  const titulo = e => cap(e.nombres.es[0] || e.nombres.ca[0]) || e.nombre;
   const sinNombre = e => !e.nombres.ca[0] && !e.nombres.es[0];
   const tituloHTML = e => (sinNombre(e) ? `<i>${esc(e.nombre)}</i>` : esc(titulo(e)));
-  const nombreConf = c => (c.ca || c.es ? esc(cap(c.ca || c.es)) : `<i>${esc(c.nombre)}</i>`);
+  // la línea de debajo del nombre: científico y nombres en catalán (los que no son ya el principal)
+  const segundaLinea = (e, nCa = 2) => [sinNombre(e) ? "" : `<i>${esc(e.nombre)}</i>`, ...(e.nombres.es[0] ? e.nombres.ca.slice(0, nCa) : e.nombres.ca.slice(1, nCa)).map(esc)].filter(Boolean).join(" · ");
+  // otros nombres en castellano (arriba a la derecha)
+  const otrosEs = e => (e.nombres.es[0] ? e.nombres.es.slice(1, 2) : []);
+  const nombreConf = c => { const x = c.id && TODAS[c.id]; if (x) return tituloHTML(x); return c.es || c.ca ? esc(cap(c.es || c.ca)) : `<i>${esc(c.nombre)}</i>`; };
 
   // ---------- iconos ----------
   const svg = d => `<svg viewBox="0 0 12 12" aria-hidden="true">${d}</svg>`;
@@ -193,7 +194,8 @@
     plecs: svg('<path d="M.6 5.2C1.5 2.3 3.6.9 6 .9s4.5 1.4 5.4 4.3z"/><path d="M2.6 5.6c.4 1.2-.2 2.4.3 3.8M4.6 5.6c.4 1.4-.3 2.8.2 4.4M6.6 5.6c.4 1.4-.3 2.8.2 4.4M8.6 5.6c.4 1.2-.2 2.4.3 3.8" stroke="currentColor" stroke-width=".75" fill="none"/>'),
     agullons: svg('<path d="M.6 5.2C1.5 2.3 3.6.9 6 .9s4.5 1.4 5.4 4.3z"/><path d="M1.8 5.6l.5 2.4.5-2.4zM3.6 5.6l.5 3 .5-3zM5.5 5.6l.5 3.3.5-3.3zM7.4 5.6l.5 3 .5-3zM9.2 5.6l.5 2.4.5-2.4z"/>'),
     altres: svg('<circle cx="6" cy="6.3" r="4.6"/><circle cx="4.4" cy="4.6" r=".7" fill="#fff" fill-opacity=".6"/><circle cx="7" cy="5.2" r=".5" fill="#fff" fill-opacity=".6"/>'),
-    monte: svg('<path d="M.4 10.9 4.3 3.6l2.1 3.6 1.5-2.3 3.7 6z"/><path d="m3.3 5.5 1-1.9 1 1.7-.6-.4-.4.5z" fill="#fff" fill-opacity=".7"/>')
+    monte: svg('<path d="M.4 10.9 4.3 3.6l2.1 3.6 1.5-2.3 3.7 6z"/><path d="m3.3 5.5 1-1.9 1 1.7-.6-.4-.4.5z" fill="#fff" fill-opacity=".7"/>'),
+    calendari: svg('<path d="M1.4 2.6h9.2a.6.6 0 0 1 .6.6v7.6a.6.6 0 0 1-.6.6H1.4a.6.6 0 0 1-.6-.6V3.2a.6.6 0 0 1 .6-.6zm.4 3v4.6h8.4V5.6z"/><path d="M3.3 1.2h1v2.3h-1zm4.4 0h1v2.3h-1z"/>')
   };
 
   // ---------- utilidades ----------
@@ -490,6 +492,8 @@
           <li><span class="v"><span class="pill st-comestible">Comestible</span><span class="pill st-toxic">Tóxica</span><span class="pill st-mortal">Mortal</span></span><span>Qué es. El mismo color va en la pestaña del margen.</span></li>
           <li><span class="v st-comestible"><span class="lvl"><i class="on"></i><i class="on"></i><i></i></span><b>Media</b></span><span>Dificultad para reconocerla: fácil, media o difícil.</span></li>
           <li><span class="v st-comestible">${meses([9, 10, 11], [8, 12])}</span><span>Meses en que sale; en claro, solo algunos años.</span></li>
+          <li><span class="v"><span class="rasgos en-linea"><span class="r-si"><i class="mk">${MARCA.si}</i></span><span class="r-no"><i class="mk">${MARCA.no}</i></span><span class="r-medio"><i class="mk">${MARCA.medio}</i></span></span></span><span>Cómo es: lo tiene, no lo tiene, solo en parte.</span></li>
+          <li><span class="v ley-ic">${ICON.pineda}${ICON.fulla}${ICON.prat}${ICON.fusta}${ICON.monte}</span><span>Dónde: pinos y abetos, árboles de hoja ancha, prados, madera, altitud.</span></li>
           <li><span class="v st-toxic grav">${gd(2)}<b>Grave</b></span><span>En las tóxicas: leve, moderada, grave o mortal.</span></li>
           <li><span class="v"><span class="refx">→ p. 12</span></span><span>Página de la seta con la que se confunde.</span></li>
         </ul>
@@ -701,14 +705,248 @@
     const f = (PICK[x.id] || [])[0] || (x.fotos || []).find(f => f.papel === "adulto") || (x.fotos || [])[0];
     return f ? G(f.t || f.g) : "";
   }
+  // =========================================================
+  // CUADERNO: FICHA PENSADA PARA LEERSE BIEN IMPRESA (sobre todo en A5)
+  // - fotos numeradas y sus textos debajo, en oscuro sobre blanco
+  // - un recuadro: «Cómo es» (✓ lo tiene, ✗ no lo tiene, ◐ solo en parte) y «Dónde y cuándo»
+  //   (árboles con su icono, prados, madera, altitud y meses, todo junto)
+  // - las setas con que se confunde, en tarjetas con foto grande
+  // =========================================================
+  // lo que hay debajo del sombrero, en pocas palabras (resumen de la descripción de cada especie)
+  const DEBAJO = {
+    "lactarius-sanguifluus": "rosa vinoso, que verdean", "lactarius-deliciosus": "naranja vivo, que verdean",
+    "boletus-edulis": "blancos, luego amarillo verdosos", "suillus-granulatus": "amarillos, con gotitas de jóvenes",
+    "chroogomphus-rutilus": "gruesas, ocre → púrpura negruzco", "cantharellus-cibarius": "gruesos, del color del sombrero",
+    "craterellus-cornucopioides": "por fuera lisa, gris ceniza", "craterellus-lutescens": "casi liso, rosado anaranjado",
+    "hydnum-repandum": "blandos, crema anaranjados", "russula-cyanoxantha": "blancas, flexibles y grasas",
+    "amanita-caesarea": "amarillo dorado", "macrolepiota-procera": "blancas a crema", "coprinus-comatus": "blancas → rosadas → negras",
+    "agaricus-campestris": "rosa vivo → pardo chocolate", "tricholoma-terreum": "blancas a gris pálido", "lepista-nuda": "violeta lila",
+    "calocybe-gambosa": "blancas a crema, muy juntas", "hygrophorus-latitabundus": "blancas, gruesas, como de cera",
+    "hygrophorus-russula": "blancas, se manchan de vinoso", "marasmius-oreades": "crema, muy separadas",
+    "pleurotus-eryngii": "blanquecinas, bajan por el pie", "cyclocybe-cylindracea": "crema → pardo tabaco",
+    "morchella-esculenta": "sombrero con alvéolos, como un panal", "lycoperdon-perlatum": "una bola: por dentro, blanca y firme",
+    "sparassis-crispa": "lóbulos rizados, como una coliflor", "paxillus-involutus": "ocre, se manchan de pardo",
+    "amanita-phalloides": "blancas", "amanita-verna": "blancas", "amanita-virosa": "blancas", "lepiota-brunneoincarnata": "blancas a crema",
+    "galerina-marginata": "amarillentas → pardo herrumbre", "inosperma-erubescens": "blanquecinas → pardas, manchas rojas",
+    "cortinarius-orellanus": "amarillo anaranjadas → herrumbre", "gyromitra-esculenta": "sombrero arrugado, como un cerebro",
+    "lactarius-chrysorrheus": "crema a rosado pálido", "rubroboletus-satanas": "poros rojos, azulean al tocarlos",
+    "amanita-muscaria": "blancas", "amanita-pantherina": "blancas", "tricholoma-equestre": "amarillo azufre",
+    "tricholoma-pardinum": "blanquecinas, reflejo verdoso", "clitocybe-rivulosa": "blancas a crema, bajan por el pie",
+    "omphalotus-olearius": "naranja, finas, bajan por el pie", "entoloma-sinuatum": "amarillentas → rosa salmón",
+    "ramaria-formosa": "ramas, como un coral", "russula-torulosa": "crema pálido, frágiles",
+    "hygrophoropsis-aurantiaca": "naranja, finas y ramificadas", "mycena-pura": "blanquecinas a lila pálido",
+    "hypholoma-fasciculare": "amarillas → verdosas", "inocybe-geophylla": "grisáceas → pardas", "lactarius-torminosus": "crema rosado",
+    "lepiota-cristata": "blancas", "agaricus-xanthodermus": "rosadas → pardas", "lactarius-zonarius": "crema",
+    "scleroderma-citrinum": "una bola: por dentro, negra violácea"
+  };
+  const LAB_HIM = { laminas: "Láminas", poros: "Tubos", pliegues: "Pliegues", aguijones: "Aguijones" };
+  const ANILLO = {
+    "amanita-caesarea": "amarillo, colgante", "macrolepiota-procera": "doble, se desliza", "coprinus-comatus": "fino, se desliza",
+    "agaricus-campestris": "fino, se pierde pronto", "cyclocybe-cylindracea": "membranoso", "amanita-phalloides": "blanco, colgante",
+    "amanita-verna": "blanco", "amanita-virosa": "blanco, frágil", "galerina-marginata": "fino", "amanita-muscaria": "blanco",
+    "amanita-pantherina": "blanco, liso", "lepiota-cristata": "fino, frágil", "agaricus-xanthodermus": "grueso"
+  };
+  const ANILLO_PARCIAL = {
+    "lepiota-brunneoincarnata": "solo una zona algodonosa", "hygrophorus-latitabundus": "solo una zona con baba",
+    "tricholoma-terreum": "solo una cortina en los jóvenes", "chroogomphus-rutilus": "solo una cortina en los jóvenes",
+    "cortinarius-orellanus": "solo una cortina en los jóvenes"
+  };
+  const VOLVA = {
+    "amanita-caesarea": "blanca, grande, en saco", "amanita-phalloides": "blanca, en saco", "amanita-verna": "blanca, en saco",
+    "amanita-virosa": "en saco", "amanita-muscaria": "anillos de escamas en el bulbo", "amanita-pantherina": "un reborde sobre el bulbo"
+  };
+  const LATEX = { rojo: "rojo vino", naranja: "naranja", blanco: "blanco", blanco_a_amarillo: "blanco → amarillo" };
+  const MARCA = {
+    si: '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.4 4.9 9.2 10 3" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    no: '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 3l6 6M9 3 3 9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>',
+    medio: '<svg viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="4.2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M6 1.8a4.2 4.2 0 0 1 0 8.4z" fill="currentColor"/></svg>'
+  };
+  // «Cómo es»: lo que tiene (✓), lo que no (✗) y cómo es; las que no tienen láminas lo dicen así
+  function rasgosLista(e, conDesc = true) {
+    const c = e.caracteres || {}, him = c.himenoforo, it = [];
+    const desc = x => (conDesc ? x : "");
+    if (LAB_HIM[him]) it.push(["si", LAB_HIM[him], desc(DEBAJO[e.id])]);
+    else if (him) it.push(["no", "Láminas", desc(DEBAJO[e.id])]);
+    if (LAB_HIM[him]) {
+      if (c.anillo) it.push(["si", "Anillo", desc(ANILLO[e.id])]);
+      else if (ANILLO_PARCIAL[e.id]) it.push(["medio", "Anillo", desc(ANILLO_PARCIAL[e.id])]);
+      else it.push(["no", "Anillo", ""]);
+      it.push(c.volva ? ["si", "Volva", desc(VOLVA[e.id])] : ["no", "Volva", ""]);
+    }
+    if (c.latex) it.push(["si", "Látex", desc(LATEX[c.latex] || "")]);
+    return it;
+  }
+  function rasgosHTML(items, esporada) {
+    const esp = String(esporada || "").trim().replace(/\.$/, "");
+    // la volva, cuando está, en rojo: en las amanitas es la señal de peligro
+    return `<ul class="rasgos">${items.map(([t, l, d]) => `<li class="r-${t}${t === "si" && l === "Volva" ? " alarma" : ""}"><i class="mk">${MARCA[t]}</i><span><b>${l}</b>${d ? " " + esc(d) : ""}</span></li>`).join("")}${esp ? `<li class="r-dato"><i class="mk"></i><span><b>Esporada</b> ${esc(esp.charAt(0).toLowerCase() + esp.slice(1))}</span></li>` : ""}</ul>`;
+  }
+  // árboles de un grupo, con el nombre repetido agrupado: «Pino carrasco, laricio y silvestre»
+  function arbolesDe(lista_, grupo, max = 4) {
+    const ns = [...new Set(lista_.filter(a => a.rel !== "ocasional" && ARB[a.id]?.grupo === grupo).map(a => ARB[a.id].nombres.es[0]).filter(Boolean))];
+    const out = [];
+    let prev = "";
+    for (const n of ns.slice(0, max)) { const [w, ...r] = n.split(" "); out.push(w === prev && r.length ? r.join(" ") : n); prev = w; }
+    return out.length ? cap(lista(out)) + (ns.length > max ? " y otros" : "") : "";
+  }
+  // altitud: de dónde a dónde y, si hay bastantes registros, la franja donde más se encuentra
+  // (window.ALTITUD, de ../datos/altitud.js: registros de GBIF en Cataluña y la altura del terreno en cada punto)
+  function altitudTexto(mins, maxs, frec) {
+    if (!maxs.length) return "";
+    const lo = Math.min(...mins), hi = Math.max(...maxs);
+    let t = `${lo}–${hi} m de altitud`;
+    if (frec) {
+      const a = Math.max(lo, frec[0]), b = Math.min(hi, frec[1]);
+      if (b - a >= 200 && (a > lo || b < hi)) t = `${lo}–${hi} m; sobre todo ${a <= lo ? `por debajo de ${b}` : b >= hi ? `por encima de ${a}` : `${a}–${b}`} m`;
+    }
+    return t;
+  }
+  const FREC = id => { const x = (window.ALTITUD || {})[id]; return x && x[2] >= 25 ? x : null; };
+  function dondeCuandoHTML(especies, maxTxt = 110) {
+    const arbs = especies.flatMap(e => e.ecologia?.arboles || []);
+    const h = new Set(especies.flatMap(e => habitatIcons(e).map(x => x[1])));
+    const filas = [];
+    const con = arbolesDe(arbs, "conifera"), fro = arbolesDe(arbs, "frondosa");
+    if (con) filas.push(["pineda", con]);
+    if (fro) filas.push(["fulla", fro]);
+    if (h.has("prados")) filas.push(["prat", "En prados"]);
+    if (h.has("madera")) filas.push(["fusta", "Sobre madera"]);
+    const alts = especies.map(e => e.distribucion?.altitud).filter(a => a && a.max != null);
+    const frec = especies.length === 1 ? FREC(especies[0].id) : null;
+    const alt = altitudTexto(alts.map(a => a.min ?? 0), alts.map(a => a.max), frec);
+    if (alt) filas.push(["monte", alt]);
+    const mesesU = [...new Set(especies.flatMap(e => e.fenologia?.meses || []))];
+    const ex = especies.length === 1 ? especies[0].fenologia?.excepcional : [];
+    const det = especies.length === 1 ? primera(especies[0].ecologia?.donde_mirar || especies[0].ecologia?.vegetacion, maxTxt) : "";
+    return { donde: `${filas.map(([ic, t]) => `<p class="dc-f">${ICON[ic]}<span>${esc(t)}</span></p>`).join("")}${det ? `<p class="d-mas">${esc(det)}</p>` : ""}`,
+      cuando: `<p class="dc-f dc-mes">${ICON.calendari}${meses(mesesU, ex)}</p>` };
+  }
+  // dos columnas: «Cómo es» (lo que tiene y lo que no) y «Dónde» (árboles, prados, madera y altitud);
+  // los meses van en la cabecera
+  // parejas: lo que tienen las dos y su altitud en una sola fila (dónde sale cada una ya va en su tabla)
+  function filaPareja(items, especies, mesesHTML = "") {
+    const alts = especies.map(e => e.distribucion?.altitud).filter(a => a && a.max != null);
+    const alt = altitudTexto(alts.map(a => a.min ?? 0), alts.map(a => a.max), null);
+    return `<div class="fila2"><ul class="rasgos en-linea">${items.map(([t, l]) => `<li class="r-${t}${t === "si" && l === "Volva" ? " alarma" : ""}"><i class="mk">${MARCA[t]}</i><span><b>${l}</b></span></li>`).join("")}</ul>${alt ? `<span class="dc-f">${ICON.monte}<span>${esc(alt)}</span></span>` : ""}${mesesHTML}</div>`;
+  }
+  function fichaCaja(items, esporada, especies, conMeses = false) {
+    const dc = dondeCuandoHTML(especies);
+    return `<div class="ficha2"><div class="f2-col"><h3>${conMeses ? "Cómo es y cuándo sale" : "Cómo es"}</h3>${rasgosHTML(items, esporada)}${conMeses ? dc.cuando : ""}</div>
+      <div class="f2-col dc"><h3>Dónde</h3>${dc.donde}</div></div>`;
+  }
+  // fotos: un número en cada una y sus textos debajo, en oscuro sobre blanco (en la foto no se leen al imprimir)
+  function fotosB(ph, maxes = [50, 34, 34]) {
+    if (!ph.length) return "";
+    const cls = ph.length === 1 ? " one" : ph.length === 2 ? " two" : "";
+    const roles = ["ph-main", "ph-a", "ph-b"];
+    const num = ph.filter(f => f.pie).length > 1;
+    const figs = ph.map((f, i) => `<figure class="${roles[i]}"><img src="${G(f.g || f.t)}" alt="">${num && f.pie ? `<span class="ph-n">${i + 1}</span>` : ""}</figure>`).join("");
+    const caps = ph.map((f, i) => (f.pie ? `<span class="pc">${num ? `<b class="pc-n">${i + 1}</b>` : ""}<span class="pc-t" data-full="${esc(f.pie)}">${esc(capCorta(f.pie, maxes[i]))}</span></span>` : "")).join(" ");
+    return `<div class="ph${cls}">${figs}</div>${caps.trim() ? `<p class="ph-caps">${caps}</p>` : ""}`;
+  }
+  // pie de foto más corto: hasta los dos puntos o una coma si es posible (sin «…»)
+  const capCorta = (c, max) => {
+    c = String(c || "").trim();
+    if (c.length <= max) return c;
+    const i = c.indexOf(":");
+    if (i > 3 && i <= max) return c.slice(0, i);
+    const cut = c.slice(0, max), j = cut.lastIndexOf(",");
+    if (j > max * .45) return cut.slice(0, j);
+    return cut.slice(0, cut.lastIndexOf(" ")).replace(/[,;:.]$/, "") + "…";
+  };
+  const acortaCaps = max => p => p.querySelectorAll(".pc-t").forEach(s => (s.textContent = capCorta(s.dataset.full, max)));
+  // una frase más corta, cortando en la última coma o punto y coma que quepa
+  const cortaFrase = (t, max) => {
+    t = String(t || "").trim();
+    if (t.length <= max) return t;
+    const c = t.slice(0, max), i = Math.max(c.lastIndexOf(";"), c.lastIndexOf(","));
+    return i > max * .5 ? c.slice(0, i).trim() + "." : c.slice(0, c.lastIndexOf(" ")).replace(/[,;:]$/, "") + "…";
+  };
+  // la foto grande de una seta con la que se confunde
+  function fotoConfG(c) {
+    const x = c.id && TODAS[c.id];
+    if (!x) return "";
+    const f = (PICK[x.id] || [])[0] || (x.fotos || []).find(f => f.papel === "adulto") || (x.fotos || [])[0];
+    return f ? G(f.g || f.t) : "";
+  }
+  // se confunde con: tarjetas con foto grande (dos o tres en fila; si es una, foto al lado)
+  function confsCards(confs, ok, propios) {
+    if (!confs.length) return "";
+    return `<div class="conf cards k${confs.length}"><h3>${ok ? "Cuidado: se confunde con" : "Se confunde con"}</h3><ul>${confs.map(c => {
+      const im = fotoConfG(c), d = primera(c.diferencia, 170);
+      // con su nombre en catalán al lado: muchos textos de diferencias lo nombran así
+      const x = c.id && TODAS[c.id], ca = x ? (x.nombres.es[0] ? x.nombres.ca[0] : "") : (c.es && c.ca ? c.ca : "");
+      return `<li class="cfc${im ? "" : " sin-foto"}">${im ? `<img class="cc-im" src="${im}" alt="">` : `<span class="cc-im cc-vacio">${DIBUJO_BAJO.laminas}</span>`}<p><b>${nombreConf(c)}</b>${ca ? ` <i class="cc-ca">${esc(ca)}</i>` : ""} <span class="cf-tag cf-${c.peligro}">${PEL[c.peligro] || c.peligro}</span> <span class="cc-d" data-full="${esc(d)}">${esc(cortaFrase(d, 85))}</span>${c.id && !propios.includes(c.id) ? " " + ref(c.id) : ""}</p></li>`;
+    }).join("")}</ul></div>`;
+  }
+  const acortaDif = max => p => p.querySelectorAll(".cc-d").forEach(s => (s.textContent = cortaFrase(s.dataset.full, max)));
+  // cabecera en poco alto: el nombre y, a su derecha, la etiqueta y la dificultad; debajo, científico y catalán
+  // (si el nombre es largo, la etiqueta va encima y el nombre ocupa todo el ancho)
+  // la tira de meses va a la derecha del nombre científico (como en muchas guías de campo)
+  const cabeceraB = (nombre, pill, dn, dt, segunda, mesesHTML, lede) => {
+    const largo = nombre.replace(/<[^>]+>/g, "").length > 18;
+    const k = `<span class="hb-k"><span class="pill">${pill}</span>${dots(dn)}<b class="dif">${dt}</b></span>`;
+    return `
+      <header class="sp-head hb${largo ? " hb-largo" : ""}">
+        ${largo ? `<div class="hb-k-arriba">${k}</div>` : ""}
+        <div class="hb-top"><h1 class="name">${nombre}</h1>${largo ? "" : k}</div>
+        <p class="lat"><span>${segunda}</span>${mesesHTML}</p>
+        ${lede ? `<p class="lede">${esc(lede)}</p>` : ""}
+      </header>`;
+  };
+  // cuando la página no cabe se recorta por este orden; después, lo recortado vuelve si ha quedado sitio,
+  // por orden de importancia: «Compruebe», los rasgos, los textos enteros, el detalle de «Dónde» y la frase de arriba
+  function ajustaB(p, nombre, ...extra) {
+    const pasos = ["tight", ".lede", "dense", acortaCaps(40), ".d-mas", acortaDif(80), quitaUltimo(".conf li"), "denser", acortaDif(62), ".r-dato", acortaCaps(26), ".os", ".ph-caps", ".truc", quitaUltimo(".checks li"), ...extra];
+    const lede = p.querySelector(".lede")?.outerHTML, mas = p.querySelector(".d-mas")?.outerHTML, truc = p.querySelector(".truc")?.outerHTML, caps = p.querySelector(".ph-caps")?.outerHTML;
+    const os = p.querySelector(".os"), osHTML = os?.outerHTML, osAntes = os?.nextElementSibling;
+    const claves = [...p.querySelectorAll(".checks li")].map(li => li.outerHTML);
+    fit(p, pasos, nombre);
+    const vuelve = (padre, html) => { if (!padre || !html) return false; padre.insertAdjacentHTML("beforeend", html); if (overflows(p)) { padre.lastElementChild.remove(); return false; } return true; };
+    if (truc && !p.querySelector(".truc")) vuelve(p.querySelector(".txt"), truc);
+    const ul = p.querySelector(".checks ul");
+    if (ul) for (const li of claves.slice(ul.children.length)) if (!vuelve(ul, li)) break;
+    // el olor o sabor, en su sitio (detrás de los rasgos)
+    if (osHTML && !p.querySelector(".os") && osAntes && osAntes.isConnected) { osAntes.insertAdjacentHTML("beforebegin", osHTML); if (overflows(p)) osAntes.previousElementSibling.remove(); }
+    for (const s of p.querySelectorAll(".cc-d, .pc-t")) { const corto = s.textContent; s.textContent = s.classList.contains("pc-t") ? capCorta(s.dataset.full, 60) : s.dataset.full; if (overflows(p)) s.textContent = corto; }
+    // los pies de foto, en su sitio (debajo de las fotos)
+    if (caps && !p.querySelector(".ph-caps")) { const ph = p.querySelector(".ph"); if (ph) { ph.insertAdjacentHTML("afterend", caps); if (overflows(p)) ph.nextElementSibling.remove(); } }
+    if (mas && !p.querySelector(".d-mas")) vuelve(p.querySelector(".dc"), mas);
+    if (lede && !p.querySelector(".lede")) vuelve(p.querySelector(".sp-head"), lede);
+  }
+  function fichaBolsillo(e) {
+    const est = EST[e.comestibilidad.cat], ok = comestible(e);
+    const p = newPage(est.sec, `sp st-${est.st}${ok ? " edible" : ""} fb`);
+    PAGE_OF[e.id] = p;
+    const [dn, dt] = DIF[e.identificacion?.dificultad] || [2, "Media"];
+    const otros = otrosEs(e);
+    // fuera los rasgos que solo dicen «sin anillo ni volva»: ya van en «Cómo es» con su ✗
+    const claves = (e.identificacion?.claves || []).filter(c => !/^\s*sin anillo( ni volva)?\.?\s*$|^\s*sin volva( ni anillo)?\.?\s*$/i.test(c));
+    const clavesHTML = claves.length ? `<div class="checks${ok ? "" : " alarm"}"><h3>${ok ? "Cómo reconocerla" : "Rasgos de alarma"}</h3><ul>${claves.map(c => `<li>${esc(c)}</li>`).join("")}</ul></div>` : "";
+    const t = e.toxicidad;
+    const tox = ok ? "" : `<div class="perill">${gravedadHTML(e)}${t ? `<p><span class="lab">${esc(t.sindrome)}</span>Síntomas ${esc(t.latencia)}. ${esc(hastaComa(t.sintomas, 95))}</p>` : ""}</div>`.replace(/(<span class="lab">[^<(]+?)\s*\([^)]*\)(<\/span>)/, "$1$2");
+    const confs = [...(e.confusiones || [])].sort((a, b) => (ok ? SEV[a.peligro] - SEV[b.peligro] : SEV[b.peligro] - SEV[a.peligro])).slice(0, 3);
+    const clave = confs.find(c => c.donde)?.donde;
+    const truc = clave ? `<p class="truc"><span class="lab">Compruebe</span>${esc(primera(clave, 160))}</p>` : "";
+    const label = ok ? "Comestibles" : est.sec === "mortales" ? "Mortales" : "Tóxicas";
+    p.insertAdjacentHTML("beforeend", `
+      ${cabeceraB(tituloHTML(e), est.pill, dn, dt, segundaLinea(e), meses(e.fenologia?.meses, e.fenologia?.excepcional), hasta(sinNormativa(e.comestibilidad.texto), 150))}
+      ${fotosB(PICK[e.id])}
+      ${fichaCaja(rasgosLista(e), e.morfologia?.esporada, [e])}
+      <div class="txt">${clavesHTML}${olorSabor(e, ok)}${tox}${confsCards(confs, ok, [e.id])}${truc}</div>
+      ${foot(label)}`);
+    ajustaB(p, e.id);
+  }
+
   function fichaPage(e) {
+    if (!GUIA) return fichaBolsillo(e);
     const est = EST[e.comestibilidad.cat];
     const ok = comestible(e);
     const p = newPage(est.sec, `sp st-${est.st}${ok ? " edible" : ""}`);
     PAGE_OF[e.id] = p;
     const [dn, dt] = DIF[e.identificacion?.dificultad] || [2, "Media"];
-    const subt = [sinNombre(e) ? "" : `<i>${esc(e.nombre)}</i>`, ...(e.nombres.ca[0] ? e.nombres.es.slice(0, 2) : e.nombres.es.slice(1, 3))].filter(Boolean);
-    const otrosCa = e.nombres.ca.slice(1, 2);
+    const subt = [segundaLinea(e)];
+    const otrosCa = otrosEs(e);
     const car = e.caracteres || {};
     const him = car.himenoforo;
     const facts = `<div class="facts">${meses(e.fenologia?.meses, e.fenologia?.excepcional)}
@@ -731,7 +969,7 @@
       <header class="sp-head">
         <div class="kick"><span class="pill">${est.pill}</span>${dots(dn)}<b class="dif">${dt}</b>${otrosCa.length ? `<span class="q">${esc(otrosCa.join(", "))}</span>` : ""}</div>
         <h1 class="name">${tituloHTML(e)}</h1>
-        <p class="lat">${subt.map((s, i) => (i === 0 && s.startsWith("<i>") ? s : esc(s))).join(" · ")}</p>
+        <p class="lat">${subt.join(" · ")}</p>
         <p class="lede">${esc(hasta(sinNormativa(e.comestibilidad.texto), 150))}</p>
       </header>
       ${photosHTML(PICK[e.id])}
@@ -791,7 +1029,7 @@
     const est = EST[e.comestibilidad.cat], ok = comestible(e);
     const [dn, dt] = DIF[e.identificacion?.dificultad] || [2, "Media"];
     const car = e.caracteres || {}, him = car.himenoforo;
-    const subt = [sinNombre(e) ? "" : `<i>${esc(e.nombre)}</i>`, ...(e.nombres.ca[0] ? e.nombres.es.slice(0, 1) : e.nombres.es.slice(1, 2)).map(esc)].filter(Boolean);
+    const subt = [segundaLinea(e, 1)];
     const facts = `<div class="facts">${meses(e.fenologia?.meses, e.fenologia?.excepcional)}
       ${him ? `<span class="fct">${ICON[HIM_ICON[him] || "altres"]}${esc((V.himenoforo[him] || him).split(/[ (]/)[0])}</span>` : ""}
       <span class="fct${car.anillo ? "" : " no"}">${car.anillo ? "Con anillo" : "Sin anillo"}</span>
@@ -938,7 +1176,7 @@
     const vistos = new Set();
     const confs = [...(a.confusiones || []), ...(b.confusiones || [])]
       .filter(c => !cfg.ids.includes(c.id) && !vistos.has(c.id || c.nombre) && vistos.add(c.id || c.nombre))
-      .sort((x, y) => (ok ? SEV[x.peligro] - SEV[y.peligro] : SEV[y.peligro] - SEV[x.peligro])).slice(0, 3);
+      .sort((x, y) => (ok ? SEV[x.peligro] - SEV[y.peligro] : SEV[y.peligro] - SEV[x.peligro])).slice(0, GUIA ? 3 : 2);
     // la más difícil de las dos
     const [dn, dt] = [a, b].map(e => DIF[e.identificacion?.dificultad] || [2, "Media"]).sort((x, y) => y[0] - x[0])[0];
     // tóxicas: la gravedad (una línea si es la misma; si no, una por seta, la peor primero) y el síndrome de la peor
@@ -951,29 +1189,35 @@
       tox = `<div class="perill">${igual ? linea("Gravedad", g[0]) : g.map(x => linea(x.lab, x)).join("")}${t ? `<p><span class="lab">${esc(t.sindrome)}</span>Síntomas ${esc(t.latencia)}. ${esc(cfg.sintomas || hastaComa(t.sintomas, 95))}</p>` : ""}</div>`;
     }
     const largo = cfg.nombre.length > 20 ? " largo" : "";
+    // cuaderno: lo que tienen los dos (sin detalles: las diferencias van en la tabla), dónde y cuándo juntos
+    const esporada = a.morfologia?.esporada === b.morfologia?.esporada ? a.morfologia?.esporada : "";
+    // si los nombres de debajo del título son largos, los meses no caben a su lado: van en el recuadro
+    const latLarga = cfg.lat.replace(/<[^>]+>/g, "").length > 46;
     p.insertAdjacentHTML("beforeend", `
-      <header class="sp-head">
+      ${GUIA ? `<header class="sp-head">
         <div class="kick"><span class="pill">${SECL[est.sec]}</span>${dots(dn)}<b class="dif">${dt}</b>${cfg.q ? `<span class="q">${esc(cfg.q)}</span>` : ""}</div>
         <h1 class="name${largo}">${esc(cfg.nombre)}</h1>
         <p class="lat">${cfg.lat}</p>
         <p class="lede">${esc(cfg.lede)}</p>
-      </header>
-      ${photosHTML(fotos)}
-      ${facts}
+      </header>` : cabeceraB(esc(cfg.nombre), SECL[est.sec], dn, dt, cfg.lat, latLarga ? "" : meses(mesesU), cfg.lede)}
+      ${GUIA ? photosHTML(fotos) : fotosB(fotos)}
+      ${GUIA ? facts : filaPareja(rasgosLista(a, false), [a, b], latLarga ? meses(mesesU) : "")}
       <div class="txt">${tabla}
         <div class="checks${ok ? "" : " alarm"}"><h3>${ok ? "Los dos" : "Rasgos de alarma de los dos"}</h3><ul>${cfg.claves.map(c => `<li>${esc(c)}</li>`).join("")}</ul></div>
         ${tox}
-        ${confsHTML(confs, ok, cfg.ids)}
+        ${GUIA ? confsHTML(confs, ok, cfg.ids) : confsCards(confs, ok, cfg.ids)}
         <p class="truc"><span class="lab">Compruebe</span>${esc(cfg.compruebe)}</p></div>
       ${foot(SECL[est.sec])}`);
     // la frase de arriba explica por qué van juntas y «Compruebe» es lo práctico: se quitan lo último
-    fit(p, ["tight", "dense", quitaUltimo(".conf li"), "denser", ".lede", quitaUltimo(".checks li"), ".truc"], "pareja " + cfg.nombre);
+    fit(p, GUIA ? ["tight", "dense", quitaUltimo(".conf li"), "denser", ".lede", quitaUltimo(".checks li"), ".truc"]
+      : ["tight", "dense", acortaCaps(46), acortaDif(110), quitaUltimo(".conf li"), "denser", acortaDif(80), ".r-dato", ".lede", quitaUltimo(".checks li"), ".truc", acortaCaps(28)], "pareja " + cfg.nombre);
     // si al quitar algo ha quedado sitio, vuelve lo quitado por orden de importancia:
-    // primero «Compruebe», luego los rasgos y, al final, la frase de arriba
+    // primero «Compruebe», luego los rasgos, los textos enteros (cuaderno) y, al final, la frase de arriba
     const vuelve = (donde, html, pos = "beforeend") => { donde.insertAdjacentHTML(pos, html); const n = pos === "beforeend" ? donde.lastElementChild : donde.firstElementChild; if (overflows(p)) { n.remove(); return false; } return true; };
     const txt = p.querySelector(".txt"), ul = p.querySelector(".checks ul"), h = p.querySelector(".sp-head");
     if (!p.querySelector(".truc")) vuelve(txt, `<p class="truc"><span class="lab">Compruebe</span>${esc(cfg.compruebe)}</p>`);
     if (ul) for (const c of cfg.claves.slice(ul.children.length)) if (!vuelve(ul, `<li>${esc(c)}</li>`)) break;
+    if (!GUIA) for (const s of p.querySelectorAll(".cc-d, .pc-t")) { const corto = s.textContent; s.textContent = s.classList.contains("pc-t") ? capCorta(s.dataset.full, 72) : s.dataset.full; if (overflows(p)) s.textContent = corto; }
     if (!h.querySelector(".lede")) vuelve(h, `<p class="lede">${esc(cfg.lede)}</p>`);
   }
 
