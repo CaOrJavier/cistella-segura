@@ -98,12 +98,14 @@
   }
   const ATRS = ["placeholder", "title", "aria-label", "alt"];
   const SALTA = new Set(["SCRIPT", "STYLE", "NOSCRIPT", "TEXTAREA"]);
+  // translate="no": textos que no se tocan (por ejemplo, lo que sale del texto de un libro en el lector)
+  const fuera = (n) => { const el = n.nodeType === 1 ? n : n.parentElement; return !!(el && el.closest && el.closest('[translate="no"]')); };
   function traduce(raiz) {
-    if (!raiz) return;
+    if (!raiz || fuera(raiz)) return;
     if (raiz.nodeType === 3) { const r = tr(raiz.nodeValue); if (r !== null) raiz.nodeValue = r; return; }
     if (raiz.nodeType !== 1 || SALTA.has(raiz.tagName)) return;
     const w = document.createTreeWalker(raiz, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT, {
-      acceptNode: (n) => (n.nodeType === 1 && SALTA.has(n.tagName) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT),
+      acceptNode: (n) => (n.nodeType === 1 && (SALTA.has(n.tagName) || n.getAttribute("translate") === "no") ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT),
     });
     const els = [raiz];
     let n;
@@ -119,7 +121,7 @@
     new MutationObserver((ms) => {
       for (const m of ms) {
         if (m.type === "characterData") traduce(m.target);
-        else if (m.type === "attributes") { const v = m.target.getAttribute(m.attributeName); const r = v && tr(v); if (r) m.target.setAttribute(m.attributeName, r); }
+        else if (m.type === "attributes") { if (fuera(m.target)) continue; const v = m.target.getAttribute(m.attributeName); const r = v && tr(v); if (r) m.target.setAttribute(m.attributeName, r); }
         else m.addedNodes.forEach(traduce);
       }
     }).observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ATRS });

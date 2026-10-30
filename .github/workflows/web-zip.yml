@@ -29,8 +29,9 @@ jobs:
             "2. Abre la carpeta cistella-segura y haz doble clic en index.html." \
             "   Se abre en el navegador y funciona sin internet." \
             "" \
-            "El quiz tambien funciona sin internet. No funcionan: Cuando salir tras la" \
-            "lluvia (necesita los datos del tiempo) y los PDF; esos enlaces abren la web." \
+            "El quiz y los libros (Libros > Leer el libro) tambien funcionan sin internet." \
+            "No funcionan: Cuando salir tras la lluvia (necesita los datos del tiempo) y" \
+            "la descarga de los PDF; esos enlaces abren la web." \
             "" \
             "Version al dia: https://caorjavier.github.io/cistella-segura/" \
             "Ninguna web ni app certifica que una seta sea comestible. Ante la duda, no la recolectes." \

@@ -12,7 +12,7 @@ En **castellano y catalán**: botón **ES · CA** en el menú (se recuerda la el
 - **Por rasgos:** se marcan los rasgos observados (debajo del sombrero, sustrato, árbol, color, anillo, volva, látex, mes) y quedan las candidatas.
 - **Aprende**: seguridad, qué hacer ante una intoxicación, anatomía, cómo buscar y glosario.
 - **Quiz** con las fotos de la web, en cinco modos: *¿Qué seta es?*, *¿Se come?* (comestible, no se come, tóxica o mortal), *No las confundas* (dos setas que se parecen: cuál es cuál y cómo distinguirlas), *Árboles* (por la hoja, el tronco o la forma) y *Mezcla*. Se elige con qué setas (las 41 del cuaderno de bolsillo, las 79 esenciales o las 163) y el nivel (en *Experto* se escribe el nombre). Rondas de 10, con puntos, rachas y récords; las setas que se fallan vuelven a salir más y se pueden repasar. Funciona sin internet.
-- **Libros** en PDF, también en la portada.
+- **Libros** en PDF, también en la portada. Se pueden **leer enteros en la web** antes de descargarlos (ver *Libros*).
 - Botón **⬇ Usar sin internet** arriba: guarda la web en el móvil. La web avisa cuando no hay conexión.
 - En **Más**: calendario, cuándo salir tras la lluvia, árboles, galería, inventario de ≈ 4.000 especies y fuentes.
 
@@ -20,12 +20,14 @@ En **castellano y catalán**: botón **ES · CA** en el menú (se recuerda la el
 
 En la web, botón **⬇ Usar sin internet** (arriba):
 
-- **En el móvil o la tableta:** botón «Guardar en este dispositivo», con fotos pequeñas (≈ 25 MB) o con todas las fotos (≈ 160 MB). Después se puede añadir a la pantalla de inicio y se abre como una app, sin cobertura.
+- **En el móvil o la tableta:** botón «Guardar en este dispositivo», con fotos pequeñas (≈ 35 MB, con el cuaderno de bolsillo entero para leerlo en el bosque) o con todas las fotos y todas las páginas de los libros (≈ 220 MB). Después se puede añadir a la pantalla de inicio y se abre como una app, sin cobertura.
 - **En el ordenador:** [descarga la web en ZIP](https://github.com/CaOrJavier/cistella-segura/releases/download/web-local/cistella-segura-web.zip), descomprímela y abre `index.html`. El ZIP se rehace solo con cada cambio de la web (`.github/workflows/web-zip.yml`).
 
 ## Libros
 
-Dos libros con las mismas 79 setas, cada uno para una cosa. Se hojean y se descargan en la web (**Libros**).
+Dos libros con las mismas 79 setas, cada uno para una cosa. Se leen y se descargan en la web (**Libros**).
+
+**Leer en la web** (`#/leer/<libro>/<página>`, `extra/lector.js`): el libro entero como un libro de verdad, antes de descargarlo. En pantallas anchas se ven dos páginas y la hoja gira en 3D (se arrastra con el dedo o el ratón, o con las flechas del teclado); en el móvil, una. Índice, búsqueda en todo el texto (lo encontrado se marca en amarillo en la página), miniaturas de todas las páginas, ampliar y pantalla completa. Los «→ p. 29» y los números de los índices del libro llevan a su página, y en cada página de una seta hay un enlace a su ficha de la web. Recuerda por qué página ibas. El cuaderno de bolsillo se abre en el idioma de la web (con botón ES · CA; al cambiar, se queda en la misma seta).
 
 - **Para llevar al bosque · Setas esenciales, cuaderno de bolsillo A6** (48 páginas, fondo blanco para gastar poca tinta): las 41 setas imprescindibles (23 comestibles, 9 mortales y 9 tóxicas), una por página, con la altitud a la que salen y, con una foto pequeña, las setas con que se confunden; 8 árboles con foto de la hoja y del tronco, síndromes y SOS. En A4 son 6 hojas (12 caras), un solo cuadernillo. También en A5, con letra más grande: [A5](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-A5.pdf) o [A4 apaisado para doblar en casa](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-A5-imprimir-A4.pdf) (12 hojas). En [A6](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-bolsillo.pdf) o [A4 para imprimir en casa](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-bolsillo-imprimir-A4.pdf) ([cómo imprimirlo](butxaca/COMO-IMPRIMIR.md)). También en catalán (50 setas): [A6](https://caorjavier.github.io/cistella-segura/offline/cistella-segura-butxaca.pdf) o [A4](https://caorjavier.github.io/cistella-segura/offline/cistella-segura-butxaca-imprimir-A4.pdf).
 - **Para estudiar en casa · *Setas comestibles esenciales de Cataluña*** (A5, 336 páginas): las mismas setas a fondo, cuatro páginas por comestible. En [Releases](https://github.com/CaOrJavier/cistella-segura/releases/tag/guia-2026.1).
@@ -38,10 +40,12 @@ El *Cuaderno de campo A5* y el *Catálogo micológico de Cataluña* ya no se ofr
 index.html, app.js, app.css   la web
 i18n.js, datos/ca.js          castellano / catalán (botón ES · CA)
 sw.js, manifest.webmanifest   modo sin internet y app instalable (icono-*.png)
-libros/            páginas de muestra de los libros (para hojearlos antes de descargar)
+libros/            todas las páginas de los libros (pNNN.jpg 800 px, tNNN.jpg miniatura) y texto.js
+                   (texto, enlaces, fichas e índice de cada página, sacados del PDF) para leerlos en la web
+extra/lector.js    el lector de libros (extra/lector.css)
 datos/db.js        las 163 especies, árboles, textos y vocabulario
 datos/cistella.js  datos de «Cuándo salir» y «Mis hallazgos»
-extra/             esas dos secciones
+extra/             esas dos secciones y el lector de libros
 fotos/             fotos de las fichas (g/, t/) y de los hallazgos (montnegre/)
 quiz/              quiz de setas (usa datos/db.js, datos/breve.js y las fotos de la web)
 datos/breve.js     las 41 setas y 8 árboles del cuaderno de bolsillo (los usan el cuaderno y el quiz)

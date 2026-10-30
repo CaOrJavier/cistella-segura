@@ -1,0 +1,189 @@
+/* Lector de libros (#/leer/…): extra/lector.js */
+html.leyendo, html.leyendo body { overflow: hidden; }
+.lec {
+  --lec-fondo: radial-gradient(ellipse 80% 70% at 50% 45%, #ece7da, #cbc4b1);
+  --lec-papel: #f4f1e8;
+  position: fixed; inset: 0; z-index: 35; display: flex; flex-direction: column; background: var(--lec-fondo); color: var(--ink);
+}
+@media (prefers-color-scheme: dark) { .lec { --lec-fondo: radial-gradient(ellipse 80% 70% at 50% 45%, #2b3128, #0f120e); } }
+.lec button { font: inherit; color: inherit; cursor: pointer; }
+
+/* barra de arriba */
+.lec-barra { display: flex; align-items: center; gap: .55rem; padding: .45rem clamp(.5rem, 2vw, 1rem); background: var(--panel); border-bottom: 1px solid var(--line); box-shadow: 0 1px 6px rgb(0 0 0 / .08); position: relative; z-index: 7; }
+.lec-volver, .lec-herr > *, .lec-ed button { display: inline-flex; align-items: center; justify-content: center; gap: .35rem; min-height: 2.25rem; border: 1px solid var(--line); background: var(--panel); border-radius: 999px; padding: .3rem .75rem; font-weight: 700; font-size: .88rem; color: var(--ink); text-decoration: none; white-space: nowrap; transition: background .15s, border-color .15s, color .15s; }
+.lec-volver:hover, .lec-herr > *:hover, .lec-ed button:hover { border-color: var(--accent); }
+.lec-herr [aria-pressed="true"], .lec-ed [aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.lec-tit { flex: 1; min-width: 0; line-height: 1.2; }
+.lec-tit b { display: block; font-family: var(--serif); font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lec-tit small { display: block; color: var(--muted); font-size: .78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lec-ed { display: inline-flex; }
+.lec-ed button { border-radius: 0; padding: .3rem .6rem; font-size: .8rem; }
+.lec-ed button:first-child { border-radius: 999px 0 0 999px; }
+.lec-ed button:last-child { border-radius: 0 999px 999px 0; margin-left: -1px; }
+.lec-herr { display: flex; gap: .3rem; }
+.lec-herr span[aria-hidden] { font-size: 1.05rem; line-height: 1; }
+@media (max-width: 900px) { .lec-herr .lec-txt { display: none; } .lec-herr > * { width: 2.3rem; padding: 0; } }
+@media (max-width: 560px) {
+  /* en el móvil el título va en su propia línea, debajo de los botones */
+  .lec-barra { flex-wrap: wrap; gap: .3rem .35rem; padding-bottom: .3rem; }
+  .lec-tit { order: 9; flex-basis: 100%; padding: 0 .2rem; }
+  .lec-tit b { font-size: .9rem; }
+  .lec-volver .lec-txt, .lec-tit small { display: none; }
+  .lec-volver { width: 2.3rem; padding: 0; }
+  .lec-herr { gap: .2rem; margin-left: auto; }
+  .lec-herr > * { width: 2.15rem; min-height: 2.15rem; }
+  .lec-b-pc { display: none !important; }
+}
+
+/* escena y libro */
+.lec-cuerpo { flex: 1; min-height: 0; display: flex; position: relative; }
+.lec-escena { flex: 1; min-width: 0; position: relative; display: grid; place-items: center; overflow: hidden; }
+.lec-libro { position: relative; perspective: calc(var(--pw, 400px) * 4.5); transition: transform .5s cubic-bezier(.3, .7, .2, 1); touch-action: pan-y pinch-zoom; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; cursor: pointer; }
+.lec-libro.doble.cerrado-izq { transform: translateX(calc(var(--pw) * -.5)); }
+.lec-libro.doble.cerrado-der { transform: translateX(calc(var(--pw) * .5)); }
+.lec-hoja { position: absolute; top: 0; height: 100%; width: var(--pw); }
+.lec-izq { left: 0; }
+.lec-der { left: var(--pw); }
+.lec-libro.simple .lec-der { left: 0; }
+.lec-libro.simple .lec-izq { display: none; }
+.lec-pag { position: absolute; inset: 0; background: #fff; overflow: hidden; box-shadow: 0 1px 3px rgb(0 0 0 / .18), 0 16px 34px -14px rgb(0 0 0 / .45); }
+.lec-izq .lec-pag { border-radius: 4px 0 0 4px; }
+.lec-der .lec-pag { border-radius: 0 4px 4px 0; }
+.lec-libro.simple .lec-der .lec-pag { border-radius: 3px; }
+/* el pliegue del centro */
+.lec-libro.doble .lec-izq .lec-pag::after, .lec-libro.doble .lec-der .lec-pag::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+.lec-libro.doble .lec-izq .lec-pag::after { background: linear-gradient(to left, rgb(0 0 0 / .2), rgb(0 0 0 / .05) 3%, transparent 9%); }
+.lec-libro.doble .lec-der .lec-pag::after { background: linear-gradient(to right, rgb(0 0 0 / .2), rgb(0 0 0 / .05) 3%, transparent 9%); }
+.lec-libro.doble.cerrado-izq .lec-der .lec-pag::after { background: linear-gradient(to right, rgb(0 0 0 / .12), transparent 4%); }
+.lec-pag img { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; -webkit-user-drag: none; }
+.lec-pag img.mal { visibility: hidden; }
+.lec-sinfoto { display: none; }
+.lec-pag.sin-foto .lec-sinfoto { display: grid; place-items: center; position: absolute; inset: 0; padding: 1.2rem; text-align: center; color: #5b5b55; font-size: .9rem; background: repeating-linear-gradient(45deg, #faf8f2 0 12px, #f2efe6 12px 24px); }
+/* grosor del libro: las páginas que quedan a cada lado */
+.lec-canto { position: absolute; top: 3px; bottom: 3px; pointer-events: none; background: repeating-linear-gradient(90deg, #fdfcf7 0 1px, #d6cfbf 1px 2px); transition: width .4s; }
+.lec-canto-izq { right: 100%; width: var(--ci, 0); border-radius: 3px 0 0 3px; }
+.lec-canto-der { left: 100%; width: var(--cd, 0); border-radius: 0 3px 3px 0; }
+.lec-libro.doble.cerrado-der .lec-canto-der { left: 50%; }
+.lec-libro.doble.cerrado-izq .lec-canto-izq { right: 50%; }
+
+/* la hoja que gira */
+.lec-giro { position: absolute; top: 0; height: 100%; width: var(--pw); transform-style: preserve-3d; transform-origin: left center; z-index: 3; pointer-events: none; will-change: transform; }
+.lec-libro.doble .lec-giro.a-der { left: var(--pw); }
+.lec-libro.simple .lec-giro { left: 0; }
+.lec-giro.a-izq { left: 0; transform-origin: right center; }
+.lec-cara, .lec-dorso { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; box-shadow: 0 0 calc(var(--lift, 0) * 34px) rgb(0 0 0 / calc(var(--lift, 0) * .35)); }
+.lec-dorso { transform: rotateY(180deg); }
+.lec-cara .lec-pag, .lec-dorso .lec-pag { box-shadow: none; border-radius: 0; }
+.lec-blanco { position: absolute; inset: 0; background: var(--lec-papel); }
+.lec-sombra { position: absolute; inset: 0; pointer-events: none; opacity: 0; z-index: 2; }
+.a-der .lec-cara .lec-sombra { background: linear-gradient(to right, rgb(0 0 0 / .55), rgb(0 0 0 / .2) 70%, rgb(0 0 0 / .3)); }
+.a-der .lec-dorso .lec-sombra { background: linear-gradient(to left, rgb(0 0 0 / .5), rgb(0 0 0 / .15) 60%, rgb(0 0 0 / .25)); }
+.a-izq .lec-cara .lec-sombra { background: linear-gradient(to left, rgb(0 0 0 / .55), rgb(0 0 0 / .2) 70%, rgb(0 0 0 / .3)); }
+.a-izq .lec-dorso .lec-sombra { background: linear-gradient(to right, rgb(0 0 0 / .5), rgb(0 0 0 / .15) 60%, rgb(0 0 0 / .25)); }
+
+/* enlaces dentro de la página y lo encontrado al buscar */
+.lec-enl { position: absolute; z-index: 2; border-radius: 3px; background: rgb(255 196 0 / .13); transition: background .15s, box-shadow .15s; }
+.lec-enl:hover, .lec-enl:focus-visible { background: rgb(255 196 0 / .42); box-shadow: 0 0 0 2px rgb(214 150 0 / .6); outline: none; }
+@media (hover: none) { .lec-enl { background: rgb(255 196 0 / .2); } }
+.lec-marca { position: absolute; z-index: 1; border-radius: 3px; background: rgb(255 226 0 / .5); mix-blend-mode: multiply; pointer-events: none; animation: lec-marca 1s ease 2; }
+@keyframes lec-marca { 50% { background: rgb(255 170 0 / .7); } }
+
+.lec-libro.salto .lec-hoja .lec-pag { animation: lec-salto .32s ease; }
+@keyframes lec-salto { from { opacity: .2; transform: scale(.985); } }
+.lec-libro.rebote-der { animation: lec-rebote-der .35s ease; }
+.lec-libro.rebote-izq { animation: lec-rebote-izq .35s ease; }
+@keyframes lec-rebote-der { 35% { translate: -10px 0; } }
+@keyframes lec-rebote-izq { 35% { translate: 10px 0; } }
+
+/* flechas a los lados */
+.lec-flecha { position: absolute; top: 50%; transform: translateY(-50%); z-index: 4; width: 2.9rem; height: 2.9rem; border-radius: 50%; border: 1px solid var(--line); background: color-mix(in srgb, var(--panel) 88%, transparent); font-size: 1.7rem; line-height: 1; padding-bottom: .2rem; box-shadow: var(--shadow); transition: opacity .2s, background .15s; }
+.lec-flecha:hover:not(:disabled) { background: var(--panel); border-color: var(--accent); }
+.lec-flecha:disabled { opacity: 0; pointer-events: none; }
+.lec-ant { left: clamp(.4rem, 1.5vw, 1.2rem); }
+.lec-sig { right: clamp(.4rem, 1.5vw, 1.2rem); }
+@media (max-width: 600px), (hover: none) and (max-width: 900px) { .lec-flecha { display: none; } }
+
+/* pie: fichas y barra de páginas */
+.lec-pie { background: var(--panel); border-top: 1px solid var(--line); padding: .35rem clamp(.5rem, 2vw, 1rem) calc(.4rem + env(safe-area-inset-bottom)); position: relative; z-index: 7; }
+.lec-fichas { display: flex; justify-content: center; gap: .4rem; overflow-x: auto; scrollbar-width: none; }
+.lec-fichas:not(:empty) { padding-bottom: .35rem; }
+.lec-ficha { flex: none; display: inline-flex; align-items: center; gap: .35rem; padding: .25rem .7rem; border: 1px solid var(--line); border-radius: 999px; font-size: .82rem; color: var(--ink); text-decoration: none; background: var(--bg); }
+.lec-ficha:hover { border-color: var(--accent); }
+.lec-ficha b { color: var(--accent); }
+.lec-nav { display: flex; align-items: center; gap: .6rem; max-width: 820px; margin: 0 auto; }
+.lec-nav > button { flex: none; width: 2.4rem; height: 2.4rem; border-radius: 50%; border: 1px solid var(--line); background: var(--panel); font-size: 1.4rem; line-height: 1; padding-bottom: .15rem; }
+.lec-nav > button:hover:not(:disabled) { border-color: var(--accent); }
+.lec-nav > button:disabled { opacity: .35; cursor: default; }
+.lec-rango { flex: 1; position: relative; display: flex; }
+.lec-rango input { width: 100%; accent-color: var(--accent); margin: 0; height: 1.6rem; cursor: pointer; }
+.lec-num { flex: none; min-width: 6.5em; text-align: center; font-weight: 700; font-size: .9rem; font-variant-numeric: tabular-nums; }
+.lec-previa { position: absolute; bottom: calc(100% + 8px); transform: translateX(-50%); width: 96px; padding: 5px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow-lg); text-align: center; font-size: .72rem; line-height: 1.25; pointer-events: none; z-index: 8; }
+.lec-previa[hidden] { display: none; }
+.lec-previa img { display: block; width: 100%; aspect-ratio: 800 / 1131; background: #fff; border-radius: 2px; margin-bottom: 3px; }
+.lec-previa span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* aviso dentro del lector */
+.lec-aviso { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 6; width: min(560px, calc(100% - 24px)); display: flex; align-items: center; gap: .8rem; padding: .7rem .9rem; border-radius: 12px; background: rgb(22 28 22 / .94); color: #fff; font-size: .9rem; line-height: 1.4; box-shadow: 0 10px 30px rgb(0 0 0 / .35); animation: lec-aviso .3s ease-out; }
+.lec-aviso[hidden] { display: none; }
+.lec-aviso span { flex: 1; }
+.lec-aviso .btn { flex: none; background: #95c083; color: #0f140e; border-color: #95c083; }
+@keyframes lec-aviso { from { opacity: 0; transform: translate(-50%, 10px); } }
+
+/* paneles: índice, buscar, páginas */
+.lec-panel { flex: none; width: 340px; display: flex; flex-direction: column; min-height: 0; background: var(--panel); border-left: 1px solid var(--line); z-index: 6; }
+.lec-panel[hidden] { display: none; }
+@media (max-width: 999px) {
+  .lec-panel { position: absolute; top: 0; right: 0; bottom: 0; width: min(360px, 92vw); box-shadow: var(--shadow-lg); animation: lec-panel .22s ease-out; }
+}
+@media (max-width: 600px) {
+  .lec-panel { top: auto; left: 0; width: auto; height: 74%; border-left: 0; border-radius: 16px 16px 0 0; animation-name: lec-panel-sube; }
+}
+@keyframes lec-panel { from { transform: translateX(24px); opacity: 0; } }
+@keyframes lec-panel-sube { from { transform: translateY(30px); opacity: 0; } }
+.lec-panel-cab { display: flex; justify-content: space-between; align-items: center; padding: .6rem .6rem .6rem 1rem; border-bottom: 1px solid var(--line); }
+.lec-cerrar { flex: none; width: 2.1rem; height: 2.1rem; border: 1px solid var(--line); background: var(--panel); border-radius: 50%; font-weight: 700; color: var(--ink); }
+.lec-cerrar:hover { border-color: var(--accent); }
+.lec-indice, .lec-res { list-style: none; margin: 0; padding: .4rem .45rem 1.2rem; overflow: auto; flex: 1; overscroll-behavior: contain; }
+.lec-indice a { display: flex; align-items: baseline; gap: .5rem; padding: .3rem .55rem; border-radius: 8px; color: var(--ink); text-decoration: none; font-size: .9rem; line-height: 1.3; }
+.lec-indice a:hover { background: var(--soft); }
+.lec-indice a.actual { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
+.lec-indice span { flex: 1; min-width: 0; }
+.lec-indice small { color: var(--muted); font-style: italic; font-size: .8rem; }
+.lec-indice b { flex: none; color: var(--muted); font-weight: 600; font-size: .8rem; font-variant-numeric: tabular-nums; }
+.lec-indice .n0 > a { font-weight: 700; }
+.lec-indice .n0 + .n0, .lec-indice .n1 + .n0, .lec-indice .n2 + .n0 { margin-top: .2rem; }
+.lec-indice .n1 > a { padding-left: 1.1rem; }
+.lec-indice .n2 > a { padding-left: 1.9rem; font-size: .86rem; }
+.lec-punto { flex: none; align-self: center; width: .6rem; height: .6rem; border-radius: 50%; background: var(--nulo); }
+.lec-punto.c-comestible { background: var(--ok); }
+.lec-punto.c-condicionada { background: var(--cond); }
+.lec-punto.c-toxica { background: var(--tox); }
+.lec-punto.c-mortal { background: var(--mortal); }
+.lec-busca { padding: .75rem .8rem 0; }
+.lec-busca input { width: 100%; font: inherit; font-size: 1rem; padding: .55rem .9rem; border: 1px solid var(--line); border-radius: 999px; background: var(--bg); color: var(--ink); }
+.lec-busca input:focus { outline: 2px solid var(--focus); outline-offset: 1px; }
+.lec-cuenta { margin: .55rem 1rem .3rem; font-size: .82rem; color: var(--muted); }
+.lec-res a { display: flex; gap: .6rem; padding: .45rem .55rem; border-radius: 8px; color: var(--ink); text-decoration: none; font-size: .86rem; line-height: 1.38; }
+.lec-res a:hover { background: var(--soft); }
+.lec-res b { flex: none; min-width: 2rem; text-align: right; color: var(--accent); font-variant-numeric: tabular-nums; }
+.lec-res mark { background: #ffe36b; color: #111; border-radius: 2px; padding: 0 1px; }
+.lec-minis { display: grid; grid-template-columns: repeat(auto-fill, minmax(82px, 1fr)); gap: .75rem .6rem; padding: .8rem; overflow: auto; flex: 1; align-content: start; overscroll-behavior: contain; }
+.lec-minis a { position: relative; display: block; background: #fff; border-radius: 3px; box-shadow: 0 1px 4px rgb(0 0 0 / .25); transition: transform .15s; }
+.lec-minis a:hover { transform: translateY(-2px); }
+.lec-minis a.actual { outline: 3px solid var(--accent); outline-offset: 2px; }
+.lec-minis img { display: block; width: 100%; aspect-ratio: 800 / 1131; object-fit: cover; border-radius: 3px; }
+.lec-minis span { position: absolute; right: 3px; bottom: 3px; background: rgb(0 0 0 / .66); color: #fff; font-size: .68rem; border-radius: 6px; padding: 0 .3rem; }
+
+/* página ampliada */
+.lec-zoom { position: fixed; inset: 0; z-index: 9; overflow: auto; background: rgb(10 12 10 / .95); padding: 3.4rem .6rem 1.5rem; text-align: center; overscroll-behavior: contain; }
+.lec-zoom[hidden] { display: none; }
+.lec-zoom img { display: block; margin: 0 auto 1rem; width: min(1150px, 190vw); max-width: none; background: #fff; border-radius: 3px; box-shadow: 0 8px 30px rgb(0 0 0 / .5); cursor: grab; user-select: none; }
+.lec-zoom.arrastra img { cursor: grabbing; }
+.lec-zoom .lec-cerrar { position: fixed; top: .7rem; right: .9rem; background: #fff; color: #111; border-color: #fff; }
+.lec-zoom-ayuda { color: #c9cfc6; font-size: .8rem; margin: -2.3rem 3rem 1.4rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lec-libro, .lec-canto { transition: none; }
+  .lec-libro.salto .lec-hoja .lec-pag, .lec-marca, .lec-panel, .lec-aviso { animation: none; }
+}
+@media print { .lec { display: none !important; } }

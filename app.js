@@ -650,35 +650,36 @@
     const n3 = (n) => String(n).padStart(3, "0");
     return ((MUESTRAS[g] || {}).pags || []).map(([n, et]) => ({ n, et, g: `libros/${g}/p${n3(n)}.jpg`, t: `libros/${g}/t${n3(n)}.jpg` }));
   }
-  function verLibro(g, i) {
-    const b = LIBROS.find((x) => x.g === g);
-    galeriaActual = paginasLibro(g).map((p) => ({ g: p.g, pie: `${b.corto} · ${p.et ? p.et + " · " : ""}pág. ${p.n}`, libro: true }));
-    abrirVisor(i);
-  }
+  // Cada libro se lee entero en la web con el lector (extra/lector.js, #/leer/<libro>/<página>): la portada,
+  // las páginas de muestra y el botón «Leer el libro» lo abren. El cuaderno de bolsillo se abre en el idioma de la web.
   function vistaLibros() {
     const L = (DB.libros || []).concat(BOLSILLO), mb = (x) => String(x).replace(".", ",");
+    const LEC = window.LECTOR, leer = (g, n) => `#/leer/${g}/${n}`;
     const fila = (l) => `<li class="libro"><a class="btn prim" href="${esc(l.url)}" target="_blank" rel="noopener">Descargar</a><div><b>${esc(l.ed)}</b> <span class="muted">· ${l.pag ? l.pag + " págs. · " : ""}${mb(l.mb)} MB</span>${l.uso ? `<br><span class="small">${esc(l.uso)}</span>` : ""}</div></li>`;
     const libro = (b) => {
       const P = paginasLibro(b.g), eds = L.filter((l) => l.guia === b.g);
       if (!eds.length) return "";
-      const ver = `Ver ${P.length} páginas por dentro`;
+      const lg = LEC && LEC.LIBROS[b.g] ? LEC.porIdioma(b.g) : "";
+      const va = lg ? LEC.guardada(lg) : 0, otra = lg && LEC.LIBROS[lg].otra;
       return `<section class="libro-c" id="libro-${b.g}">
-        ${P.length ? `<button class="libro-tapa" data-libro="${b.g}" data-i="0" aria-label="Ver por dentro: ${esc(b.tit)}"><img src="${P[0].t}" alt="Portada de ${esc(b.tit)}" loading="lazy"><span>Ver por dentro</span></button>` : ""}
+        ${P.length ? (lg ? `<a class="libro-tapa" href="${leer(b.g, 1)}" aria-label="Leer: ${esc(b.tit)}"><img src="${P[0].t}" alt="Portada de ${esc(b.tit)}" loading="lazy"><span>📖 Leer</span></a>` : `<span class="libro-tapa"><img src="${P[0].t}" alt="Portada de ${esc(b.tit)}" loading="lazy"></span>`) : ""}
         <div class="libro-cab"><p class="libro-uso">${esc(b.uso)}</p><h2>${esc(b.tit)}</h2><p class="libro-formato">${esc(b.formato)}</p><p class="libro-txt">${esc(b.txt)}</p></div>
         <div class="libro-resto">
-          ${P.length > 1 ? `<div class="libro-hojas">${P.slice(1, 15).map((p, i) => `<button data-libro="${b.g}" data-i="${i + 1}" aria-label="Ver la página ${p.n}${p.et ? ": " + esc(p.et) : ""}" title="${esc(p.et || "Página " + p.n)}"><img src="${p.t}" alt="" loading="lazy"><span>${p.n}</span></button>`).join("")}</div>
-          <button class="btn" data-libro="${b.g}" data-i="0">👁 ${ver}</button>` : ""}
+          ${lg ? `<div class="libro-leer"><a class="btn prim" href="${leer(lg, va || 1)}"><span aria-hidden="true">📖</span> ${va > 1 ? `Seguir leyendo · pág. ${va}` : "Leer el libro"}</a>${va > 1 ? ` <a class="btn" href="${leer(lg, 1)}">Desde el principio</a>` : ""}${otra ? ` <a class="libro-otra" href="${leer(otra, LEC.guardada(otra) || 1)}">${LEC.LIBROS[otra].ed === "ca" ? "o la edición en catalán" : "o la edición en castellano"}</a>` : ""}
+            <p class="small muted">Pasa las páginas como en un libro, busca una seta o una palabra y salta a su ficha de la web.</p></div>` : ""}
+          ${P.length > 1 ? `<div class="libro-hojas">${P.slice(1, 15).map((p) => lg
+            ? `<a href="${leer(b.g, p.n)}" aria-label="Ver la página ${p.n}${p.et ? ": " + esc(p.et) : ""}" title="${esc(p.et || "Página " + p.n)}"><img src="${p.t}" alt="" loading="lazy"><span>${p.n}</span></a>`
+            : `<span title="${esc(p.et || "Página " + p.n)}"><img src="${p.t}" alt="" loading="lazy"><span>${p.n}</span></span>`).join("")}</div>` : ""}
           <ul class="libros">${eds.map(fila).join("")}</ul>
           ${IMPRIMIR[b.g] || ""}
         </div></section>`;
     };
     const hay = LIBROS.filter((b) => L.some((l) => l.guia === b.g));
     app.innerHTML = `<h1>Libros en PDF</h1>
-      <p class="ap-intro">Dos libros: uno pequeño para llevar al bosque, con las 41 setas imprescindibles, y otro grande para estudiar en casa, con 79. Hojéalos antes de descargarlos: toca la portada o cualquier página para verla en grande.</p>
+      <p class="ap-intro">Dos libros: uno pequeño para llevar al bosque, con las 41 setas imprescindibles, y otro grande para estudiar en casa, con 79. Léelos aquí antes de descargarlos: se pasan las páginas como en un libro y puedes buscar una seta o una palabra.</p>
       ${hay.length > 2 ? `<div class="libro-saltos">${hay.map((b) => `<button class="btn" data-ir="libro-${b.g}">${esc(b.corto)}</button>`).join("")}</div>` : ""}
       ${hay.length ? hay.map(libro).join("") : `<p class="muted">Los PDF no están disponibles en esta copia de la web.</p>`}
       <p class="small muted">Todos salen de la misma base de datos que esta web. Muchas fotografías tienen licencia CC BY-NC: los PDF son para uso personal o sin ánimo de lucro.</p>`;
-    $$("[data-libro]").forEach((x) => (x.onclick = () => verLibro(x.dataset.libro, +x.dataset.i)));
     $$("[data-ir]").forEach((x) => (x.onclick = () => document.getElementById(x.dataset.ir).scrollIntoView({ behavior: "smooth", block: "start" })));
   }
   function vistaNoEncontrada() { app.innerHTML = `<h1>No encontrado</h1><p><a href="#/">Volver al buscador</a></p>`; }
@@ -693,13 +694,18 @@
   const puedeGuardar = !EN_ARCHIVO && "serviceWorker" in navigator && "caches" in window;
   const mbTxt = (b) => (b / 1048576).toLocaleString("es", { maximumFractionDigits: b < 10485760 ? 1 : 0 }) + " MB";
   const fechaTxt = (f) => String(f || "").split("-").reverse().join("/");
-  // Qué se guarda. Siempre: la web, los datos, las fuentes y las miniaturas. Con «todas»: también las fotos y páginas en grande.
+  // Qué se guarda. Siempre: la web, los datos, las fuentes, las miniaturas, el texto de los libros y el cuaderno de bolsillo
+  // entero en el idioma de la web (para leerlo en el bosque). Con «todas»: también las fotos y todas las páginas en grande.
   function archivosSinInternet(arbol, todas) {
-    return arbol.filter((x) => x.type === "blob").filter(({ path: p }) =>
-      /^(index\.html|app\.js|app\.css|i18n\.js|manifest\.webmanifest|icono-\d+\.png)$/.test(p) || /^(datos|extra|fonts)\//.test(p) ||
-      /^quiz\/(index\.html|quiz\.js|quiz\.css)$/.test(p) ||
-      /^fotos\/(t|montnegre\/t)\/[^/]+$/.test(p) || /^libros\/[^/]+\/t\d+\.jpg$/.test(p) ||
-      (todas && /^(fotos|libros)\/.+\.(jpe?g|png|webp)$/i.test(p)));
+    const cuaderno = window.IDIOMA === "ca" ? "butxaca" : "bolsillo";
+    const muestra = (g, n) => ((MUESTRAS[g] || {}).pags || []).some(([m]) => m === n);
+    return arbol.filter((x) => x.type === "blob").filter(({ path: p }) => {
+      if (/^(index\.html|app\.js|app\.css|i18n\.js|manifest\.webmanifest|icono-\d+\.png)$/.test(p) || /^(datos|extra|fonts)\//.test(p) ||
+        /^quiz\/(index\.html|quiz\.js|quiz\.css)$/.test(p) || /^fotos\/(t|montnegre\/t)\/[^/]+$/.test(p) || /^libros\/[^/]+\/texto\.js$/.test(p)) return true;
+      const m = p.match(/^libros\/([^/]+)\/([pt])(\d+)\.jpg$/);
+      if (m) return todas || m[1] === cuaderno || (m[2] === "t" && muestra(m[1], +m[3]));
+      return todas && /^fotos\/.+\.(jpe?g|png|webp)$/i.test(p);
+    });
   }
   // La lista de archivos sale de GitHub: así siempre coincide con lo publicado
   let arbolRepo = null;
@@ -798,15 +804,15 @@
          <p class="small muted">Para cambiar entre fotos pequeñas y grandes, elige otra opción:</p>`
       : `<p>Guárdala antes de salir, con wifi. Elige cómo:</p>`;
     app.innerHTML = `<h1>Usar la web sin internet</h1>
-      <p class="ap-intro">En el bosque muchas veces no hay cobertura. Guarda la web y funcionará igual: fichas, fotos, búsqueda por rasgos, calendario y Aprende.</p>
+      <p class="ap-intro">En el bosque muchas veces no hay cobertura. Guarda la web y funcionará igual: fichas, fotos, búsqueda por rasgos, calendario, Aprende y el cuaderno de bolsillo.</p>
       <section class="si-c">
         <h2>📱 En el móvil o la tableta</h2>
         ${EN_ARCHIVO ? `<p>Estás usando la copia descargada: ya funciona sin internet.</p>`
         : !puedeGuardar ? `<p>Este navegador no permite guardar la web. Prueba con Chrome, Safari, Edge o Firefox actualizados, o usa los <a href="#/libros">libros en PDF</a>.</p>`
         : `${estado}
         <div class="si-opciones">
-          <button class="si-op" data-guardar="pequenas"><b>Con fotos pequeñas</b><span data-peso="pequenas">unos 25 MB</span><small>Ocupa poco. Las fotos se ven más pequeñas.</small></button>
-          <button class="si-op" data-guardar="todas"><b>Con todas las fotos en grande</b><span data-peso="todas">unos 160 MB</span><small>Como en la web. Mejor con wifi.</small></button>
+          <button class="si-op" data-guardar="pequenas"><b>Con fotos pequeñas</b><span data-peso="pequenas">unos 35 MB</span><small>Ocupa poco. Las fotos se ven más pequeñas.</small></button>
+          <button class="si-op" data-guardar="todas"><b>Con todas las fotos en grande</b><span data-peso="todas">unos 220 MB</span><small>Como en la web. Mejor con wifi.</small></button>
         </div>
         <div id="si-progreso" hidden><div class="si-barra"><span></span></div><p class="small" id="si-txt"></p></div>
         <p><button class="btn prim" id="si-instalar" ${instalar ? "" : "hidden"}>📲 Instalar como app</button></p>
@@ -818,13 +824,14 @@
       <section class="si-c">
         <h2>💻 En el ordenador</h2>
         <p>Descarga la web entera en un archivo ZIP. Descomprímelo y abre <b>index.html</b> con doble clic: se abre en el navegador, sin internet.</p>
-        <p><a class="btn prim" href="${ZIP}">Descargar la web (ZIP)</a> <span class="muted small" data-peso="zip">unos 160 MB</span></p>
+        <p><a class="btn prim" href="${ZIP}">Descargar la web (ZIP)</a> <span class="muted small" data-peso="zip">unos 220 MB</span></p>
       </section>
       <section class="si-c">
         <h2>📕 En papel</h2>
         <p>Sin depender de la batería: el <a href="#/libros">cuaderno de bolsillo en PDF</a>, para imprimirlo y llevarlo en la mochila.</p>
       </section>
-      <p class="small muted">Sin internet no funcionan «Cuándo salir tras la lluvia» (necesita saber cuánto ha llovido) ni la descarga de los PDF.</p>`;
+      <p class="small muted">Sin internet no funcionan «Cuándo salir tras la lluvia» (necesita saber cuánto ha llovido) ni la descarga de los PDF.</p>
+      <p class="small muted">La guía esencial (336 páginas) solo se puede leer sin internet si guardas la web con todas las fotos en grande; el cuaderno de bolsillo, siempre.</p>`;
     // pesos exactos, sacados de la lista de archivos
     listaRepo().then((arbol) => {
       const p = { pequenas: pesoDe(archivosSinInternet(arbol, false)), todas: pesoDe(archivosSinInternet(arbol, true)) };

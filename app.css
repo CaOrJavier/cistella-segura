@@ -297,7 +297,13 @@ td.m.x { background: var(--line); }
 .libro-saltos { display: flex; flex-wrap: wrap; gap: .4rem; margin: -.4rem 0 1.4rem; }
 .libro-c > div { min-width: 0; }
 .libro-c { display: grid; grid-template-columns: 190px minmax(0, 1fr); grid-template-rows: auto 1fr; column-gap: 1.7rem; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 1.4rem; margin-bottom: 1.4rem; box-shadow: var(--shadow); scroll-margin-top: 5rem; }
-.libro-tapa { grid-row: 1 / span 2; align-self: start; position: relative; display: block; width: 100%; border: 0; padding: 0; background: none; cursor: zoom-in; }
+.libro-tapa { grid-row: 1 / span 2; align-self: start; position: relative; display: block; width: 100%; border: 0; padding: 0; background: none; cursor: pointer; text-decoration: none; }
+span.libro-tapa { cursor: default; }
+.libro-leer { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .6rem; margin: .2rem 0 .4rem; }
+.libro-leer .btn { text-decoration: none; }
+.libro-leer .btn.prim { font-size: 1rem; padding: .6rem 1.2rem; }
+.libro-leer p { flex-basis: 100%; margin: 0; }
+.libro-otra { font-size: .9rem; font-weight: 700; }
 .libro-tapa img { display: block; width: 100%; aspect-ratio: 148 / 210; object-fit: cover; background: #fff; border-radius: 3px 8px 8px 3px; box-shadow: inset 4px 0 6px -3px rgb(0 0 0 / .35), var(--shadow-lg); transition: transform .2s; }
 .libro-tapa:hover img { transform: translateY(-3px) rotate(-1deg); }
 .libro-tapa span { position: absolute; left: 50%; bottom: .7rem; transform: translateX(-50%); white-space: nowrap; background: rgb(20 24 20 / .84); color: #fff; font-weight: 700; font-size: .82rem; padding: .3rem .8rem; border-radius: 999px; }
@@ -306,10 +312,10 @@ td.m.x { background: var(--line); }
 .libro-formato { margin: 0 0 .5rem; color: var(--accent); font-weight: 700; font-size: .9rem; }
 .libro-txt { margin: 0 0 .6rem; }
 .libro-hojas { display: flex; gap: .55rem; overflow-x: auto; padding: .35rem .1rem .7rem; margin: .2rem 0 .5rem; scroll-snap-type: x proximity; }
-.libro-hojas button { flex: none; position: relative; width: 76px; border: 0; padding: 0; background: #fff; border-radius: 3px; box-shadow: 0 1px 4px rgb(0 0 0 / .28); cursor: zoom-in; scroll-snap-align: start; transition: transform .15s; }
-.libro-hojas button:hover { transform: translateY(-2px); }
+.libro-hojas > * { flex: none; position: relative; display: block; width: 76px; border: 0; padding: 0; background: #fff; border-radius: 3px; box-shadow: 0 1px 4px rgb(0 0 0 / .28); scroll-snap-align: start; transition: transform .15s; }
+.libro-hojas > a:hover { transform: translateY(-2px); }
 .libro-hojas img { display: block; width: 100%; aspect-ratio: 148 / 210; object-fit: cover; border-radius: 3px; }
-.libro-hojas span { position: absolute; bottom: 3px; right: 3px; font-size: .66rem; line-height: 1.35; background: rgb(0 0 0 / .62); color: #fff; border-radius: 6px; padding: 0 .3rem; }
+.libro-hojas > * > span { position: absolute; bottom: 3px; right: 3px; font-size: .66rem; line-height: 1.35; background: rgb(0 0 0 / .62); color: #fff; border-radius: 6px; padding: 0 .3rem; }
 .libro-c .libros { margin: 1rem 0 .4rem; border-top: 1px solid var(--line); }
 .libro-c .libros .libro:last-child { border-bottom: 0; }
 .libro-c .como-imprimir { margin-top: .4rem; }
