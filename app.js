@@ -127,7 +127,7 @@
 
   // ---------------- Vista: buscador ----------------
   // Atajos de la portada: filtros de un toque
-  const RAPIDOS = { comestibles: { cat: ["comestible", "condicionada"] }, peligrosas: { cat: ["toxica", "mortal"] }, mes: { mes: [String(new Date().getMonth() + 1)] } };
+  const RAPIDOS = { comestibles: { cat: ["comestible", "condicionada"] }, peligrosas: { cat: ["toxica", "mortal"] } };
   const igual = (a, b) => JSON.stringify((a || []).slice().sort()) === JSON.stringify((b || []).slice().sort());
   const rapidoActivo = (k) => Object.entries(RAPIDOS[k]).every(([f, v]) => igual(state.f[f], v));
   function fotoPortada() {
@@ -149,7 +149,6 @@
             <a class="atajo prim" href="#/rasgos">🔍 Identificar por rasgos</a>
             <button class="atajo" data-rapido="comestibles" aria-pressed="${rapidoActivo("comestibles")}">Comestibles</button>
             <button class="atajo" data-rapido="peligrosas" aria-pressed="${rapidoActivo("peligrosas")}">Tóxicas y mortales</button>
-            <button class="atajo" data-rapido="mes" aria-pressed="${rapidoActivo("mes")}">Salen en ${MESES_L[new Date().getMonth()]}</button>
           </div>
         </div>
         ${hf ? `<span class="hero-credito">Foto: ${esc(hf.autor || "")} (${esc(hf.licencia || "")})</span>` : ""}
@@ -310,17 +309,38 @@
       ${e.datos_faltan ? `<div class="caja"><b>Datos que faltan o son inciertos:</b> ${esc(e.datos_faltan)}</div>` : ""}`;
     $$("[data-foto]").forEach((b) => (b.onclick = () => abrirVisor(+b.dataset.foto)));
   }
+  // Visor de fotos y de páginas de los libros: flechas del teclado, deslizar en el móvil y tocar la imagen para ampliarla
+  let visorI = 0;
   function abrirVisor(i) {
     const v = $("#visor"); const n = galeriaActual.length; if (!n) return;
-    const p = galeriaActual[(i + n) % n];
-    v.innerHTML = `<button aria-label="Cerrar">Cerrar ✕</button><button class="nav-v ant" aria-label="Anterior">‹</button><button class="nav-v sig" aria-label="Siguiente">›</button>
-      <img src="${p.g}" alt=""><div class="txt">${esc(p.pie || "")} ${p.taxon ? `<i>(${esc(p.taxon)})</i>` : ""}${p.autor || p.licencia ? `<br>© ${esc(p.autor || "")} · ${esc(p.licencia || "")}` : ""} ${p.url ? `· <a href="${esc(p.url)}" target="_blank" rel="noopener" style="color:#fff">origen</a>` : ""}</div>`;
+    visorI = ((i % n) + n) % n;
+    const p = galeriaActual[visorI];
+    v.classList.toggle("pagina", !!p.libro);
+    v.classList.remove("zoom");
+    v.innerHTML = `<button class="cerrar" aria-label="Cerrar">Cerrar ✕</button>${n > 1 ? `<button class="nav-v ant" aria-label="Anterior">‹</button><button class="nav-v sig" aria-label="Siguiente">›</button>` : ""}
+      <img src="${p.g}" alt="${esc(p.pie || "")}"><div class="txt">${n > 1 ? `<span class="cuenta-v">${visorI + 1} / ${n}</span> ` : ""}${esc(p.pie || "")} ${p.taxon ? `<i>(${esc(p.taxon)})</i>` : ""}${p.autor || p.licencia ? `<br>© ${esc(p.autor || "")} · ${esc(p.licencia || "")}` : ""} ${p.url ? `· <a href="${esc(p.url)}" target="_blank" rel="noopener" style="color:#fff">origen</a>` : ""}${p.libro ? `<br><span class="pista-v">Toca la página para ampliarla${n > 1 ? " · desliza o usa las flechas para pasar" : ""}</span>` : ""}</div>`;
     v.hidden = false;
-    $("button", v).onclick = () => (v.hidden = true);
-    $(".ant", v).onclick = () => abrirVisor(i - 1);
-    $(".sig", v).onclick = () => abrirVisor(i + 1);
+    $(".cerrar", v).onclick = cerrarVisor;
+    if (n > 1) { $(".ant", v).onclick = () => abrirVisor(visorI - 1); $(".sig", v).onclick = () => abrirVisor(visorI + 1); }
+    $("img", v).onclick = () => v.classList.toggle("zoom");
+    $(".cerrar", v).focus({ preventScroll: true });
   }
-  document.addEventListener("keydown", (ev) => { if (ev.key === "Escape") $("#visor").hidden = true; });
+  function cerrarVisor() { const v = $("#visor"); v.hidden = true; v.classList.remove("zoom"); v.innerHTML = ""; }
+  document.addEventListener("keydown", (ev) => {
+    if ($("#visor").hidden) return;
+    if (ev.key === "Escape") cerrarVisor();
+    else if (ev.key === "ArrowLeft") abrirVisor(visorI - 1);
+    else if (ev.key === "ArrowRight") abrirVisor(visorI + 1);
+  });
+  (() => {
+    const v = $("#visor"); let x0 = null;
+    v.addEventListener("touchstart", (e) => { x0 = e.touches.length === 1 && !v.classList.contains("zoom") ? e.touches[0].clientX : null; }, { passive: true });
+    v.addEventListener("touchend", (e) => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0; x0 = null;
+      if (Math.abs(dx) > 50 && galeriaActual.length > 1) abrirVisor(visorI + (dx < 0 ? 1 : -1));
+    });
+  })();
 
   // ---------------- Vista: buscador por rasgos ----------------
   function vistaRasgos() {
@@ -552,7 +572,7 @@
     const C = DB.cuaderno;
     if (!C) { app.innerHTML = `<h1>Cuaderno de campo</h1><p class="muted">El cuaderno no está incluido en esta copia de la web.</p>`; return; }
     const pad = (n) => String(n).padStart(2, "0");
-    galeriaActual = Array.from({ length: C.paginas }, (_, i) => ({ g: `cuaderno/p${pad(i + 1)}.jpg`, t: `cuaderno/t${pad(i + 1)}.jpg`, pie: `Página ${i + 1} de ${C.paginas}` }));
+    galeriaActual = Array.from({ length: C.paginas }, (_, i) => ({ g: `cuaderno/p${pad(i + 1)}.jpg`, t: `cuaderno/t${pad(i + 1)}.jpg`, pie: "Cuaderno de campo", libro: true }));
     const pag = (i) => `<button class="pag-c" data-foto="${i}" aria-label="Ver la página ${i + 1}"><img loading="lazy" src="${galeriaActual[i].t}" alt="Página ${i + 1}"><span>${i + 1}</span></button>`;
     const pliegos = [[0]];
     for (let i = 1; i < C.paginas - 1; i += 2) pliegos.push([i, i + 1]);
@@ -591,14 +611,80 @@
       <div class="pliegos">${pliegos.map((pl) => `<div class="pliego${pl.length === 1 ? " solo" : ""}">${pl.map(pag).join("")}</div>`).join("")}</div>`;
     $$("[data-foto]").forEach((b) => (b.onclick = () => abrirVisor(+b.dataset.foto)));
   }
+  // ---------------- Vista: libros en PDF, con páginas de muestra para hojearlos antes de descargar ----------------
+  // Las muestras son imágenes sacadas de los PDF: libros/<libro>/pNNN.jpg (grande) y tNNN.jpg (miniatura)
+  const MUESTRAS = {
+    bolsillo: { total: 104, pags: [[1, "Portada"], [2, "Sumario"], [3, "Las 12 reglas"], [4, "Cómo mirar una seta"], [6, "Índice visual: las comestibles"], [8, "Índice visual: las de alerta"], [9, "Calendario"], [11, "Árboles y sus setas"],
+      [14, "Ficha del rovelló"], [21, "Ficha del cep"], [36, "Ficha del ou de reig"], [62, "Ficha de la farinera borda (mortal)"], [93, "Si alguien se encuentra mal"], [95, "Mis hallazgos"], [104, "Contraportada: qué hacer ante una intoxicación"]] },
+    esencial: { total: 336, pags: [[1, "Portada"], [3, "Índice"], [6, "Antes de salir: seguridad"], [11, "Partes de una seta"], [14, "Cómo buscar setas"], [24, "Ficha de árbol: pino carrasco"],
+      [176, "Ficha del rovelló (1 de 4)"], [177, "Rovelló: cómo no confundirlo (2 de 4)"], [178, "Rovelló: cuándo y dónde (3 de 4)"], [179, "Rovelló: descripción (4 de 4)"],
+      [246, "Ficha de la farinera borda, mortal (1 de 2)"], [247, "Farinera borda: síntomas y confusiones (2 de 2)"], [304, "Calendario de fructificación"], [335, "Cuaderno de campo para anotar las salidas"]] },
+    catalogo: { total: 565, pags: [[1, "Portada"], [3, "Índice"], [5, "Antes de salir: seguridad"], [10, "Partes de una seta"], [13, "Cómo se ha hecho este catálogo"], [47, "Orden Agaricales"], [49, "Familia de las amanitas"],
+      [67, "Ficha de la farinera borda (mortal)"], [68, "Farinera borda: síntomas y confusiones"], [270, "Inventario: otras especies con registros"], [350, "Ficha del rovelló"], [351, "Rovelló: cómo no confundirlo"], [352, "Rovelló: cuándo y dónde"],
+      [517, "Calendario de fructificación"], [524, "Qué hacer ante una intoxicación"]] },
+  };
+  const LIBROS = [
+    { g: "bolsillo", corto: "Cuaderno de bolsillo", tit: "Setas esenciales · cuaderno de bolsillo", formato: "104 páginas A6 (10,5 × 14,8 cm)",
+      txt: "Las 79 setas que hay que conocer, una por página: fotos, cómo reconocerla, dónde sale y con qué no confundirla. Con calendario, árboles, índice visual y qué hacer ante una intoxicación. Cabe en el bolsillo." },
+    { g: "esencial", corto: "Guía esencial", tit: "Setas comestibles esenciales de Cataluña", formato: "336 páginas A5",
+      txt: "La guía de campo completa: cada comestible en cuatro páginas (fotos, rasgos que hay que comprobar, cómo no confundirla, cuándo y dónde sale), las tóxicas y mortales, los árboles, el calendario y un glosario." },
+    { g: "cuaderno", corto: "Cuaderno de campo", tit: "Cuaderno de campo", formato: "48 páginas A5 · se imprime en 12 hojas A4",
+      txt: (C) => `Un librillo para la mochila: ${C.comestibles || 26} comestibles con cuatro fotos y sus confusiones, ${C.peligrosas || 20} peligrosas, ${C.arboles || 8} árboles, calendario y qué hacer ante una intoxicación. Se imprime en casa, se dobla y se grapa.` },
+    { g: "catalogo", corto: "Catálogo", tit: "Catálogo micológico de Cataluña · volumen 1", formato: "565 páginas A5",
+      txt: "Para profundizar: fichas desarrolladas por órdenes y familias, e inventario de las especies con registros en Cataluña." },
+  ];
+  // Los cuadernos de bolsillo están en la propia web (offline/), no en las «releases» de GitHub
+  const BOLSILLO = [
+    { guia: "bolsillo", ed: "A6", uso: "Para leerlo en el móvil o llevarlo a la copistería: pide «cuadernillo A6 a color, a sangre», con espiral o en rústica.", mb: 28.8, pag: 104, url: "offline/setas-esenciales-bolsillo.pdf" },
+    { guia: "bolsillo", ed: "Para imprimir en casa (A4)", uso: "14 hojas A4 a doble cara: se cortan por la mitad, se doblan y se grapan en dos cuadernillos.", mb: 29.3, url: "offline/setas-esenciales-bolsillo-imprimir-A4.pdf" },
+    { guia: "bolsillo", ed: "En catalán · 50 setas", uso: "Quadern de butxaca, 76 páginas A6 (las muestras de arriba son de la edición en castellano).", mb: 15.4, pag: 76, url: "offline/cistella-segura-butxaca.pdf" },
+    { guia: "bolsillo", ed: "En catalán, para imprimir en casa (A4)", uso: "10 hojas A4, un solo cuadernillo.", mb: 15.8, url: "offline/cistella-segura-butxaca-imprimir-A4.pdf" },
+  ];
+  const IMPRIMIR = {
+    bolsillo: `<details class="caja como-imprimir"><summary><b>Cómo imprimirlo en casa</b></summary><ol>
+        <li>Descarga el PDF <b>para imprimir en casa (A4)</b>. Imprime a <b>doble cara</b>, volteando por el <b>borde largo</b>, a <b>tamaño real (100 %)</b>.</li>
+        <li><b>Corta</b> las hojas por la mitad, por la línea de puntos ✂.</li>
+        <li><b>Ordena</b> las mitades por el número pequeño de abajo: un montón con las A (A 1/13, A 2/13…) y otro con las B.</li>
+        <li><b>Dobla</b> cada montón por la mitad y <b>grapa</b> por el pliegue con 2 grapas.</li></ol></details>`,
+    esencial: `<p class="small muted">Para imprimir: A5 a doble cara sin cambiar el orden de las páginas (cada ficha empieza en página par), papel mate de 100–115 g y espiral o encuadernación cosida para que se abra plano. Para el móvil, la edición <b>ligera</b>.</p>`,
+    cuaderno: `<p class="small"><a href="#/cuaderno">Cómo imprimirlo y doblarlo, paso a paso →</a></p>`,
+    catalogo: `<p class="small muted">Para el móvil, la edición <b>ligera</b>. Para imprimirlo, mejor en dos tomos.</p>`,
+  };
+  function paginasLibro(g) {
+    const C = DB.cuaderno || {}, pad = (n) => String(n).padStart(2, "0"), n3 = (n) => String(n).padStart(3, "0");
+    if (g === "cuaderno") return Array.from({ length: C.paginas || 0 }, (_, i) => ({ n: i + 1, et: i ? "" : "Portada", g: `cuaderno/p${pad(i + 1)}.jpg`, t: `cuaderno/t${pad(i + 1)}.jpg` }));
+    return ((MUESTRAS[g] || {}).pags || []).map(([n, et]) => ({ n, et, g: `libros/${g}/p${n3(n)}.jpg`, t: `libros/${g}/t${n3(n)}.jpg` }));
+  }
+  function verLibro(g, i) {
+    const b = LIBROS.find((x) => x.g === g);
+    galeriaActual = paginasLibro(g).map((p) => ({ g: p.g, pie: `${b.corto} · ${p.et ? p.et + " · " : ""}pág. ${p.n}`, libro: true }));
+    abrirVisor(i);
+  }
   function vistaLibros() {
-    const L = DB.libros || [], tit = { cuaderno: "Cuaderno de campo (48 páginas, para imprimir y doblar)", esencial: "Setas comestibles esenciales de Cataluña", catalogo: "Catálogo micológico de Cataluña · volumen 1" };
-    const fila = (l) => `<li class="libro"><a class="btn prim" href="${esc(l.url)}" target="_blank" rel="noopener">Descargar</a><div><b>${esc(l.ed)}</b> <span class="muted">· ${l.pag ? l.pag + " págs. · " : ""}${String(l.mb).replace(".", ",")} MB</span>${l.uso ? `<br><span class="small">${esc(l.uso)}</span>` : ""}</div></li>`;
+    const C = DB.cuaderno || {}, L = (DB.libros || []).concat(BOLSILLO), mb = (x) => String(x).replace(".", ",");
+    const fila = (l) => `<li class="libro"><a class="btn prim" href="${esc(l.url)}" target="_blank" rel="noopener">Descargar</a><div><b>${esc(l.ed)}</b> <span class="muted">· ${l.pag ? l.pag + " págs. · " : ""}${mb(l.mb)} MB</span>${l.uso ? `<br><span class="small">${esc(l.uso)}</span>` : ""}</div></li>`;
+    const libro = (b) => {
+      const P = paginasLibro(b.g), eds = L.filter((l) => l.guia === b.g);
+      if (!eds.length) return "";
+      const ver = b.g === "cuaderno" ? `Hojear las ${P.length} páginas` : `Ver ${P.length} páginas por dentro`;
+      return `<section class="libro-c" id="libro-${b.g}">
+        ${P.length ? `<button class="libro-tapa" data-libro="${b.g}" data-i="0" aria-label="Ver por dentro: ${esc(b.tit)}"><img src="${P[0].t}" alt="Portada de ${esc(b.tit)}" loading="lazy"><span>Ver por dentro</span></button>` : ""}
+        <div class="libro-cab"><h2>${esc(b.tit)}</h2><p class="libro-formato">${esc(b.formato)}</p><p class="libro-txt">${esc(typeof b.txt === "function" ? b.txt(C) : b.txt)}</p></div>
+        <div class="libro-resto">
+          ${P.length > 1 ? `<div class="libro-hojas">${P.slice(1, 15).map((p, i) => `<button data-libro="${b.g}" data-i="${i + 1}" aria-label="Ver la página ${p.n}${p.et ? ": " + esc(p.et) : ""}" title="${esc(p.et || "Página " + p.n)}"><img src="${p.t}" alt="" loading="lazy"><span>${p.n}</span></button>`).join("")}</div>
+          <button class="btn" data-libro="${b.g}" data-i="0">👁 ${ver}</button>` : ""}
+          <ul class="libros">${eds.map(fila).join("")}</ul>
+          ${IMPRIMIR[b.g] || ""}
+        </div></section>`;
+    };
+    const hay = LIBROS.filter((b) => L.some((l) => l.guia === b.g));
     app.innerHTML = `<h1>Libros en PDF</h1>
-      <p>Los dos libros salen de la misma base de datos que esta web. Formato A5; para leer en el móvil, elija la edición <b>ligera</b>.</p>
-      <p class="small">Para imprimir: A5 a doble cara sin cambiar el orden de las páginas (cada ficha de la guía esencial empieza en página par), papel mate de 100–115 g y encuadernación en espiral o cosida para que el libro se abra plano en el campo.</p>
-      ${L.length ? ["cuaderno", "esencial", "catalogo"].filter((g) => L.some((l) => l.guia === g)).map((g) => `<h2>${tit[g]}</h2><ul class="libros">${L.filter((l) => l.guia === g).map(fila).join("")}</ul>`).join("") : `<p class="muted">Los PDF no están disponibles en esta copia de la web.</p>`}
-      <p class="small muted">Muchas fotografías tienen licencia CC BY-NC: los PDF son para uso personal o sin ánimo de lucro.</p>`;
+      <p class="ap-intro">Hojéalos antes de descargarlos: toca la portada o cualquier página para verla en grande.</p>
+      ${hay.length > 1 ? `<div class="libro-saltos">${hay.map((b) => `<button class="btn" data-ir="libro-${b.g}">${esc(b.corto)}</button>`).join("")}</div>` : ""}
+      ${hay.length ? hay.map(libro).join("") : `<p class="muted">Los PDF no están disponibles en esta copia de la web.</p>`}
+      <p class="small muted">Todos salen de la misma base de datos que esta web. Muchas fotografías tienen licencia CC BY-NC: los PDF son para uso personal o sin ánimo de lucro.</p>`;
+    $$("[data-libro]").forEach((x) => (x.onclick = () => verLibro(x.dataset.libro, +x.dataset.i)));
+    $$("[data-ir]").forEach((x) => (x.onclick = () => document.getElementById(x.dataset.ir).scrollIntoView({ behavior: "smooth", block: "start" })));
   }
   function vistaNoEncontrada() { app.innerHTML = `<h1>No encontrado</h1><p><a href="#/">Volver al buscador</a></p>`; }
 

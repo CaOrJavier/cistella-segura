@@ -213,6 +213,21 @@ td.m.x { background: var(--line); }
 .visor button { position: absolute; top: .8rem; right: 1rem; background: #fff; color: #000; border: 0; border-radius: 999px; padding: .4rem .9rem; font-weight: 700; }
 .visor .nav-v { position: absolute; top: 50%; background: rgba(255,255,255,.9); font-size: 1.3rem; padding: .3rem .8rem; }
 .visor .ant { left: 1rem; right: auto; } .visor .sig { right: 1rem; }
+.visor img { cursor: zoom-in; }
+.visor .cuenta-v { display: inline-block; background: rgba(255,255,255,.16); border-radius: 999px; padding: 0 .55rem; margin-right: .25rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.visor .pista-v { font-size: .8rem; opacity: .7; }
+/* páginas de los libros: lo más altas posible, con aspecto de papel */
+.visor.pagina img { max-height: calc(100vh - 7rem); border-radius: 3px; background: #fff; box-shadow: 0 8px 30px rgba(0,0,0,.5); }
+/* ampliada: a su tamaño real, con barras de desplazamiento */
+.visor.zoom { display: block; overflow: auto; padding: 3.6rem .5rem 1.5rem; text-align: center; }
+.visor.zoom img { max-width: none; max-height: none; cursor: zoom-out; }
+.visor.zoom .cerrar { position: fixed; }
+.visor.zoom .nav-v { display: none; }
+@media (max-width: 640px) {
+  .visor { padding: 3.2rem .5rem 1rem; }
+  .visor .nav-v { padding: .25rem .6rem; opacity: .85; }
+  .visor .ant { left: .3rem; } .visor .sig { right: .3rem; }
+}
 
 /* ---------- Textos y otras vistas ---------- */
 .texto { max-width: 760px; }
@@ -226,6 +241,34 @@ td.m.x { background: var(--line); }
 .libros { list-style: none; padding: 0; margin: 0 0 1.5rem; }
 .libros .libro { display: flex; gap: .9rem; align-items: center; padding: .7rem 0; border-bottom: 1px solid var(--line); }
 .libros .libro .btn { flex: none; text-decoration: none; }
+/* Libros: portada, tira de páginas y ediciones para descargar */
+.libro-saltos { display: flex; flex-wrap: wrap; gap: .4rem; margin: -.4rem 0 1.4rem; }
+.libro-c > div { min-width: 0; }
+.libro-c { display: grid; grid-template-columns: 190px minmax(0, 1fr); grid-template-rows: auto 1fr; column-gap: 1.7rem; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 1.4rem; margin-bottom: 1.4rem; box-shadow: var(--shadow); scroll-margin-top: 5rem; }
+.libro-tapa { grid-row: 1 / span 2; align-self: start; position: relative; display: block; width: 100%; border: 0; padding: 0; background: none; cursor: zoom-in; }
+.libro-tapa img { display: block; width: 100%; aspect-ratio: 148 / 210; object-fit: cover; background: #fff; border-radius: 3px 8px 8px 3px; box-shadow: inset 4px 0 6px -3px rgb(0 0 0 / .35), var(--shadow-lg); transition: transform .2s; }
+.libro-tapa:hover img { transform: translateY(-3px) rotate(-1deg); }
+.libro-tapa span { position: absolute; left: 50%; bottom: .7rem; transform: translateX(-50%); white-space: nowrap; background: rgb(20 24 20 / .84); color: #fff; font-weight: 700; font-size: .82rem; padding: .3rem .8rem; border-radius: 999px; }
+.libro-cab h2 { margin: 0 0 .2rem; }
+.libro-formato { margin: 0 0 .5rem; color: var(--accent); font-weight: 700; font-size: .9rem; }
+.libro-txt { margin: 0 0 .6rem; }
+.libro-hojas { display: flex; gap: .55rem; overflow-x: auto; padding: .35rem .1rem .7rem; margin: .2rem 0 .5rem; scroll-snap-type: x proximity; }
+.libro-hojas button { flex: none; position: relative; width: 76px; border: 0; padding: 0; background: #fff; border-radius: 3px; box-shadow: 0 1px 4px rgb(0 0 0 / .28); cursor: zoom-in; scroll-snap-align: start; transition: transform .15s; }
+.libro-hojas button:hover { transform: translateY(-2px); }
+.libro-hojas img { display: block; width: 100%; aspect-ratio: 148 / 210; object-fit: cover; border-radius: 3px; }
+.libro-hojas span { position: absolute; bottom: 3px; right: 3px; font-size: .66rem; line-height: 1.35; background: rgb(0 0 0 / .62); color: #fff; border-radius: 6px; padding: 0 .3rem; }
+.libro-c .libros { margin: 1rem 0 .4rem; border-top: 1px solid var(--line); }
+.libro-c .libros .libro:last-child { border-bottom: 0; }
+.libro-c .como-imprimir { margin-top: .4rem; }
+@media (max-width: 640px) {
+  .libro-c { grid-template-columns: 104px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 1rem; padding: 1rem; }
+  .libro-tapa { grid-row: 1; }
+  .libro-tapa span { font-size: .7rem; padding: .2rem .55rem; bottom: .45rem; }
+  .libro-cab h2 { font-size: 1.15rem; }
+  .libro-txt { font-size: .9rem; }
+  .libro-resto { grid-column: 1 / -1; margin-top: .6rem; }
+  .libros .libro { align-items: flex-start; }
+}
 .descargas { display: flex; flex-wrap: wrap; gap: .6rem; margin: 1rem 0; }
 .descargas .btn { text-decoration: none; padding: .6rem 1rem; }
 .como-imprimir summary { cursor: pointer; }
