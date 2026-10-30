@@ -14,8 +14,8 @@
     res1: "1 pàgina", resN: "{n} pàgines", resMas: "{n} pàgines (en surten {m})", nada: "No surt en aquest llibre.", corto: "Escriu almenys 2 lletres.",
     cargando: "Obrint el llibre…", noTexto: "No s'ha pogut carregar el text del llibre: es pot fullejar, però no cercar.",
     cerrar: "Tanca", edicion: "Edició", edES: "En castellà", edCA: "En català", de: "de",
-    pista: "Llisca o toca la vora de la pàgina per passar-la. Els «→ p.» i els números dels índexs porten a la seva pàgina.",
-    pistaPC: "Fes clic a la pàgina o fes servir ← → per passar-la. Els «→ p.» i els números dels índexs porten a la seva pàgina.",
+    pista: "Llisca o toca la vora de la pàgina per passar-la. El que s'il·lumina en groc es pot tocar: et porta a aquella part del llibre.",
+    pistaPC: "Fes clic a la pàgina o fes servir ← → per passar-la. El que s'il·lumina en groc es pot tocar: et porta a aquella part del llibre.",
     entendido: "Entesos", sinFoto: "Aquesta pàgina no està desada per veure-la sense internet.", zoomAyuda: "Toca fora de la pàgina o prem Esc per tornar.",
   } : {
     volver: "Libros", indice: "Índice", buscar: "Buscar", paginas: "Páginas", ampliar: "Ampliar", pantalla: "Pantalla completa",
@@ -24,8 +24,8 @@
     res1: "1 página", resN: "{n} páginas", resMas: "{n} páginas (se muestran {m})", nada: "No aparece en este libro.", corto: "Escribe al menos 2 letras.",
     cargando: "Abriendo el libro…", noTexto: "No se ha podido cargar el texto del libro: se puede hojear, pero no buscar.",
     cerrar: "Cerrar", edicion: "Edición", edES: "En castellano", edCA: "En catalán", de: "de",
-    pista: "Desliza o toca el borde de la página para pasarla. Los «→ p.» y los números de los índices llevan a su página.",
-    pistaPC: "Haz clic en la página o usa ← → para pasarla. Los «→ p.» y los números de los índices llevan a su página.",
+    pista: "Desliza o toca el borde de la página para pasarla. Lo que se ilumina en amarillo se puede tocar: te lleva a esa parte del libro.",
+    pistaPC: "Haz clic en la página o usa ← → para pasarla. Lo que se ilumina en amarillo se puede tocar: te lleva a esa parte del libro.",
     entendido: "Entendido", sinFoto: "Esta página no está guardada para verla sin internet.", zoomAyuda: "Toca fuera de la página o pulsa Esc para volver.",
   };
   const fmt = (s, o) => s.replace(/\{(\w+)\}/g, (_, k) => o[k]);
@@ -36,7 +36,7 @@
 
   const pdfDe = (f, otro) => (((window.DB && DB.libros) || []).find((l) => l.f === f) || {}).url || otro;
   const LIBROS = {
-    bolsillo: { tit: "Setas esenciales · cuaderno de bolsillo", sub: CA ? "48 pàgines · 41 bolets" : "48 páginas · 41 setas", n: 48,
+    bolsillo: { tit: "Setas esenciales · cuaderno de bolsillo", sub: CA ? "52 pàgines · 46 bolets" : "52 páginas · 46 setas", n: 52,
       pdf: "offline/setas-esenciales-bolsillo.pdf", ed: "es", otra: "butxaca" },
     butxaca: { tit: "Cistella Segura · quadern de butxaca", sub: CA ? "76 pàgines · 50 bolets" : "76 páginas · 50 setas · en catalán", n: 76,
       pdf: "offline/cistella-segura-butxaca.pdf", ed: "ca", otra: "bolsillo" },
@@ -233,7 +233,8 @@
     const d = S.L.dir, D = S.D || {};
     const enl = conEnlaces ? ((D.l || {})[n] || []).map(([x, y, w, h, p]) => {
       const t = fmt(T.irA, { n: p });
-      return `<a class="lec-enl" href="#/leer/${S.g}/${p}" data-ir="${p}" style="left:${(x * 100).toFixed(2)}%;top:${(y * 100).toFixed(2)}%;width:${(w * 100).toFixed(2)}%;height:${(h * 100).toFixed(2)}%" aria-label="${esc(t)}" title="${esc(t)}"></a>`;
+      // las zonas grandes (una seta entera con su foto) van recuadradas en vez de pintadas
+      return `<a class="lec-enl${w * h > 0.004 ? " grande" : ""}" href="#/leer/${S.g}/${p}" data-ir="${p}" style="left:${(x * 100).toFixed(2)}%;top:${(y * 100).toFixed(2)}%;width:${(w * 100).toFixed(2)}%;height:${(h * 100).toFixed(2)}%" aria-label="${esc(t)}" title="${esc(t)}"></a>`;
     }).join("") : "";
     const mar = S.marca && S.marca.n === n ? S.marca.cajas.map(([x0, y, x1, h]) =>
       `<span class="lec-marca" style="left:${((x0 - 0.006) * 100).toFixed(2)}%;top:${((y - 0.004) * 100).toFixed(2)}%;width:${((x1 - x0 + 0.012) * 100).toFixed(2)}%;height:${((h + 0.008) * 100).toFixed(2)}%"></span>`).join("") : "";
@@ -280,7 +281,8 @@
   }
   function fichas(v) {
     const D = S.D || {}, by = (G && G.BYID) || {}, vistos = new Set();
-    S.el.fichas.innerHTML = v.todas.map((n) => (D.f || {})[n]).filter((id) => id && by[id] && !vistos.has(id) && vistos.add(id)).map((id) => {
+    // una página puede tener una seta o dos (rovelló y pinetell van juntos)
+    S.el.fichas.innerHTML = v.todas.flatMap((n) => [].concat((D.f || {})[n] || [])).filter((id) => id && by[id] && !vistos.has(id) && vistos.add(id)).map((id) => {
       const e = by[id], cat = G.catOf ? G.catOf(e) : "";
       return `<a class="lec-ficha" href="#/especie/${esc(id)}"><i class="lec-punto c-${esc(cat)}"></i>${esc(T.ficha)}: <b>${esc(G.titulo ? G.titulo(e) : e.nombre)}</b> <span aria-hidden="true">→</span></a>`;
     }).join("");
@@ -320,11 +322,11 @@
   function cambiarEdicion(g) {
     if (!S || g === S.g) return;
     // si se está viendo una seta, se abre la misma en la otra edición (si está en las dos)
-    const F = (S.D || {}).f || {}, ids = vis().todas.map((n) => F[n]).filter(Boolean);
+    const F = (S.D || {}).f || {}, ids = vis().todas.flatMap((n) => [].concat(F[n] || []));
     cargarTexto(g).then((D) => {
       let n = pos.get(g) || 1;
       const f2 = (D && D.f) || {};
-      for (const id of ids) { const p = Object.keys(f2).find((k) => f2[k] === id); if (p) { n = +p; break; } }
+      for (const id of ids) { const p = Object.keys(f2).find((k) => [].concat(f2[k]).includes(id)); if (p) { n = +p; break; } }
       location.hash = `#/leer/${g}/${n}`;
     });
   }
@@ -600,7 +602,7 @@
     return cerrar;
   }
   function pista() {
-    try { if (localStorage.getItem("setas:leer-pista")) return; localStorage.setItem("setas:leer-pista", "1"); } catch (e) { return; }
+    try { if (localStorage.getItem("setas:leer-pista2")) return; localStorage.setItem("setas:leer-pista2", "1"); } catch (e) { return; }
     const cerrar = aviso(TACTIL ? T.pista : T.pistaPC, T.entendido);
     setTimeout(cerrar, 9000);
   }

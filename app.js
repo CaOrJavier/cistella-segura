@@ -615,25 +615,25 @@
   // El cuaderno de campo A5 y el catálogo se retiraron por repetir contenido; sus PDF siguen en las «releases» de GitHub.
   // Las muestras son imágenes sacadas de los PDF: libros/<libro>/pNNN.jpg (grande) y tNNN.jpg (miniatura)
   const MUESTRAS = {
-    bolsillo: { total: 48, pags: [[1, "Portada"], [2, "Las 12 reglas"], [3, "Cómo mirar una seta"], [4, "Árboles y sus setas, con la hoja y el tronco"],
-      [6, "Ficha del rovelló: con qué se confunde, con foto"], [9, "Ficha del cep"], [16, "Ficha del ou de reig"], [30, "Ficha de la farinera borda (mortal)"],
-      [40, "Ficha del pixacà (tóxica)"], [47, "Síndromes: según cuándo aparecen los síntomas"], [48, "Contraportada: qué hacer ante una intoxicación"]] },
+    bolsillo: { total: 52, pags: [[1, "Portada"], [2, "Las 12 reglas"], [3, "Cómo mirar una seta"], [4, "Árboles y sus setas, con la hoja y el tronco"],
+      [6, "Rovelló y pinetell: en qué se diferencian"], [9, "Ficha del cep"], [16, "Ficha del ou de reig"], [31, "Ficha de la farinera borda (mortal)"],
+      [44, "Ficha del pixacà (tóxica): gravedad y por qué"], [51, "Síndromes: según cuándo aparecen los síntomas"], [52, "Contraportada: qué hacer ante una intoxicación"]] },
     esencial: { total: 336, pags: [[1, "Portada"], [3, "Índice"], [6, "Antes de salir: seguridad"], [11, "Partes de una seta"], [14, "Cómo buscar setas"], [24, "Ficha de árbol: pino carrasco"],
       [176, "Ficha del rovelló (1 de 4)"], [177, "Rovelló: cómo no confundirlo (2 de 4)"], [178, "Rovelló: cuándo y dónde (3 de 4)"], [179, "Rovelló: descripción (4 de 4)"],
       [246, "Ficha de la farinera borda, mortal (1 de 2)"], [247, "Farinera borda: síntomas y confusiones (2 de 2)"], [304, "Calendario de fructificación"], [335, "Cuaderno de campo para anotar las salidas"]] },
   };
   const LIBROS = [
-    { g: "bolsillo", corto: "Cuaderno de bolsillo", uso: "Para llevar al bosque", tit: "Setas esenciales · cuaderno de bolsillo", formato: "48 páginas · A6 (10,5 × 14,8 cm) o A5 (14,8 × 21 cm) · fondo blanco, gasta poca tinta",
-      txt: "Las 41 setas imprescindibles (23 comestibles, 9 mortales y 9 tóxicas), una por página: fotos, cómo reconocerla, en qué meses y a qué altura sale y, con una foto pequeña, con qué se confunde. Con los árboles principales y qué hacer ante una intoxicación. Cabe en el bolsillo." },
+    { g: "bolsillo", corto: "Cuaderno de bolsillo", uso: "Para llevar al bosque", tit: "Setas esenciales · cuaderno de bolsillo", formato: "52 páginas · A6 (10,5 × 14,8 cm) o A5 (14,8 × 21 cm) · fondo blanco, gasta poca tinta",
+      txt: "Las 46 setas imprescindibles (25 comestibles, 9 mortales y 12 tóxicas o no comestibles): fotos, cómo reconocerla, en qué meses y a qué altura sale, su olor o sabor si es peculiar y, con una foto pequeña, con qué se confunde. En las tóxicas, por qué lo son y cuánto. El rovelló y el pinetell van juntos, con sus diferencias. Con los árboles principales y qué hacer ante una intoxicación. Cabe en el bolsillo." },
     { g: "esencial", corto: "Guía esencial", uso: "Para estudiar en casa", tit: "Setas comestibles esenciales de Cataluña", formato: "336 páginas A5",
       txt: "79 setas a fondo: cada comestible en cuatro páginas (fotos, rasgos que hay que comprobar, cómo no confundirla, cuándo y dónde sale), las tóxicas y mortales, los árboles, el calendario y un glosario." },
   ];
   // Los cuadernos de bolsillo están en la propia web (offline/), no en las «releases» de GitHub
   const BOLSILLO = [
-    { guia: "bolsillo", ed: "A6", uso: "Para leerlo en el móvil o llevarlo a la copistería: pide «cuadernillo A6 a color, a sangre», con espiral o grapado.", mb: 15.2, pag: 48, url: "offline/setas-esenciales-bolsillo.pdf" },
-    { guia: "bolsillo", ed: "Para imprimir en casa (A4)", uso: "Solo 6 hojas A4 a doble cara (12 caras): se cortan por la mitad, se doblan juntas y se grapan.", mb: 15.4, url: "offline/setas-esenciales-bolsillo-imprimir-A4.pdf" },
-    { guia: "bolsillo", ed: "A5 · letra más grande", uso: "El mismo cuaderno en tamaño cuartilla (14,8 × 21 cm): letra y fotos un 40 % más grandes. Para leer en la tableta o llevar a la copistería.", mb: 15.5, pag: 48, url: "offline/setas-esenciales-A5.pdf" },
-    { guia: "bolsillo", ed: "A5 para imprimir en casa (A4)", uso: "12 hojas A4 apaisadas a doble cara (borde corto). No hay que cortar: se doblan juntas por la mitad y se grapan. Gasta el doble de papel que el A6.", mb: 15.5, url: "offline/setas-esenciales-A5-imprimir-A4.pdf" },
+    { guia: "bolsillo", ed: "A6", uso: "Para leerlo en el móvil o llevarlo a la copistería: pide «cuadernillo A6 a color, a sangre», con espiral o grapado.", mb: 16.9, pag: 52, url: "offline/setas-esenciales-bolsillo.pdf" },
+    { guia: "bolsillo", ed: "Para imprimir en casa (A4)", uso: "Solo 7 hojas A4 a doble cara (14 caras): se cortan por la mitad, se doblan juntas y se grapan.", mb: 17.2, url: "offline/setas-esenciales-bolsillo-imprimir-A4.pdf" },
+    { guia: "bolsillo", ed: "A5 · letra más grande", uso: "El mismo cuaderno en tamaño cuartilla (14,8 × 21 cm): letra y fotos un 40 % más grandes. Para leer en la tableta o llevar a la copistería.", mb: 17.2, pag: 52, url: "offline/setas-esenciales-A5.pdf" },
+    { guia: "bolsillo", ed: "A5 para imprimir en casa (A4)", uso: "13 hojas A4 apaisadas a doble cara (borde corto). No hay que cortar: se doblan juntas por la mitad y se grapan. Gasta el doble de papel que el A6.", mb: 17.2, url: "offline/setas-esenciales-A5-imprimir-A4.pdf" },
     { guia: "bolsillo", ed: "En catalán · 50 setas", uso: "Quadern de butxaca, 76 páginas A6 (las muestras de arriba son de la edición en castellano).", mb: 15.4, pag: 76, url: "offline/cistella-segura-butxaca.pdf" },
     { guia: "bolsillo", ed: "En catalán, para imprimir en casa (A4)", uso: "10 hojas A4, un solo cuadernillo.", mb: 15.8, url: "offline/cistella-segura-butxaca-imprimir-A4.pdf" },
   ];
@@ -641,7 +641,7 @@
     bolsillo: `<details class="caja como-imprimir"><summary><b>Cómo imprimirlo en casa</b></summary><ol>
         <li>Descarga el PDF <b>para imprimir en casa (A4)</b>. Imprime a <b>doble cara</b>, volteando por el <b>borde largo</b>, a <b>tamaño real (100 %)</b>.</li>
         <li><b>Corta</b> las hojas por la mitad, por la línea de puntos ✂.</li>
-        <li><b>Ordena</b> las mitades por el número pequeño de abajo (1/12, 2/12…), la 1 encima.</li>
+        <li><b>Ordena</b> las mitades por el número pequeño de abajo (1/13, 2/13…), la 1 encima.</li>
         <li><b>Dobla</b> el montón por la mitad y <b>grapa</b> por el pliegue con 2 grapas.</li></ol>
         <p class="small"><b>Versión A5:</b> imprime a doble cara volteando por el <b>borde corto</b>. No se corta nada: ordena las hojas por su número, dóblalas juntas por la mitad y grapa.</p></details>`,
     esencial: `<p class="small muted">Para imprimir: A5 a doble cara sin cambiar el orden de las páginas (cada ficha empieza en página par), papel mate de 100–115 g y espiral o encuadernación cosida para que se abra plano. Para el móvil, la edición <b>ligera</b>.</p>`,
@@ -676,7 +676,7 @@
     };
     const hay = LIBROS.filter((b) => L.some((l) => l.guia === b.g));
     app.innerHTML = `<h1>Libros en PDF</h1>
-      <p class="ap-intro">Dos libros: uno pequeño para llevar al bosque, con las 41 setas imprescindibles, y otro grande para estudiar en casa, con 79. Léelos aquí antes de descargarlos: se pasan las páginas como en un libro y puedes buscar una seta o una palabra.</p>
+      <p class="ap-intro">Dos libros: uno pequeño para llevar al bosque, con las 46 setas imprescindibles, y otro grande para estudiar en casa, con 79. Léelos aquí antes de descargarlos: se pasan las páginas como en un libro y puedes buscar una seta o una palabra.</p>
       ${hay.length > 2 ? `<div class="libro-saltos">${hay.map((b) => `<button class="btn" data-ir="libro-${b.g}">${esc(b.corto)}</button>`).join("")}</div>` : ""}
       ${hay.length ? hay.map(libro).join("") : `<p class="muted">Los PDF no están disponibles en esta copia de la web.</p>`}
       <p class="small muted">Todos salen de la misma base de datos que esta web. Muchas fotografías tienen licencia CC BY-NC: los PDF son para uso personal o sin ánimo de lucro.</p>`;

@@ -82,9 +82,15 @@ html.leyendo, html.leyendo body { overflow: hidden; }
 .a-izq .lec-dorso .lec-sombra { background: linear-gradient(to right, rgb(0 0 0 / .5), rgb(0 0 0 / .15) 60%, rgb(0 0 0 / .25)); }
 
 /* enlaces dentro de la página y lo encontrado al buscar */
-.lec-enl { position: absolute; z-index: 2; border-radius: 3px; background: rgb(255 196 0 / .13); transition: background .15s, box-shadow .15s; }
+.lec-enl { position: absolute; z-index: 2; border-radius: 3px; background: rgb(255 196 0 / .16); transition: background .15s, box-shadow .15s; }
 .lec-enl:hover, .lec-enl:focus-visible { background: rgb(255 196 0 / .42); box-shadow: 0 0 0 2px rgb(214 150 0 / .6); outline: none; }
-@media (hover: none) { .lec-enl { background: rgb(255 196 0 / .2); } }
+@media (hover: none) { .lec-enl { background: rgb(255 196 0 / .22); } }
+/* zonas grandes (una seta con su foto, la pestaña del margen): recuadro en vez de color */
+.lec-enl.grande { background: transparent; border-radius: 5px; box-shadow: inset 0 0 0 1.5px rgb(214 150 0 / .55); }
+.lec-enl.grande:hover, .lec-enl.grande:focus-visible { background: rgb(255 196 0 / .16); box-shadow: inset 0 0 0 2px rgb(214 150 0 / .9); }
+/* al aparecer una página, lo que se puede tocar se ilumina un momento */
+.lec-hoja .lec-enl { animation: lec-enl-ve 1.5s ease .35s 1 both; }
+@keyframes lec-enl-ve { 30% { background-color: rgb(255 196 0 / .5); box-shadow: 0 0 0 3px rgb(255 196 0 / .45); } }
 .lec-marca { position: absolute; z-index: 1; border-radius: 3px; background: rgb(255 226 0 / .5); mix-blend-mode: multiply; pointer-events: none; animation: lec-marca 1s ease 2; }
 @keyframes lec-marca { 50% { background: rgb(255 170 0 / .7); } }
 
@@ -184,6 +190,6 @@ html.leyendo, html.leyendo body { overflow: hidden; }
 
 @media (prefers-reduced-motion: reduce) {
   .lec-libro, .lec-canto { transition: none; }
-  .lec-libro.salto .lec-hoja .lec-pag, .lec-marca, .lec-panel, .lec-aviso { animation: none; }
+  .lec-libro.salto .lec-hoja .lec-pag, .lec-marca, .lec-panel, .lec-aviso, .lec-hoja .lec-enl { animation: none; }
 }
 @media print { .lec { display: none !important; } }

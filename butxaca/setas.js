@@ -19,6 +19,24 @@
   // Cuaderno breve: solo las setas y árboles imprescindibles (lista en ../datos/breve.js, la misma que usa el quiz).
   // Las que se confunden con cada una salen dentro de su ficha, con foto pequeña.
   const BREVE = window.BREVE;
+  // Setas casi iguales que van juntas en una sola página, con sus pequeñas diferencias
+  // (fotos: [especie, foto (ruta g), pie corto]; filas: [qué, la primera, la segunda])
+  const PAREJAS = [{
+    ids: ["lactarius-sanguifluus", "lactarius-deliciosus"],
+    nombre: "Rovelló y pinetell",
+    lat: "<i>Lactarius sanguifluus</i> y <i>L. deliciosus</i> · níscalos, rebollones",
+    lede: "Casi iguales y los dos comestibles excelentes. Lo que los separa es el color del látex al cortarlos.",
+    fotos: [["lactarius-sanguifluus", "fotos/g/db970a74779d.jpg", "Rovelló: naranja vinoso, con pocas zonas."],
+      ["lactarius-deliciosus", "fotos/g/87b9e09821d1.jpg", "Pinetell: zonas bien marcadas."],
+      ["lactarius-deliciosus", "fotos/g/8bd69c6b0fd3.jpg", "Pinetell: láminas naranja vivo."]],
+    filas: [["Látex", "Rojo vino desde el primer momento", "Naranja zanahoria; no pasa a vino"],
+      ["Láminas", "Rosa vinoso o lila", "Naranja vivo"],
+      ["Dónde", "Pino carrasco y piñonero, a menudo en suelo calizo; de la costa a la montaña media", "Pino silvestre y laricio: pinares más frescos y de montaña, umbrías"]],
+    claves: ["Láminas que se manchan de verde al tocarlas.", "Pie corto y hueco, con hoyuelos más oscuros.",
+      "Látex de color al cortar: si es blanco, descártelo.", "Siempre bajo pinos."],
+    compruebe: "Corte el pie y mire el color del látex en el primer momento."
+  }];
+  const EN_PAREJA = new Map(PAREJAS.flatMap(c => c.ids.map((id, i) => [id, [c, i]])));
   const ESENCIAL = DB.especies.filter(e => BREVE.especies.includes(e.id));
   const BY = Object.fromEntries(ESENCIAL.map(e => [e.id, e]));
   const TODAS = Object.fromEntries(DB.especies.map(e => [e.id, e]));   // para la foto de las que se confunden
@@ -92,6 +110,48 @@
   const sinNormativa = t => (String(t || "").match(/[^.!?]+[.!?]+(\s|$)/g) || [String(t || "")]).filter(f => !/RD\s?30\/2009|anexo del RD|venta/i.test(f)).join("").trim() || String(t || "");
   const lista = arr =>(arr.length <= 1 ? arr.join("") : arr.slice(0, -1).join(", ") + " y " + arr[arr.length - 1]);
 
+  // ---------- tóxicas: qué gravedad tiene y por qué ----------
+  function gravedad(e) {
+    const cat = e.comestibilidad.cat, t = e.toxicidad || {};
+    if (cat === "mortal") return [3, "Mortal"];
+    if (cat === "toxica") return /intens|grave|muerte|rabdomi|muscar|neurot/i.test([e.comestibilidad.texto, t.sindrome, t.sintomas].join(" ")) ? [2, "Grave"] : [1, "Moderada"];
+    return [1, "Leve"];
+  }
+  // la causa, según el síndrome (toxicología clínica estándar)
+  const CAUSA = [
+    [/faloid/i, "Amatoxinas: destruyen el hígado. No se van al cocinarla, congelarla ni secarla."],
+    [/orell/i, "Orellanina: destruye los riñones, días o semanas después de comerla."],
+    [/giromitr/i, "Giromitrina: daña el hígado y el sistema nervioso; cocinarla o secarla no la hace segura."],
+    [/paxíl|hemol/i, "Tras comerla varias veces, el cuerpo ataca su propia sangre y pueden fallar los riñones."],
+    [/rabdomi/i, "Destruye los músculos, también el del corazón, si se come varios días seguidos."],
+    [/muscar/i, "Muscarina: sudor, saliva y lágrimas a chorro y el pulso se vuelve lento."],
+    [/panter|micoatrop/i, "Ácido iboténico y muscimol: actúan sobre el cerebro."],
+    [/gastro/i, "Irrita el estómago y el intestino."]
+  ];
+  function causa(e) {
+    const s = e.toxicidad?.sindrome || "";
+    const c = CAUSA.find(([re]) => re.test(s));
+    if (c) return c[1];
+    const fr = String(e.comestibilidad.texto || "").match(/[^.!?]+[.!?]+(\s|$)/g) || [e.comestibilidad.texto || ""];
+    return (fr.find(f => /gastro|digest|molest|trastorn/i.test(f)) || fr[0]).trim();
+  }
+  const gravedadHTML = e => {
+    const [n, t] = gravedad(e);
+    return `<p class="grav"><span class="lab">Gravedad</span><span class="gd">${[1, 2, 3].map(i => `<i class="${i <= n ? "on" : ""}"></i>`).join("")}</span><b>${t}.</b> ${esc(causa(e))}</p>`;
+  };
+  // olor y sabor, solo si son peculiares (harina, anís, picante, amargo…); fuera los avisos entre paréntesis
+  const AVISO = /\s*\((?:[^)]*(?:dato|subjetiv|diagnóstic|pruebe)[^)]*)\)/gi;
+  const PECULIAR = /harin|anís|almendra|albaricoque|rábano|carroña|tinta|fenol|picante|amarg|avellana|ajo|dulzón|perfumad|yodo/i;
+  function olorSabor(e, ok) {
+    const m = e.morfologia || {};
+    const lim = s => String(s || "").replace(AVISO, "").trim().replace(/\.$/, "");
+    const o = lim(m.olor), s = lim(m.sabor) || (/amarg/i.test(m.carne || "") ? "Algo amargo" : "");
+    const partes = [];
+    if (PECULIAR.test(o) && !/poco diagnóstico/i.test(m.olor || "")) partes.push(`<span class="lab">Olor</span>${esc(o)}.`);
+    if (PECULIAR.test(s)) partes.push(`<span class="lab">Sabor</span>${esc(s)}${ok ? "" : " (no la pruebe)"}.`);
+    return partes.length ? `<p class="os">${partes.join(" ")}</p>` : "";
+  }
+
   function newPage(sec, cls = "") {
     const p = document.createElement("section");
     p.className = "page " + cls;
@@ -158,7 +218,12 @@
     }
     return out.slice(0, 3);
   }
-  const PICK = Object.fromEntries(ESENCIAL.map(e => [e.id, pickPhotos(e)]));
+  // fotos elegidas a mano cuando las automáticas no sirven (ou de reig: entero, láminas amarillas y saliendo del huevo)
+  const FOTOS_CUADERNO = { "amanita-caesarea": ["fotos/g/8205426474fa.jpg", "fotos/g/6e4d41ce5c8f.jpg", "fotos/g/0fe1b13bc174.jpg"] };
+  const PICK = Object.fromEntries(ESENCIAL.map(e => {
+    const fijas = (FOTOS_CUADERNO[e.id] || []).map(g => (e.fotos || []).find(f => f.g === g)).filter(Boolean);
+    return [e.id, fijas.length ? fijas : pickPhotos(e)];
+  }));
   const thumb = id => { const f = PICK[id]?.[0]; return f ? G(f.t || f.g) : ""; };
   const shortCap = (c, max) => {
     c = String(c || "").trim();
@@ -323,10 +388,15 @@
   // En el orden de BREVE.arboles: así se reparten justo en dos páginas (las fichas largas no van todas juntas)
   function arbolesPages() {
     const items = BREVE.arboles.map(id => ARB[id]).filter(Boolean).map(a => {
-      const setas = (a.setas || []).filter(s => BY[s.id] && s.rel !== "ocasional").map(s => BY[s.id]);
+      // las parejas (rovelló y pinetell) salen una sola vez, con el nombre de su página
+      const vistas = new Set();
+      const setas = (a.setas || []).filter(s => BY[s.id] && s.rel !== "ocasional").map(s => BY[s.id])
+        .filter(e => { const k = EN_PAREJA.has(e.id) ? EN_PAREJA.get(e.id)[0].nombre : e.id; return !vistas.has(k) && vistas.add(k); });
       if (!setas.length) return null;
-      const nm = e => `<span class="nm">${tituloHTML(e)}${ref(e.id, true)}</span>`;
-      const ok = setas.filter(comestible), ko = setas.filter(e => !comestible(e));
+      const nm = e => `<span class="nm">${EN_PAREJA.has(e.id) ? esc(EN_PAREJA.get(e.id)[0].nombre) : tituloHTML(e)}${ref(e.id, true)}</span>`;
+      // como mucho 6 de cada lista (para que los 10 árboles quepan en dos páginas); en «Cuidado», primero las mortales
+      const ok = setas.filter(comestible).slice(0, 6);
+      const ko = setas.filter(e => !comestible(e)).sort((x, y) => SEV[x.comestibilidad.cat] - SEV[y.comestibilidad.cat]).slice(0, 6);
       // la hoja y el tronco, para reconocer el árbol (las fotos llevan «papel» en la base de datos)
       const fotos = [["hoja", "Hoja"], ["tronco", "Tronco"]].map(([p, t]) => [(a.fotos || []).find(f => f.papel === p), t]).filter(([f]) => f);
       fotos.forEach(([f]) => EXTRA.push(["Árboles", f]));
@@ -387,15 +457,11 @@
     const donde = primera(e.ecologia?.donde_mirar || e.ecologia?.vegetacion, 150);
     const dondeHTML = (arb || donde) ? `<p class="donde"><span class="lab">Dónde</span>${arb ? `Con ${esc(arb)}. ` : ""}${esc(donde)}</p>` : "";
     const t = e.toxicidad;
-    const tox = t ? `<p class="perill"><span class="lab">${esc(t.sindrome)}</span>Síntomas ${esc(t.latencia)}. ${esc(primera(t.sintomas, 170))}</p>` : "";
+    // las que no se comen: gravedad y por qué, y el síndrome con sus síntomas
+    const tox = ok ? "" : `<div class="perill">${gravedadHTML(e)}${t ? `<p><span class="lab">${esc(t.sindrome)}</span>Síntomas ${esc(t.latencia)}. ${esc(primera(t.sintomas, 170))}</p>` : ""}</div>`;
     const confs = [...(e.confusiones || [])]
       .sort((a, b) => (ok ? SEV[a.peligro] - SEV[b.peligro] : SEV[b.peligro] - SEV[a.peligro]))
       .slice(0, 3);
-    // cada seta con la que se confunde: foto pequeña + en qué se diferencia (y su página, si tiene ficha)
-    const confHTML = confs.length ? `<div class="conf"><h3>${ok ? "Cuidado: se confunde con" : "Se confunde con"}</h3><ul>${confs.map(c => {
-      const im = fotoConf(c);
-      return `<li class="cf${im ? " cf-foto" : ""}">${im ? `<img class="cf-im" src="${im}" alt="">` : ""}<span><b>${nombreConf(c)}</b> <span class="cf-tag cf-${c.peligro}">${PEL[c.peligro] || c.peligro}</span> ${esc(primera(c.diferencia, 170))} ${c.id && c.id !== e.id ? ref(c.id) : ""}</span></li>`;
-    }).join("")}</ul></div>` : "";
     const clave = confs.find(c => c.donde)?.donde;
     const truc = clave ? `<p class="truc"><span class="lab">Compruebe</span>${esc(primera(clave, 160))}</p>` : "";
     const label = ok ? "Comestibles" : est.sec === "mortales" ? "Mortales" : "Tóxicas";
@@ -408,9 +474,53 @@
       </header>
       ${photosHTML(PICK[e.id])}
       ${facts}
-      <div class="txt">${clavesHTML}${tox}${dondeHTML}${confHTML}${truc}</div>
+      <div class="txt">${clavesHTML}${olorSabor(e, ok)}${tox}${dondeHTML}${confsHTML(confs, ok, [e.id])}${truc}</div>
       ${foot(label)}`);
     fit(p, ["tight", ".lede", "dense", quitaUltimo(".conf li"), ".truc", "denser", quitaUltimo(".checks li"), ".donde"], e.id);
+  }
+  // cada seta con la que se confunde: foto pequeña + en qué se diferencia (y su página, si tiene ficha)
+  function confsHTML(confs, ok, propios) {
+    if (!confs.length) return "";
+    return `<div class="conf"><h3>${ok ? "Cuidado: se confunde con" : "Se confunde con"}</h3><ul>${confs.map(c => {
+      const im = fotoConf(c);
+      return `<li class="cf${im ? " cf-foto" : ""}">${im ? `<img class="cf-im" src="${im}" alt="">` : ""}<span><b>${nombreConf(c)}</b> <span class="cf-tag cf-${c.peligro}">${PEL[c.peligro] || c.peligro}</span> ${esc(primera(c.diferencia, 170))} ${c.id && !propios.includes(c.id) ? ref(c.id) : ""}</span></li>`;
+    }).join("")}</ul></div>`;
+  }
+
+  // Dos setas casi iguales en una página: lo común, una tabla con lo que las separa y sus confusiones juntas
+  function parejaPage(cfg) {
+    const [a, b] = cfg.ids.map(id => BY[id]);
+    const p = newPage("comestibles", "sp st-comestible edible pareja");
+    cfg.ids.forEach(id => (PAGE_OF[id] = p));
+    const fotos = cfg.fotos.map(([id, g, pie]) => ({ ...((BY[id].fotos || []).find(f => f.g === g) || BY[id].fotos[0]), pie }));
+    fotos.forEach(f => EXTRA.push([cfg.nombre, f]));
+    const mesesU = [...new Set([...(a.fenologia?.meses || []), ...(b.fenologia?.meses || [])])];
+    const alts = [a, b].map(e => e.distribucion?.altitud).filter(x => x && x.max != null);
+    const alt = alts.length ? `<span class="fct alt">${ICON.monte}${Math.min(...alts.map(x => x.min ?? 0))}–${Math.max(...alts.map(x => x.max))} m</span>` : "";
+    const him = a.caracteres?.himenoforo;
+    const facts = `<div class="facts">${meses(mesesU)}
+      ${him ? `<span class="fct">${ICON[HIM_ICON[him] || "altres"]}${esc((V.himenoforo[him] || him).split(/[ (]/)[0])}</span>` : ""}
+      <span class="fct no">Sin anillo</span><span class="fct no">Sin volva</span><span class="fct hab">${ICON.pineda}</span>${alt}</div>`;
+    const tabla = `<table class="cmp"><tr><th></th><th>${esc(titulo(a))}</th><th>${esc(titulo(b))}</th></tr>${cfg.filas.map(([k, x, y]) => `<tr><th>${esc(k)}</th><td>${esc(x)}</td><td>${esc(y)}</td></tr>`).join("")}</table>`;
+    const vistos = new Set();
+    const confs = [...(a.confusiones || []), ...(b.confusiones || [])]
+      .filter(c => !cfg.ids.includes(c.id) && !vistos.has(c.id || c.nombre) && vistos.add(c.id || c.nombre))
+      .sort((x, y) => SEV[x.peligro] - SEV[y.peligro]).slice(0, 3);
+    p.insertAdjacentHTML("beforeend", `
+      <header class="sp-head">
+        <div class="kick"><span class="pill">Comestibles</span>${dots(2)}<b class="dif">Media</b><span class="q">esclatasang · rovelló d'obaga</span></div>
+        <h1 class="name">${esc(cfg.nombre)}</h1>
+        <p class="lat">${cfg.lat}</p>
+        <p class="lede">${esc(cfg.lede)}</p>
+      </header>
+      ${photosHTML(fotos)}
+      ${facts}
+      <div class="txt">${tabla}
+        <div class="checks"><h3>Los dos</h3><ul>${cfg.claves.map(c => `<li>${esc(c)}</li>`).join("")}</ul></div>
+        ${confsHTML(confs, true, cfg.ids)}
+        <p class="truc"><span class="lab">Compruebe</span>${esc(cfg.compruebe)}</p></div>
+      ${foot("Comestibles")}`);
+    fit(p, ["tight", ".lede", "dense", quitaUltimo(".conf li"), ".truc", "denser", quitaUltimo(".checks li")], "pareja");
   }
 
   // =========================================================
@@ -510,7 +620,8 @@
     reglasPage();
     mirarPage();
     arbolesPages();
-    GROUPS.comestibles.forEach(fichaPage);
+    // las parejas casi iguales (rovelló y pinetell) van juntas en la página de la primera
+    GROUPS.comestibles.forEach(e => { const pj = EN_PAREJA.get(e.id); if (!pj) fichaPage(e); else if (pj[1] === 0) parejaPage(pj[0]); });
     [...GROUPS.mortales, ...GROUPS.toxicas].forEach(fichaPage);
     sindromesPages();
     const antesDeSOS = book.lastElementChild;
@@ -538,8 +649,55 @@
 
     REPORT.pages = pages.length;
     window.BUILD_REPORT = REPORT;
+    window.libroInfo = () => libroInfo(pages);
     document.dispatchEvent(new CustomEvent("llibre-llest"));
     document.body.dataset.ready = "1";
+  }
+
+  // Para leer el libro en la web (extra/lector.js): dónde se puede tocar en cada página y adónde lleva,
+  // qué fichas hay en cada página y el índice. Las posiciones van en fracciones de la página (0–1).
+  // Se saca con el cuaderno abierto en pantalla (setas.html): window.libroInfo()
+  function libroInfo(pages) {
+    const num = p => +p.dataset.n;
+    const r3 = x => Math.round(x * 1000) / 1000;
+    const inicio = {};
+    pages.forEach(p => { const s = p.dataset.sec; if (s && !inicio[s]) inicio[s] = num(p); });
+    const destDe = ref => (ref && PAGE_OF[ref.dataset.ref] ? num(PAGE_OF[ref.dataset.ref]) : 0);
+    const out = { n: pages.length, l: {}, f: {}, i: [] };
+    pages.forEach(p => {
+      const n = num(p), pr = p.getBoundingClientRect(), L = [], hechos = new Set();
+      const pon = (el, dest) => {
+        if (!dest || dest === n) return;
+        const r = el.getBoundingClientRect();
+        if (r.width && r.height) L.push([r3((r.left - pr.left) / pr.width), r3((r.top - pr.top) / pr.height), r3(r.width / pr.width), r3(r.height / pr.height), dest]);
+      };
+      // cada seta con la que se confunde (foto, nombre y texto) lleva a su página
+      p.querySelectorAll(".conf li").forEach(li => { const ref = li.querySelector(".ref[data-ref]"); if (ref) { hechos.add(ref); pon(li, destDe(ref)); } });
+      // en «Árboles y sus setas»: el nombre con su número
+      p.querySelectorAll(".nm").forEach(nm => { const ref = nm.querySelector(".ref[data-ref]"); if (ref) { hechos.add(ref); pon(nm, destDe(ref)); } });
+      p.querySelectorAll(".ref[data-ref]").forEach(ref => { if (!hechos.has(ref)) pon(ref, destDe(ref)); });
+      // la pestaña del margen lleva al principio de su sección; en la portada, «comestibles», «mortales», «tóxicas»
+      const tab = p.querySelector(".tab");
+      if (tab && p.dataset.sec) pon(tab, inicio[p.dataset.sec]);
+      p.querySelectorAll(".cv-stats span").forEach(sp => pon(sp, inicio[sp.classList.contains("st-comestible") ? "comestibles" : sp.classList.contains("st-mortal") ? "mortales" : "toxicas"]));
+      if (L.length) out.l[n] = L;
+    });
+    Object.entries(PAGE_OF).forEach(([id, p]) => { const n = num(p); (out.f[n] = out.f[n] || []).push(id); });
+    const SECN = { comestibles: "Comestibles", mortales: "Mortales", toxicas: "Tóxicas" };
+    let sec = "";
+    pages.forEach(p => {
+      const n = num(p);
+      if (p.classList.contains("cover")) { out.i.push([n, "Portada", 0]); return; }
+      const h = p.querySelector(".sp-head .name");
+      if (h) {
+        if (p.dataset.sec !== sec) { sec = p.dataset.sec; out.i.push([n, SECN[sec] || sec, 0]); }
+        out.i.push([n, h.textContent.trim(), 1, "", (out.f[n] || [])[0] || ""]);
+        return;
+      }
+      const pt = p.querySelector(".pt"), kick = p.querySelector(".kicker");
+      if (pt && !/continuaci/i.test(kick ? kick.textContent : "")) { sec = p.dataset.sec; out.i.push([n, pt.textContent.trim(), 0]); }
+    });
+    return out;
   }
 
   const fonts = [

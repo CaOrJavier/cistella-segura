@@ -1,6 +1,6 @@
 /* Quiz de setas · Cistella Segura
    Usa los mismos datos y fotos que la web: ../datos/db.js (en catalán, i18n.js ya lo ha traducido),
-   ../datos/breve.js (las 41 del cuaderno) y ../fotos/.
+   ../datos/breve.js (las del cuaderno) y ../fotos/.
    Modos: ¿Qué seta es? (foto → nombre), ¿Se come? (foto → comestible, no se come, tóxica o mortal),
    No las confundas (dos fotos que se parecen: ¿cuál es cuál?), Árboles (hoja, tronco o forma → cuál) y Mezcla.
    Guarda en el navegador los aciertos y fallos de cada seta: las que más se fallan salen más. */
@@ -33,7 +33,7 @@
       m_conf: "No las confundas", m_conf_d: "Dos setas que se parecen: ¿cuál es cuál?",
       m_arbol: "Árboles", m_arbol_d: "Por la hoja, el tronco o la forma.",
       m_mix: "Mezcla", m_mix_d: "Un poco de todo.",
-      m_repaso: "Repaso", setas: "Setas", s41: "Las 41 del cuaderno", s79: "Las 79 esenciales", todas: "Todas ({n})",
+      m_repaso: "Repaso", setas: "Setas", s41: "Las {n} del cuaderno", s79: "Las 79 esenciales", todas: "Todas ({n})",
       nivel: "Nivel", facil: "Fácil", medio: "Medio", experto: "Experto",
       facil_d: "Fotos claras y opciones muy distintas.", medio_d: "Fotos de joven y de detalle; opciones parecidas.",
       experto_d: "Fotos difíciles; en «¿Qué seta es?» escribes el nombre.",
@@ -65,7 +65,7 @@
       m_conf: "No els confonguis", m_conf_d: "Dos bolets que s'assemblen: quin és quin?",
       m_arbol: "Arbres", m_arbol_d: "Per la fulla, el tronc o la forma.",
       m_mix: "Barreja", m_mix_d: "Una mica de tot.",
-      m_repaso: "Repàs", setas: "Bolets", s41: "Els 41 del quadern", s79: "Els 79 essencials", todas: "Tots ({n})",
+      m_repaso: "Repàs", setas: "Bolets", s41: "Els {n} del quadern", s79: "Els 79 essencials", todas: "Tots ({n})",
       nivel: "Nivell", facil: "Fàcil", medio: "Mitjà", experto: "Expert",
       facil_d: "Fotos clares i opcions molt diferents.", medio_d: "Fotos de jove i de detall; opcions semblants.",
       experto_d: "Fotos difícils; a «Quin bolet és?» escrius el nom.",
@@ -283,7 +283,7 @@
         <div class="q-dom"><span>${esc(t("dominas", { n: dom, t: pool.length }))}</span><span class="q-barra"><i style="width:${pool.length ? Math.round((100 * dom) / pool.length) : 0}%"></i></span></div>
       </div>
       <div class="q-opciones">
-        <div class="q-op"><span class="q-op-t">${esc(t("setas"))}</span>${seg(t("setas"), P.scope, [["s41", t("s41")], ["s79", t("s79")], ["todas", t("todas", { n: ESP.length })]])}</div>
+        <div class="q-op"><span class="q-op-t">${esc(t("setas"))}</span>${seg(t("setas"), P.scope, [["s41", t("s41", { n: POOL.s41.length })], ["s79", t("s79")], ["todas", t("todas", { n: ESP.length })]])}</div>
         <div class="q-op"><span class="q-op-t">${esc(t("nivel"))}</span>${seg(t("nivel"), P.nivel, [["facil", t("facil")], ["medio", t("medio")], ["experto", t("experto")]])}<small class="q-op-d">${esc(t(P.nivel + "_d"))}</small></div>
       </div>
       <h2 class="q-h">${esc(t("eligeModo"))}</h2>
