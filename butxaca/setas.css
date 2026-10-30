@@ -159,7 +159,13 @@
 .cmp tr:first-child th { font-family: var(--display); font-size: 7.4pt; font-weight: 800; color: var(--ok); border-bottom: .35mm solid var(--ok); }
 .cmp th:first-child { width: 11mm; font-size: 5pt; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .cmp tr:last-child th, .cmp tr:last-child td { border-bottom: 0; }
-.pareja .checks h3 { color: var(--ok); }
+.pareja.edible .checks h3 { color: var(--ok); }
+/* parejas de tóxicas: la tabla con el color de su sección */
+.pareja:not(.edible) .cmp tr:first-child th { color: var(--st); border-bottom-color: var(--st); }
+/* nombre largo («Trompeta de la mort y camagroc»): letra algo menor para que quepa en una línea */
+.pareja h1.name.largo { font-size: 15.5pt; }
+/* dos setas en una hoja: fotos algo más bajas para que quepa el texto de las dos */
+.pareja.tight .ph { min-height: 27mm; }
 /* los árboles se reparten por toda la altura de la página: sin hueco en blanco abajo */
 .flow.reparte { flex: 1 1 auto; display: flex; flex-direction: column; }
 .flow.reparte > .bosc { flex: 1 1 auto; align-content: center; }

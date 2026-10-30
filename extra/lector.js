@@ -35,7 +35,7 @@
   const TACTIL = window.matchMedia && matchMedia("(hover: none)").matches;
 
   const LIBROS = {
-    bolsillo: { tit: "Setas esenciales · cuaderno de bolsillo", sub: CA ? "60 pàgines · 54 bolets" : "60 páginas · 54 setas", n: 60,
+    bolsillo: { tit: "Setas esenciales · cuaderno de bolsillo", sub: CA ? "56 pàgines · 54 bolets" : "56 páginas · 54 setas", n: 56,
       pdf: "offline/setas-esenciales-bolsillo.pdf", ed: "es", otra: "butxaca" },
     butxaca: { tit: "Cistella Segura · quadern de butxaca", sub: CA ? "76 pàgines · 50 bolets" : "76 páginas · 50 setas · en catalán", n: 76,
       pdf: "offline/cistella-segura-butxaca.pdf", ed: "ca", otra: "bolsillo" },

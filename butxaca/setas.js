@@ -26,9 +26,11 @@
   const BREVE = window.BREVE;
   // Setas casi iguales que van juntas en una sola página, con sus pequeñas diferencias
   // (fotos: [especie, foto (ruta g), pie corto]; filas: [qué, la primera, la segunda])
+  // (bolsillo: solo en el cuaderno de bolsillo, para que quepan dos setas por hoja; en la guía siguen por separado)
   const PAREJAS = [{
     ids: ["lactarius-sanguifluus", "lactarius-deliciosus"],
     nombre: "Rovelló y pinetell",
+    q: "esclatasang · rovelló d'obaga", hab: "Bajo pinos",
     lat: "<i>Lactarius sanguifluus</i> y <i>L. deliciosus</i> · níscalos, rebollones",
     lede: "Casi iguales y los dos comestibles excelentes. Lo que los separa es el color del látex al cortarlos.",
     fotos: [["lactarius-sanguifluus", "fotos/g/db970a74779d.jpg", "Rovelló: naranja vinoso, con pocas zonas."],
@@ -40,7 +42,70 @@
     claves: ["Láminas que se manchan de verde al tocarlas.", "Pie corto y hueco, con hoyuelos más oscuros.",
       "Látex de color al cortar: si es blanco, descártelo.", "Siempre bajo pinos."],
     compruebe: "Corte el pie y mire el color del látex en el primer momento."
-  }];
+  }, {
+    bolsillo: true,
+    ids: ["craterellus-cornucopioides", "craterellus-lutescens"],
+    nombre: "Trompeta de la mort y camagroc", cols: ["Trompeta de la mort", "Camagroc"],
+    q: "trompeta · rossinyol de pi",
+    lat: "<i>Craterellus cornucopioides</i> y <i>C. lutescens</i> · trompeta de los muertos, angula de monte",
+    lede: "Huecas, en embudo y sin láminas; las dos, muy apreciadas.",
+    fotos: [["craterellus-cornucopioides", "fotos/g/fed8d2eb141c.jpg", "Trompeta de la mort: negra, en grupo."],
+      ["craterellus-lutescens", "fotos/g/0c352230905f.jpg", "Camagroc: pie amarillo y sombrero pardo."],
+      ["craterellus-lutescens", "fotos/g/2f73c4a6b70e.jpg", "Por debajo, liso o con venas bajas."]],
+    filas: [["Color", "Negra o gris muy oscuro, toda ella", "Sombrero pardo; pie amarillo anaranjado vivo"],
+      ["Por debajo", "Gris ceniza, liso o apenas arrugado", "Rosado anaranjado o amarillo, con venas muy bajas"],
+      ["Dónde", "Hojarasca húmeda de hayedos, encinares y castañares", "Musgo húmedo de pinares y abetales, cerca del agua"]],
+    claves: ["Sin láminas: por debajo, lisas o con venas muy bajas.", "Huecas hasta abajo, en forma de embudo o trompeta.",
+      "Carne delgada y elástica.", "Salen en grupo, a menudo muchas juntas."],
+    compruebe: "Mire por debajo: si tiene láminas finas y apretadas, no es ninguna de las dos."
+  }, {
+    bolsillo: true,
+    ids: ["hygrophorus-latitabundus", "hygrophorus-russula"],
+    nombre: "Llenega negra y carlet", cols: ["Llenega negra", "Carlet"],
+    q: "llenega",
+    lat: "<i>Hygrophorus latitabundus</i> y <i>H. russula</i> · babosa negra",
+    lede: "Del mismo grupo y las dos muy buenas: láminas blancas, como de cera.",
+    fotos: [["hygrophorus-latitabundus", "fotos/g/f446747575f3.jpg", "Llenega negra: oscura, brillante y viscosa."],
+      ["hygrophorus-russula", "fotos/g/49979ba7f94f.jpg", "Carlet: rosa con manchas vinosas."],
+      ["hygrophorus-latitabundus", "fotos/g/2438fe643abf.jpg", "Láminas blancas, espaciadas, como de cera."]],
+    filas: [["Sombrero", "Pardo oscuro a casi negro, con mucha baba", "Rosa vinoso con manchas, poco viscoso"],
+      ["Láminas", "Blancas, espaciadas", "Blancas, se manchan de vinoso"],
+      ["Pie", "Abajo, con una funda de baba gris", "Robusto, con manchas vinosas"],
+      ["Dónde", "Bajo pinos, en suelo calizo", "Bajo encinas y robles"]],
+    claves: ["Láminas blancas, gruesas y céreas: como de cera al tocarlas.", "Esporada blanca.", "Salen tarde: de octubre a diciembre."],
+    compruebe: "Láminas blancas: si con la edad se vuelven rosa salmón o pardo herrumbre, no es ninguna de las dos."
+  }, {
+    bolsillo: true,
+    ids: ["lactarius-zonarius", "lactarius-chrysorrheus"],
+    nombre: "Enganyapastors", cols: ["Enganyapastors", "De llet groga"],
+    q: "pinetell bord · rovelló bord",
+    lat: "<i>Lactarius zonarius</i> y <i>L. chrysorrheus</i> (enganyapastors de llet groga)",
+    lede: "Parecen pinetells, pero su látex es blanco. Los dos son tóxicos.",
+    fotos: [["lactarius-zonarius", "fotos/g/d09e00f9142d.jpg", "Enganyapastors: zonas como el pinetell."],
+      ["lactarius-chrysorrheus", "fotos/g/ae48bcffefe9.jpg", "De llet groga: látex blanco que amarillea."],
+      ["lactarius-zonarius", "fotos/g/ee3188e47a50.jpg", "Láminas crema, nunca verdes."]],
+    filas: [["Látex", "Blanco, no cambia de color; muy picante", "Blanco que en segundos se vuelve amarillo azufre"],
+      ["Sombrero", "Crema a naranja pálido, con zonas; borde enrollado", "Ocre salmón pálido, con manchas o zonas más oscuras"]],
+    claves: ["Látex BLANCO al cortar (rovelló: rojo vino; pinetell: naranja).", "Láminas crema o rosadas pálidas, que no se manchan de verde.",
+      "Bajo encinas, alcornoques y robles; no bajo pinos."],
+    compruebe: "Corte el pie: si el látex es blanco, descártela."
+  }, {
+    bolsillo: true,
+    ids: ["hygrophoropsis-aurantiaca", "omphalotus-olearius"],
+    nombre: "Falsos rossinyols", cols: ["Fals rossinyol", "Gírgola d'olivera"],
+    q: "rossinyol ataronjat · bolet d'oliu",
+    lat: "<i>Hygrophoropsis aurantiaca</i> y <i>Omphalotus olearius</i> · falso rebozuelo, seta de olivo",
+    lede: "Naranjas como el rossinyol, pero con láminas finas de verdad.",
+    causa: { "hygrophoropsis-aurantiaca": "No comestible: puede sentar mal." },
+    fotos: [["omphalotus-olearius", "fotos/g/fb8831e7a529.jpg", "Gírgola d'olivera: en ramillete sobre un tocón."],
+      ["hygrophoropsis-aurantiaca", "fotos/g/e013bbbc7601.jpg", "Fals rossinyol: pequeño y todo naranja."],
+      ["hygrophoropsis-aurantiaca", "fotos/g/5b1ccc687ace.jpg", "Láminas finas, apretadas y ramificadas."]],
+    filas: [["Tamaño", "Pequeño (2–8 cm), carne delgada y blanda", "Grande (5–15 cm) y carnoso"],
+      ["Cómo sale", "Suelto, en la pinaza o sobre madera podrida de pino", "En ramilletes de pies unidos, sobre tocones y raíces de olivo, encina o castaño"]],
+    claves: ["Láminas verdaderas: finas, apretadas y que bajan por el pie.", "Todo naranja: sombrero, láminas y pie.",
+      "Pase el dedo por debajo: las láminas se separan; los pliegues del rossinyol, no."],
+    compruebe: "Debajo del sombrero: láminas finas, falso; pliegues gruesos y romos, rossinyol."
+  }].filter(c => !(GUIA && c.bolsillo));
   const EN_PAREJA = new Map(PAREJAS.flatMap(c => c.ids.map((id, i) => [id, [c, i]])));
   const ESENCIAL = DB.especies.filter(e => BREVE.especies.includes(e.id) || (GUIA && (e.guias || []).includes("esencial")));
   // en la guía, las que no están en el cuaderno de bolsillo van en media página (dos por página)
@@ -732,9 +797,13 @@
   }
 
   // Dos setas casi iguales en una página: lo común, una tabla con lo que las separa y sus confusiones juntas
+  // (sirve para comestibles y para tóxicas: va en la sección de la más peligrosa de las dos)
   function parejaPage(cfg) {
     const [a, b] = cfg.ids.map(id => BY[id]);
-    const p = newPage("comestibles", "sp st-comestible edible pareja");
+    const ok = comestible(a) && comestible(b);
+    const est = EST[[a, b].map(e => e.comestibilidad.cat).sort((x, y) => SEV[x] - SEV[y])[0]];
+    const SECL = { comestibles: "Comestibles", toxicas: "Tóxicas", mortales: "Mortales" };
+    const p = newPage(est.sec, `sp st-${est.st}${ok ? " edible" : ""} pareja`);
     cfg.ids.forEach(id => (PAGE_OF[id] = p));
     const fotos = cfg.fotos.map(([id, g, pie]) => ({ ...((BY[id].fotos || []).find(f => f.g === g) || BY[id].fotos[0]), pie }));
     fotos.forEach(f => EXTRA.push([cfg.nombre, f]));
@@ -742,29 +811,48 @@
     const alts = [a, b].map(e => e.distribucion?.altitud).filter(x => x && x.max != null);
     const alt = alts.length ? `<span class="fct alt">${Math.min(...alts.map(x => x.min ?? 0))}–${Math.max(...alts.map(x => x.max))} m de altitud</span>` : "";
     const him = a.caracteres?.himenoforo;
+    const anillo = a.caracteres?.anillo || b.caracteres?.anillo, volva = a.caracteres?.volva || b.caracteres?.volva;
     const facts = `<div class="facts">${meses(mesesU)}
       ${him ? `<span class="fct">${ICON[HIM_ICON[him] || "altres"]}${esc((V.himenoforo[him] || him).split(/[ (]/)[0])}</span>` : ""}
-      <span class="fct no">Sin anillo</span><span class="fct no">Sin volva</span><span class="fct hab">Bajo pinos</span>${alt}</div>`;
-    const tabla = `<table class="cmp"><tr><th></th><th>${esc(titulo(a))}</th><th>${esc(titulo(b))}</th></tr>${cfg.filas.map(([k, x, y]) => `<tr><th>${esc(k)}</th><td>${esc(x)}</td><td>${esc(y)}</td></tr>`).join("")}</table>`;
+      <span class="fct${anillo ? "" : " no"}">${anillo ? "Con anillo" : "Sin anillo"}</span><span class="fct${volva ? " alarm" : " no"}">${volva ? "Con volva" : "Sin volva"}</span>${cfg.hab ? `<span class="fct hab">${esc(cfg.hab)}</span>` : ""}${alt}</div>`;
+    const cols = cfg.cols || [titulo(a), titulo(b)];
+    const tabla = `<table class="cmp"><tr><th></th><th>${esc(cols[0])}</th><th>${esc(cols[1])}</th></tr>${cfg.filas.map(([k, x, y]) => `<tr><th>${esc(k)}</th><td>${esc(x)}</td><td>${esc(y)}</td></tr>`).join("")}</table>`;
     const vistos = new Set();
     const confs = [...(a.confusiones || []), ...(b.confusiones || [])]
       .filter(c => !cfg.ids.includes(c.id) && !vistos.has(c.id || c.nombre) && vistos.add(c.id || c.nombre))
-      .sort((x, y) => SEV[x.peligro] - SEV[y.peligro]).slice(0, 3);
+      .sort((x, y) => (ok ? SEV[x.peligro] - SEV[y.peligro] : SEV[y.peligro] - SEV[x.peligro])).slice(0, 3);
+    // la más difícil de las dos
+    const [dn, dt] = [a, b].map(e => DIF[e.identificacion?.dificultad] || [2, "Media"]).sort((x, y) => y[0] - x[0])[0];
+    // tóxicas: la gravedad (una línea si es la misma; si no, una por seta, la peor primero) y el síndrome de la peor
+    let tox = "";
+    if (!ok) {
+      const g = [a, b].map((e, i) => ({ e, lab: cols[i], g: gravedad(e), c: (cfg.causa || {})[e.id] || causa(e) })).sort((x, y) => y.g[0] - x.g[0]);
+      const linea = (lab, x) => `<p class="grav"><span class="lab">${esc(lab)}</span><span class="gd">${[1, 2, 3].map(i => `<i class="${i <= x.g[0] ? "on" : ""}"></i>`).join("")}</span><b>${x.g[1]}.</b> ${esc(x.c)}</p>`;
+      const igual = g[0].g[1] === g[1].g[1] && g[0].c === g[1].c;
+      const t = g.map(x => x.e.toxicidad).find(Boolean);
+      tox = `<div class="perill">${igual ? linea("Gravedad", g[0]) : g.map(x => linea(x.lab, x)).join("")}${t ? `<p><span class="lab">${esc(t.sindrome)}</span>Síntomas ${esc(t.latencia)}. ${esc(primera(t.sintomas, 170))}</p>` : ""}</div>`;
+    }
+    const largo = cfg.nombre.length > 20 ? " largo" : "";
     p.insertAdjacentHTML("beforeend", `
       <header class="sp-head">
-        <div class="kick"><span class="pill">Comestibles</span>${dots(2)}<b class="dif">Media</b><span class="q">esclatasang · rovelló d'obaga</span></div>
-        <h1 class="name">${esc(cfg.nombre)}</h1>
+        <div class="kick"><span class="pill">${SECL[est.sec]}</span>${dots(dn)}<b class="dif">${dt}</b>${cfg.q ? `<span class="q">${esc(cfg.q)}</span>` : ""}</div>
+        <h1 class="name${largo}">${esc(cfg.nombre)}</h1>
         <p class="lat">${cfg.lat}</p>
         <p class="lede">${esc(cfg.lede)}</p>
       </header>
       ${photosHTML(fotos)}
       ${facts}
       <div class="txt">${tabla}
-        <div class="checks"><h3>Los dos</h3><ul>${cfg.claves.map(c => `<li>${esc(c)}</li>`).join("")}</ul></div>
-        ${confsHTML(confs, true, cfg.ids)}
+        <div class="checks${ok ? "" : " alarm"}"><h3>${ok ? "Los dos" : "Rasgos de alarma de los dos"}</h3><ul>${cfg.claves.map(c => `<li>${esc(c)}</li>`).join("")}</ul></div>
+        ${tox}
+        ${confsHTML(confs, ok, cfg.ids)}
         <p class="truc"><span class="lab">Compruebe</span>${esc(cfg.compruebe)}</p></div>
-      ${foot("Comestibles")}`);
-    fit(p, ["tight", ".lede", "dense", quitaUltimo(".conf li"), ".truc", "denser", quitaUltimo(".checks li")], "pareja");
+      ${foot(SECL[est.sec])}`);
+    // la frase de arriba explica por qué van juntas y «Compruebe» es lo práctico: se quitan lo último
+    fit(p, ["tight", "dense", quitaUltimo(".conf li"), "denser", ".lede", quitaUltimo(".checks li"), ".truc"], "pareja " + cfg.nombre);
+    // si al quitar algo después ha quedado sitio, vuelve la frase de arriba
+    const h = p.querySelector(".sp-head");
+    if (!h.querySelector(".lede")) { h.insertAdjacentHTML("beforeend", `<p class="lede">${esc(cfg.lede)}</p>`); if (overflows(p)) h.querySelector(".lede").remove(); }
   }
 
   // =========================================================
@@ -877,8 +965,8 @@
       creditosPages();
     } else {
       // las parejas casi iguales (rovelló y pinetell) van juntas en la página de la primera
-      GROUPS.comestibles.forEach(e => { const pj = EN_PAREJA.get(e.id); if (!pj) fichaPage(e); else if (pj[1] === 0) parejaPage(pj[0]); });
-      [...GROUPS.toxicas, ...GROUPS.mortales].forEach(fichaPage);
+      // (y las otras parejas, también en tóxicas: dos setas por hoja)
+      ORDEN.forEach(e => { const pj = EN_PAREJA.get(e.id); if (!pj) fichaPage(e); else if (pj[1] === 0) parejaPage(pj[0]); });
       arbolesPages();
       // sin síndromes ni «Llame ahora» (los teléfonos van en la portada): el índice cierra el cuaderno
       // y ocupa lo que falte para llegar a un múltiplo de 4 (al menos una página)
