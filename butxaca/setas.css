@@ -9,8 +9,17 @@
 /* fitxa: anillo, volva y hábitat */
 .fct.no { color: var(--faint); }
 .fct.alarm { color: var(--deadly); font-weight: 800; }
-.fct.hab { gap: .5mm; }
-.fct.hab svg { fill: var(--muted); }
+/* dónde sale, en palabras (rovelló y pinetell) */
+.fct.hab { font-weight: 700; color: var(--ink-2); }
+
+/* índice: dos columnas que se llenan de arriba abajo (filas iguales hasta el pie de la página) */
+.flow.ixg-lista { flex: 1 1 auto; min-height: 0; height: 0; display: grid; grid-auto-flow: column; grid-template-columns: 1fr 1fr; column-gap: 4.5mm; }
+.ixg-lista .ixg { align-items: flex-end; padding-bottom: .25mm; }
+.ixg { display: flex; flex-direction: row; justify-content: space-between; align-items: baseline; gap: 1.5mm; font-size: 6pt; line-height: 1.35; margin: 0; break-inside: avoid; border-bottom: .15mm dotted var(--line); }
+.ixg .ref { font-family: var(--display); font-style: italic; font-weight: 700; color: var(--accent); }
+.ixg.cient span { color: var(--ink-2); }
+.ixg-lista + .cred-linea { margin-top: 2.4mm; }
+.pt + .flow.ixg-lista { margin-top: 1.4mm; }
 .kick .dif { font-weight: 700; margin-left: -.6mm; }
 .st-mortal .sp-head .lvl i { border-color: var(--st); }
 .st-mortal .sp-head .lvl i.on { background: var(--st); }

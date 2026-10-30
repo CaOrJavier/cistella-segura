@@ -34,11 +34,6 @@
 .glo { font-size: 6pt; line-height: 1.3; margin: 0 0 1mm; break-inside: avoid; }
 .glo strong { font-weight: 800; }
 .cr-lista { column-fill: balance; }
-/* índice: dos columnas que se llenan de arriba abajo (filas iguales hasta el pie de la página) */
-.flow.ixg-lista { flex: 1 1 auto; min-height: 0; height: 0; display: grid; grid-auto-flow: column; grid-template-columns: 1fr 1fr; column-gap: 4.5mm; }
-.ixg-lista .ixg { align-items: flex-end; padding-bottom: .25mm; }
-.ixg { display: flex; flex-direction: row; justify-content: space-between; align-items: baseline; gap: 1.5mm; font-size: 6pt; line-height: 1.35; margin: 0; break-inside: avoid; border-bottom: .15mm dotted var(--line); }
-.ixg .ref { font-family: var(--display); font-style: italic; font-weight: 700; color: var(--accent); }
-.ixg.cient span { color: var(--ink-2); }
+/* el índice, en setas.css (también lo lleva el cuaderno de bolsillo) */
 .cr { font-size: 5.4pt; line-height: 1.26; margin: 0 0 .8mm; break-inside: avoid; color: var(--ink-2); }
 .cr b { color: var(--ink); font-weight: 800; }

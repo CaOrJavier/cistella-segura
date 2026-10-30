@@ -658,15 +658,15 @@
   const MUESTRAS = {
     // orden de los libros: comestibles, tóxicas, mortales y, al final, árboles y anexos
     bolsillo: { total: 60, pags: [[1, "Portada"], [2, "Las 12 reglas"], [3, "Cómo mirar una seta"], [4, "Rovelló y pinetell: en qué se diferencian"],
-      [7, "Ficha del cep"], [14, "Ficha del ou de reig"], [36, "Ficha del pixacà (tóxica): gravedad y por qué"], [38, "Ficha de la lepiota pudent (tóxica)"],
-      [49, "Ficha de la farinera borda (mortal)"], [57, "Árboles y sus setas, con la hoja y el tronco"], [59, "Síndromes: según cuándo aparecen los síntomas"], [60, "Contraportada: qué hacer ante una intoxicación"]] },
+      [7, "Ficha del cep"], [14, "Ficha del ou de reig"], [26, "Ficha del pollancró: dónde sale, en palabras"], [36, "Ficha del pixacà (tóxica): gravedad y por qué"], [38, "Ficha de la lepiota pudent (tóxica)"],
+      [49, "Ficha de la farinera borda (mortal)"], [57, "Árboles y sus setas, con la hoja y el tronco"], [59, "Índice de todos los nombres"]] },
     esencial: { total: 84, pags: [[1, "Portada"], [2, "Las 12 reglas"], [4, "Rovelló y pinetell: en qué se diferencian"], [8, "Ficha del cep: página entera"],
       [9, "Llora verda y sureny fosc: media página cada una"], [19, "Ficha del ou de reig"], [48, "Ficha del pixacà (tóxica): gravedad y por qué"], [62, "Ficha de la farinera borda (mortal)"],
       [70, "Árboles y sus setas: cinco por página"], [74, "Calendario"], [76, "Síndromes: según cuándo aparecen los síntomas"], [78, "Índice de todos los nombres"]] },
   };
   const LIBROS = [
     { g: "bolsillo", corto: "Cuaderno de bolsillo", uso: "Para llevar al bosque", tit: "Setas esenciales · cuaderno de bolsillo", formato: "60 páginas · A6 (10,5 × 14,8 cm) o A5 (14,8 × 21 cm) · fondo blanco, gasta poca tinta",
-      txt: "Las 54 setas imprescindibles (25 comestibles, 20 tóxicas o no comestibles y 9 mortales): fotos, cómo reconocerla, en qué meses y a qué altura sale, su olor o sabor si es peculiar y, con una foto pequeña, con qué se confunde. En las tóxicas, por qué lo son y cuánto. El rovelló y el pinetell van juntos, con sus diferencias. Con los árboles principales y qué hacer ante una intoxicación. Cabe en el bolsillo." },
+      txt: "Las 54 setas imprescindibles (25 comestibles, 20 tóxicas o no comestibles y 9 mortales): fotos, cómo reconocerla, dónde, en qué meses y a qué altura sale, su olor o sabor si es peculiar y, con una foto pequeña, con qué se confunde. En las tóxicas, por qué lo son y cuánto. El rovelló y el pinetell van juntos, con sus diferencias. Con los árboles principales y el índice de todos los nombres; los teléfonos de urgencias, en la portada. Cabe en el bolsillo." },
     { g: "esencial", corto: "Guía esencial", uso: "Para estudiar en casa", tit: "Setas comestibles esenciales de Cataluña", formato: "84 páginas · A5 (14,8 × 21 cm)",
       txt: "80 setas a fondo, cada una en una página como mucho: las 54 del cuaderno de bolsillo en página entera (cómo reconocerla, cómo es, dónde y cuándo sale, con qué se confunde y, en las tóxicas, por qué y cuánto) y otras 26 en media página. Con los árboles, el calendario, los síndromes, un glosario y el índice de todos los nombres." },
   ];

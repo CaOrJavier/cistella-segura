@@ -275,6 +275,18 @@
     if ((eco.sustrato || []).some(s => /madera/.test(s))) out.push(["fusta", "madera"]);
     return out;
   }
+  // Dónde sale, en palabras (antes eran iconos que no se entendían):
+  // «Con pino silvestre, laricio y rodeno. Sobre madera. Al pie de pinos grandes…»
+  function dondeHTML(e, maxArb, maxTxt) {
+    const eco = e.ecologia || {};
+    const arb = arboles(e, maxArb);
+    const h = habitatIcons(e).map(x => x[1]);
+    const otros = [h.includes("prados") && "en prados", h.includes("madera") && "sobre madera"].filter(Boolean);
+    const donde = primera(eco.donde_mirar || eco.vegetacion, maxTxt);
+    if (!arb && !otros.length && !donde) return "";
+    // si la página no cabe, lo primero que se quita es el detalle (.d-mas), antes que la frase de arriba o «Compruebe»
+    return `<p class="donde"><span class="lab">Dónde</span>${arb ? `Con ${esc(arb)}. ` : ""}${otros.length ? `<b>${cap(lista(otros))}.</b> ` : ""}${donde ? `<span class="d-mas">${esc(donde)}</span>` : ""}</p>`;
+  }
 
   // =========================================================
   // PORTADA
@@ -497,7 +509,7 @@
   function altitud(e) {
     const a = e.distribucion?.altitud;
     if (!a || a.max == null) return "";
-    return `<span class="fct alt">${ICON.monte}${a.min ?? 0}–${a.max} m</span>`;
+    return `<span class="fct alt">${a.min ?? 0}–${a.max} m de altitud</span>`;
   }
   // Foto pequeña de una seta con la que se confunde (si está en la base de datos con foto)
   function fotoConf(c) {
@@ -520,12 +532,9 @@
       ${him ? `<span class="fct">${ICON[HIM_ICON[him] || "altres"]}${esc((V.himenoforo[him] || him).split(/[ (]/)[0])}</span>` : ""}
       <span class="fct${car.anillo ? "" : " no"}">${car.anillo ? "Con anillo" : "Sin anillo"}</span>
       <span class="fct${car.volva ? " alarm" : " no"}">${car.volva ? "Con volva" : "Sin volva"}</span>
-      <span class="fct hab">${habitatIcons(e).map(([ic]) => ICON[ic]).join("")}</span>${altitud(e)}</div>`;
+      ${altitud(e)}</div>`;
     const claves = (e.identificacion?.claves || []);
     const clavesHTML = claves.length ? `<div class="checks${ok ? "" : " alarm"}"><h3>${ok ? "Cómo reconocerla" : "Rasgos de alarma"}</h3><ul>${claves.map(c => `<li>${esc(c)}</li>`).join("")}</ul></div>` : "";
-    const arb = arboles(e);
-    const donde = primera(e.ecologia?.donde_mirar || e.ecologia?.vegetacion, 150);
-    const dondeHTML = (arb || donde) ? `<p class="donde"><span class="lab">Dónde</span>${arb ? `Con ${esc(arb)}. ` : ""}${esc(donde)}</p>` : "";
     const t = e.toxicidad;
     // las que no se comen: gravedad y por qué, y el síndrome con sus síntomas
     const tox = ok ? "" : `<div class="perill">${gravedadHTML(e)}${t ? `<p><span class="lab">${esc(t.sindrome)}</span>Síntomas ${esc(t.latencia)}. ${esc(primera(t.sintomas, 170))}</p>` : ""}</div>`;
@@ -544,12 +553,32 @@
       </header>
       ${photosHTML(PICK[e.id])}
       ${facts}
-      <div class="txt">${clavesHTML}${GUIA ? descripcionHTML(e) : ""}${olorSabor(e, ok)}${tox}${dondeHTML}${GUIA ? cuandoHTML(e) : ""}${confsHTML(GUIA ? [...(e.confusiones || [])].sort((a, b) => (ok ? SEV[a.peligro] - SEV[b.peligro] : SEV[b.peligro] - SEV[a.peligro])).slice(0, 4) : confs, ok, [e.id])}${truc}</div>
+      <div class="txt">${clavesHTML}${GUIA ? descripcionHTML(e) : ""}${olorSabor(e, ok)}${tox}${dondeHTML(e, 5, 150)}${GUIA ? cuandoHTML(e) : ""}${confsHTML(GUIA ? [...(e.confusiones || [])].sort((a, b) => (ok ? SEV[a.peligro] - SEV[b.peligro] : SEV[b.peligro] - SEV[a.peligro])).slice(0, 4) : confs, ok, [e.id])}${truc}</div>
       ${foot(label)}`);
     // en la guía, si no cabe, primero se acorta la descripción
     const antes = GUIA ? [".cuando", quitaUno(".desc p"), quitaUno(".conf li"), quitaUno(".desc p"), quitaUno(".desc p"), ".desc"] : [];
-    fit(p, [...antes, "tight", ".lede", "dense", quitaUltimo(".conf li"), ".truc", "denser", quitaUltimo(".checks li"), ".donde"], e.id);
+    const mas = p.querySelector(".d-mas")?.textContent;
+    fit(p, [...antes, "tight", ".lede", "dense", acortaMas, ".d-mas", quitaUltimo(".conf li"), ".truc", "denser", quitaUltimo(".checks li"), ".donde"], e.id);
+    devuelveMas(p, mas);
   }
+  // si al quitar algo más abajo ha quedado sitio, vuelve el detalle de «Dónde» (entero o acortado)
+  function devuelveMas(el, mas) {
+    const d = el.querySelector(".donde");
+    if (!mas || !d) return;
+    const sobra = () => el.scrollHeight > el.clientHeight + 1;
+    let m = d.querySelector(".d-mas");
+    if (m && m.textContent === mas) return;
+    const previo = m ? m.textContent : null;
+    if (!m) { d.insertAdjacentHTML("beforeend", `<span class="d-mas"></span>`); m = d.querySelector(".d-mas"); }
+    m.textContent = mas;
+    if (sobra()) acortaMas(el);
+    if (sobra()) { if (previo) m.textContent = previo; else m.remove(); }
+  }
+  // el detalle de «Dónde», solo hasta el primer «;» («Bordes de bosque, claros y taludes; en hayedos…» → «Bordes de bosque, claros y taludes.»)
+  const acortaMas = p => p.querySelectorAll(".d-mas").forEach(m => {
+    const t = m.textContent.split(/;|: /)[0].trim().replace(/[.,]$/, "");
+    if (t.length > 12 && t.length < m.textContent.trim().length - 2) m.textContent = t + ".";
+  });
   const quitaUno = sel => p => { const l = p.querySelectorAll(sel); if (l.length) l[l.length - 1].remove(); };
   // guía: cómo es (sombrero, debajo, pie, carne, esporada) y cuándo sale
   function descripcionHTML(e) {
@@ -587,7 +616,6 @@
     const claves = (e.identificacion?.claves || []).slice(0, 3);
     const t = e.toxicidad;
     const tox = ok ? "" : `<div class="perill">${gravedadHTML(e)}${t ? `<p><span class="lab">${esc(t.sindrome)}</span>Síntomas ${esc(t.latencia)}.</p>` : ""}</div>`;
-    const arb = arboles(e, 3), donde = primera(e.ecologia?.donde_mirar || e.ecologia?.vegetacion, 110);
     const confs = [...(e.confusiones || [])].sort((a, b) => (ok ? SEV[a.peligro] - SEV[b.peligro] : SEV[b.peligro] - SEV[a.peligro])).slice(0, 2);
     // la principal y, de segunda, mejor una de detalle o joven que una de vieja
     const fs = PICK[e.id] || [], resto = (e.fotos || []).filter(f => f !== fs[0]);
@@ -600,7 +628,7 @@
           <h1 class="name">${tituloHTML(e)}</h1><p class="lat">${subt.join(" · ")}</p></header>
         ${facts}
         <div class="txt">${claves.length ? `<div class="checks${ok ? "" : " alarm"}"><h3>${ok ? "Cómo reconocerla" : "Rasgos de alarma"}</h3><ul>${claves.map(c => `<li>${esc(c)}</li>`).join("")}</ul></div>` : ""}
-          ${olorSabor(e, ok)}${tox}${(arb || donde) ? `<p class="donde"><span class="lab">Dónde</span>${arb ? `Con ${esc(arb)}. ` : ""}${esc(donde)}</p>` : ""}
+          ${olorSabor(e, ok)}${tox}${dondeHTML(e, 3, 110)}
           ${confsHTML(confs, ok, [e.id])}</div>
       </div></article>`;
   }
@@ -609,7 +637,7 @@
     const label = sec === "comestibles" ? "Comestibles" : sec === "mortales" ? "Mortales" : "Tóxicas";
     p.insertAdjacentHTML("beforeend", `<div class="mitades-in">${lista.map(mediaFicha).join("")}</div>${foot(label)}`);
     lista.forEach(e => (PAGE_OF[e.id] = p));
-    p.querySelectorAll(".media").forEach(m => fitEl(m, ["dense", quitaUno(".conf li"), ".donde", quitaUno(".checks li"), "denser", ".os", quitaUno(".conf li"), quitaUno(".checks li")]));
+    p.querySelectorAll(".media").forEach(m => { const mas = m.querySelector(".d-mas")?.textContent; fitEl(m, ["dense", acortaMas, ".d-mas", quitaUno(".conf li"), ".donde", quitaUno(".checks li"), "denser", ".os", quitaUno(".conf li"), quitaUno(".checks li")]); devuelveMas(m, mas); });
   }
   // una sección de la guía: cada seta del cuaderno en su página; las demás, de dos en dos (si queda una sola, página entera)
   function seccionGuia(lista, sec) {
@@ -655,20 +683,28 @@
     const items = [...d.querySelectorAll("li")].map(li => `<p class="glo">${li.innerHTML}</p>`);
     flowCols(items, anexoPage("Palabras de setero", "Glosario", "", "Anexo · Glosario", "cols glo-lista"), "glosario");
   }
-  function indicePages() {
+  // cuaderno: en las páginas que se le den (para cerrar el libro sin hojas en blanco), con los créditos de las fotos al final
+  function indicePages(paginas) {
     const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
     const ent = [];
     ESENCIAL.forEach(e => {
       const vistos = new Set();
       const pon = (t, cls) => { const k = norm(t); if (!t || vistos.has(k)) return; vistos.add(k); ent.push([k, `<p class="ixg${cls ? " " + cls : ""}"><span>${cls ? `<i>${esc(t)}</i>` : esc(cap(t))}</span>${ref(e.id, true)}</p>`]); };
-      [...e.nombres.ca, ...e.nombres.es].forEach(n => pon(n, ""));
+      // en el cuaderno, el nombre principal en cada idioma (y el científico)
+      const n = paginas ? 1 : 99;
+      [...e.nombres.ca.slice(0, n), ...e.nombres.es.slice(0, n)].forEach(x => pon(x, ""));
       pon(e.nombre, "cient");
     });
     ent.sort((a, b) => a[0].localeCompare(b[0], "es"));
     // en dos columnas, repartido por igual (84 nombres por página como mucho); las filas llenan la altura
-    paginasIguales(ent.map(x => x[1]), Math.ceil(ent.length / 84), anexoPage("Todos los nombres", "Índice", "Nombres en catalán, castellano y científicos (en cursiva), con su página.", "Índice", "ixg-lista"), "índice",
-      (p, n) => (p.querySelector(".flow").style.gridTemplateRows = `repeat(${Math.ceil(n / 2)}, 1fr)`));
+    const k = paginas || Math.ceil(ent.length / 84);
+    paginasIguales(ent.map(x => x[1]), k, anexoPage("Todos los nombres", "Índice", "Nombres en catalán, castellano y científicos (en cursiva), con su página.", "Índice", "ixg-lista"), "índice",
+      (p, n) => {
+        p.querySelector(".flow").style.gridTemplateRows = `repeat(${Math.ceil(n / 2)}, 1fr)`;
+        if (paginas && p === book.lastElementChild && book.querySelectorAll(".ixg-lista").length === k) p.querySelector(".pf").insertAdjacentHTML("beforebegin", CREDITO);
+      });
   }
+  const CREDITO = `<p class="cred-linea">Fotos de iNaturalist y Wikimedia Commons con licencia Creative Commons o de dominio público; el autor y la licencia de cada una, en su ficha de <b>caorjavier.github.io/cistella-segura</b>. Uso personal o sin ánimo de lucro.</p>`;
   function creditosPages() {
     // cada seta con los autores y licencias de sus fotos (el detalle de cada foto, con enlace, en su ficha de la web)
     const porSeta = ESENCIAL.map(e => {
@@ -704,11 +740,11 @@
     fotos.forEach(f => EXTRA.push([cfg.nombre, f]));
     const mesesU = [...new Set([...(a.fenologia?.meses || []), ...(b.fenologia?.meses || [])])];
     const alts = [a, b].map(e => e.distribucion?.altitud).filter(x => x && x.max != null);
-    const alt = alts.length ? `<span class="fct alt">${ICON.monte}${Math.min(...alts.map(x => x.min ?? 0))}–${Math.max(...alts.map(x => x.max))} m</span>` : "";
+    const alt = alts.length ? `<span class="fct alt">${Math.min(...alts.map(x => x.min ?? 0))}–${Math.max(...alts.map(x => x.max))} m de altitud</span>` : "";
     const him = a.caracteres?.himenoforo;
     const facts = `<div class="facts">${meses(mesesU)}
       ${him ? `<span class="fct">${ICON[HIM_ICON[him] || "altres"]}${esc((V.himenoforo[him] || him).split(/[ (]/)[0])}</span>` : ""}
-      <span class="fct no">Sin anillo</span><span class="fct no">Sin volva</span><span class="fct hab">${ICON.pineda}</span>${alt}</div>`;
+      <span class="fct no">Sin anillo</span><span class="fct no">Sin volva</span><span class="fct hab">Bajo pinos</span>${alt}</div>`;
     const tabla = `<table class="cmp"><tr><th></th><th>${esc(titulo(a))}</th><th>${esc(titulo(b))}</th></tr>${cfg.filas.map(([k, x, y]) => `<tr><th>${esc(k)}</th><td>${esc(x)}</td><td>${esc(y)}</td></tr>`).join("")}</table>`;
     const vistos = new Set();
     const confs = [...(a.confusiones || []), ...(b.confusiones || [])]
@@ -797,7 +833,7 @@
       ${alarma ? `<p class="sos-alarma">${esc(hasta(alarma, 230))}</p>` : ""}
       <div class="h3" style="margin-top:auto">Anótelo antes de salir</div>
       ${["Alojamiento", "Centro de salud", "Sociedad micológica", "Dónde aparqué"].map(t => `<div class="wi"><span>${t}</span><i></i></div>`).join("")}
-      <p class="cred-linea">Fotos de iNaturalist y Wikimedia Commons con licencia Creative Commons o de dominio público; el autor y la licencia de cada una, en su ficha de <b>caorjavier.github.io/cistella-segura</b>. Uso personal o sin ánimo de lucro.</p>
+      ${CREDITO}
       ${foot("SOS")}`);
     fit(p, ["dense", ".sos-alarma", p2 => p2.querySelectorAll(".sos-f li").forEach(li => { const b = li.querySelector("b"); li.innerHTML = b ? b.outerHTML : li.innerHTML; })], "sos");
   }
@@ -844,10 +880,12 @@
       GROUPS.comestibles.forEach(e => { const pj = EN_PAREJA.get(e.id); if (!pj) fichaPage(e); else if (pj[1] === 0) parejaPage(pj[0]); });
       [...GROUPS.toxicas, ...GROUPS.mortales].forEach(fichaPage);
       arbolesPages();
-      sindromesPages();
+      // sin síndromes ni «Llame ahora» (los teléfonos van en la portada): el índice cierra el cuaderno
+      // y ocupa lo que falte para llegar a un múltiplo de 4 (al menos una página)
+      indicePages(((4 - ((book.children.length + 1) % 4)) % 4) + 1);
     }
     const antesDeSOS = book.lastElementChild;
-    sosPage();
+    if (GUIA) sosPage();
 
     // si hace falta, páginas de notas para que el total sea múltiplo de 4 (antes de la contraportada)
     const extra = (4 - (book.children.length % 4)) % 4;
@@ -896,7 +934,7 @@
       // cada seta con la que se confunde (foto, nombre y texto) lleva a su página
       p.querySelectorAll(".conf li").forEach(li => { const ref = li.querySelector(".ref[data-ref]"); if (ref) { hechos.add(ref); pon(li, destDe(ref)); } });
       // en «Árboles y sus setas»: el nombre con su número
-      p.querySelectorAll(".nm").forEach(nm => { const ref = nm.querySelector(".ref[data-ref]"); if (ref) { hechos.add(ref); pon(nm, destDe(ref)); } });
+      p.querySelectorAll(".nm, .ixg").forEach(nm => { const ref = nm.querySelector(".ref[data-ref]"); if (ref) { hechos.add(ref); pon(nm, destDe(ref)); } });
       p.querySelectorAll(".ref[data-ref]").forEach(ref => { if (!hechos.has(ref)) pon(ref, destDe(ref)); });
       // la pestaña del margen lleva al principio de su sección; en la portada, «comestibles», «mortales», «tóxicas»
       const tab = p.querySelector(".tab");
