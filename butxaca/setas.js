@@ -105,6 +105,36 @@
     claves: ["Láminas verdaderas: finas, apretadas y que bajan por el pie.", "Todo naranja: sombrero, láminas y pie.",
       "Pase el dedo por debajo: las láminas se separan; los pliegues del rossinyol, no."],
     compruebe: "Debajo del sombrero: láminas finas, falso; pliegues gruesos y romos, rossinyol."
+  }, {
+    bolsillo: true,
+    ids: ["amanita-pantherina", "amanita-muscaria"],
+    nombre: "Pixacà y reig bord", cols: ["Pixacà", "Reig bord"],
+    q: "reig bru",
+    lat: "<i>Amanita pantherina</i> y <i>A. muscaria</i> · amanita pantera, matamoscas",
+    lede: "Dos amanitas con verrugas blancas y el mismo veneno.",
+    fotos: [["amanita-muscaria", "fotos/g/6fe8c495e42f.jpg", "Reig bord: rojo con verrugas blancas."],
+      ["amanita-pantherina", "fotos/g/9d81561ed5de.jpg", "Pixacà: pardo con verrugas blancas."],
+      ["amanita-pantherina", "fotos/g/7c1387667a07.jpg", "Pixacà: bulbo con reborde, como un calcetín."]],
+    filas: [["Sombrero", "Pardo; verrugas blanco puro, en círculos", "Rojo o naranja, más grande"],
+      ["Base", "Bulbo con reborde, como un calcetín", "Bulbo con anillos de volva"],
+      ["Dónde", "Pinares, robledales, hayedos, encinares", "Pinares y abedulares de montaña"]],
+    claves: ["Verrugas blancas en el sombrero (la lluvia puede borrarlas).", "Láminas y pie blancos, con anillo.",
+      "Bulbo en la base: sáquela entera para verlo."],
+    compruebe: "Láminas blancas, anillo y volva: descártela. El ou de reig tiene láminas y pie amarillos."
+  }, {
+    bolsillo: true,
+    ids: ["inocybe-geophylla", "mycena-pura"],
+    nombre: "Pequeñas con muscarina", cols: ["Barret de bruixa", "Mycena pura"],
+    lat: "<i>Inocybe geophylla</i> y <i>Mycena pura</i>",
+    lede: "Pequeñas, blancas o lilas; las lilas se confunden con la pimpinella morada.",
+    fotos: [["inocybe-geophylla", "fotos/g/101f0b4da93a.jpg", "Barret de bruixa: blanco, con un pico en el centro."],
+      ["mycena-pura", "fotos/g/a6689cbc9203.jpg", "Mycena pura: lila, borde con rayas."],
+      ["mycena-pura", "fotos/g/60cf092643de.jpg", "Mycena pura, entre la pinaza."]],
+    filas: [["Color", "Blanco sedoso, a veces lila", "Lila o rosado; borde con rayas"],
+      ["Forma", "Cónico, con pico; fibras que se agrietan", "Acampanado; pie hueco y frágil"],
+      ["Olor", "A tierra", "A rábano"]],
+    claves: ["Pequeñas: de 1 a 5 cm.", "Sin anillo ni volva.", "En la hojarasca de pinares, hayedos y bosques mixtos."],
+    compruebe: "Tamaño: la pimpinella morada es grande, carnosa y huele a fruta."
   }].filter(c => !(GUIA && c.bolsillo));
   const EN_PAREJA = new Map(PAREJAS.flatMap(c => c.ids.map((id, i) => [id, [c, i]])));
   const ESENCIAL = DB.especies.filter(e => BREVE.especies.includes(e.id) || (GUIA && (e.guias || []).includes("esencial")));
@@ -129,8 +159,8 @@
     toxica: { pill: "Tóxica", st: "toxic", sec: "toxicas" },
     no_comestible: { pill: "No comestible", st: "precaucio", sec: "toxicas" }
   };
-  const PEL = { mortal: "mortal", toxica: "tóxica", no_comestible: "no comestible", condicionada: "condicionada", comestible: "comestible" };
-  const SEV = { mortal: 0, toxica: 1, no_comestible: 2, condicionada: 3, comestible: 4 };
+  const PEL = { mortal: "mortal", toxica: "tóxica", no_comestible: "no comestible", condicionada: "condicionada", comestible: "comestible", sin_interes: "sin interés" };
+  const SEV = { mortal: 0, toxica: 1, no_comestible: 2, sin_interes: 2.5, condicionada: 3, comestible: 4 };
   const DIF = { baja: [1, "Fácil"], media: [2, "Media"], alta: [3, "Difícil"] };
   const MESL = ["E", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
   const HIM_ICON = { laminas: "lamines", poros: "porus", pliegues: "plecs", aguijones: "agullons", liso: "plecs" };
@@ -229,6 +259,8 @@
   function newPage(sec, cls = "") {
     const p = document.createElement("section");
     p.className = "page " + cls;
+    // primera página de cada sección (para «Empiezan en la página…»)
+    if (sec && !PAGE_OF["sec:" + sec]) PAGE_OF["sec:" + sec] = p;
     if (sec) {
       p.dataset.sec = sec;
       const s = SEC[sec];
@@ -382,7 +414,47 @@
   // =========================================================
   // GUÍA
   // =========================================================
+  // Cuaderno: las 12 reglas en media hoja (una línea cada una) y, debajo, cómo leer las fichas
+  const REGLAS_CORTAS = [
+    "Recolecte solo lo que conoce a fondo.",
+    "Saque la seta entera, con la base del pie.",
+    "Revise cada ejemplar, uno a uno.",
+    "No mezcle especies; las dudosas, aparte y en papel.",
+    "Deseche las viejas, agusanadas, empapadas o heladas.",
+    "Cesta rígida y ventilada; nunca bolsas de plástico.",
+    "No crea en pruebas caseras (ajo, cuchara de plata…).",
+    "Las apps de fotos orientan, pero no deciden.",
+    "Ante la duda, consulte a un micólogo con la seta entera.",
+    "Cocínelas siempre: muchas son tóxicas en crudo.",
+    "Guarde una cruda de cada especie hasta el día siguiente.",
+    "Evite cunetas, zonas industriales y campos tratados."
+  ];
+  function reglasCortasPage() {
+    const p = newPage("guia", "reglas-page");
+    const gd = n => `<span class="gd">${[1, 2, 3].map(i => `<i class="${i <= n ? "on" : ""}"></i>`).join("")}</span>`;
+    const sec = (k, t) => `<span class="${EST[k].st === "precaucio" ? "" : "st-" + EST[k].st}"><i></i>${t} <span class="ref" data-ref="sec:${EST[k].sec}" data-fmt="n">00</span></span>`;
+    p.insertAdjacentHTML("beforeend", `
+      <div class="kicker">Antes de salir</div>
+      <h2 class="pt">Las ${REGLAS_CORTAS.length} reglas</h2>
+      <p class="ps">No admiten excepciones. Ante la duda, no la recolecte para comer.</p>
+      <ol class="normes reglas cortas spread">${REGLAS_CORTAS.map((r, i) => `<li><span class="nn">${i + 1}</span><p>${esc(r)}</p></li>`).join("")}</ol>
+      <div class="leyenda">
+        <div class="kicker">Cómo leer las fichas</div>
+        <ul class="ley">
+          <li><span class="v"><span class="pill st-comestible">Comestible</span><span class="pill st-toxic">Tóxica</span><span class="pill st-mortal">Mortal</span></span><span>Qué es. El mismo color va en la pestaña del margen.</span></li>
+          <li><span class="v st-comestible"><span class="lvl"><i class="on"></i><i class="on"></i><i></i></span><b>Media</b></span><span>Dificultad para reconocerla: fácil, media o difícil.</span></li>
+          <li><span class="v st-comestible">${meses([9, 10, 11], [8, 12])}</span><span>Meses en que sale; en claro, solo algunos años.</span></li>
+          <li><span class="v st-toxic grav">${gd(2)}<b>Grave</b></span><span>En las tóxicas: leve, moderada, grave o mortal.</span></li>
+          <li><span class="v"><span class="refx">→ p. 12</span></span><span>Página de la seta con la que se confunde.</span></li>
+        </ul>
+        <p class="secs"><b>Empiezan en la página</b>${sec("comestible", "Comestibles")}${sec("toxica", "Tóxicas")}${sec("mortal", "Mortales")}<span class="st-arb"><i></i>Árboles <span class="ref" data-ref="sec:anexo" data-fmt="n">00</span></span></p>
+      </div>
+      ${CREDITO}
+      ${foot("Antes de salir")}`);
+    fit(p, [".ps"], "reglas");
+  }
   function reglasPage() {
+    if (!GUIA) return reglasCortasPage();
     const seg = html(DB.textos.seguridad);
     // La negrita de la guía a veces es solo el principio de la frase («No mezcle especies en la cesta» y lleve…):
     // entonces el resto se une a la misma frase; si no, se añade la primera frase de la explicación.
@@ -968,9 +1040,8 @@
       // (y las otras parejas, también en tóxicas: dos setas por hoja)
       ORDEN.forEach(e => { const pj = EN_PAREJA.get(e.id); if (!pj) fichaPage(e); else if (pj[1] === 0) parejaPage(pj[0]); });
       arbolesPages();
-      // sin síndromes ni «Llame ahora» (los teléfonos van en la portada): el índice cierra el cuaderno
-      // y ocupa lo que falte para llegar a un múltiplo de 4 (al menos una página)
-      indicePages(((4 - ((book.children.length + 1) % 4)) % 4) + 1);
+      // sin síndromes, «Llame ahora» ni índice (los teléfonos van en la portada; las secciones y los créditos
+      // de las fotos, en la página de las reglas): los árboles cierran el cuaderno
     }
     const antesDeSOS = book.lastElementChild;
     if (GUIA) sosPage();
@@ -1022,7 +1093,7 @@
       // cada seta con la que se confunde (foto, nombre y texto) lleva a su página
       p.querySelectorAll(".conf li").forEach(li => { const ref = li.querySelector(".ref[data-ref]"); if (ref) { hechos.add(ref); pon(li, destDe(ref)); } });
       // en «Árboles y sus setas»: el nombre con su número
-      p.querySelectorAll(".nm, .ixg").forEach(nm => { const ref = nm.querySelector(".ref[data-ref]"); if (ref) { hechos.add(ref); pon(nm, destDe(ref)); } });
+      p.querySelectorAll(".nm, .ixg, .secs > span").forEach(nm => { const ref = nm.querySelector(".ref[data-ref]"); if (ref) { hechos.add(ref); pon(nm, destDe(ref)); } });
       p.querySelectorAll(".ref[data-ref]").forEach(ref => { if (!hechos.has(ref)) pon(ref, destDe(ref)); });
       // la pestaña del margen lleva al principio de su sección; en la portada, «comestibles», «mortales», «tóxicas»
       const tab = p.querySelector(".tab");
@@ -1030,7 +1101,7 @@
       p.querySelectorAll(".cv-stats span").forEach(sp => pon(sp, inicio[sp.classList.contains("st-comestible") ? "comestibles" : sp.classList.contains("st-mortal") ? "mortales" : "toxicas"]));
       if (L.length) out.l[n] = L;
     });
-    Object.entries(PAGE_OF).forEach(([id, p]) => { const n = num(p); (out.f[n] = out.f[n] || []).push(id); });
+    Object.entries(PAGE_OF).forEach(([id, p]) => { if (id.startsWith("sec:")) return; const n = num(p); (out.f[n] = out.f[n] || []).push(id); });
     const SECN = { comestibles: "Comestibles", mortales: "Mortales", toxicas: "Tóxicas" };
     let sec = "";
     pages.forEach(p => {

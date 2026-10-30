@@ -48,6 +48,28 @@
 .reglas p b { display: inline; font-size: 7pt; color: var(--ink); }
 .reglas li:last-child p b { color: var(--ink); }
 .reglas .nn { font-size: 10pt; }
+/* cuaderno: las reglas en media hoja (una línea cada una) y, debajo, cómo leer las fichas */
+.reglas.cortas li { grid-template-columns: 4.2mm 1fr; align-items: baseline; padding: .62mm 0; }
+.reglas.cortas .nn { font-size: 8.4pt; }
+.reglas.cortas p { font-size: 7.1pt; line-height: 1.2; color: var(--ink); font-weight: 600; }
+.reglas.cortas li:last-child p { color: var(--deadly); }
+.leyenda { margin-top: 2mm; padding-top: 2.2mm; border-top: .35mm solid var(--line); }
+.reglas-page .cred-linea { margin-top: 1.8mm; }
+.leyenda .kicker { margin-bottom: 1mm; }
+.ley { list-style: none; margin: 0; padding: 0; }
+.ley li { display: flex; align-items: center; gap: 1.8mm; padding: .75mm 0; font-size: 6.1pt; line-height: 1.22; color: var(--ink-2); border-bottom: .2mm solid var(--paper-3); }
+.ley .v { flex: 0 0 34mm; display: flex; align-items: center; gap: .7mm; }
+.ley .pill { font-size: 4.4pt; padding: .3mm .9mm .2mm; letter-spacing: .06em; }
+.ley .lvl b { margin-left: .4mm; }
+.ley .v > b { font-size: 5.6pt; font-weight: 800; color: var(--st); }
+.ley .grav .gd { display: inline-flex; gap: .45mm; }
+.ley .refx { font-family: var(--display); font-style: italic; font-weight: 700; font-size: 7pt; color: var(--accent); }
+.secs { display: flex; flex-wrap: wrap; align-items: center; gap: .8mm 2.2mm; margin: 1.5mm 0 0; font-size: 6.2pt; font-weight: 700; color: var(--ink); }
+.secs > b { font-weight: 800; font-size: 5pt; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.secs > span { display: inline-flex; align-items: center; gap: .8mm; }
+.secs i { width: 1.9mm; height: 1.9mm; border-radius: .5mm; background: var(--st); }
+.secs .st-arb { --st: var(--annex); }
+.secs .ref { font-family: var(--display); font-style: italic; font-weight: 700; color: var(--accent); }
 .dense .reglas p { font-size: 6.1pt; }
 .dense .reglas p b { font-size: 6.6pt; }
 
