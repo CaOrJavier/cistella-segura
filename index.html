@@ -3,32 +3,54 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2f5d3a">
 <title>Cistella Segura · Setas de Cataluña</title>
 <meta name="description" content="Cistella Segura: las setas de Cataluña. Fichas, búsqueda por rasgos, el tiempo de hoy por zonas, mapa, calendario y seguridad.">
-<meta http-equiv="refresh" content="1; url=guia/">
-<link rel="canonical" href="guia/">
-<style>
-  body { margin: 0; min-height: 100vh; display: grid; place-items: center; font: 1.05rem/1.5 system-ui, "Segoe UI", sans-serif; background: #f6f5ef; color: #1c231f; }
-  a { color: #3f6136; font-weight: 700; }
-  @media (prefers-color-scheme: dark) { body { background: #141814; color: #e8ebe4; } a { color: #8fb77e; } }
-</style>
-<script>
-  // La web única vive en guia/. Los enlaces antiguos de la web catalana (#/bolet/rovello, #/avui…) llevan a su equivalente.
-  (function () {
-    var ES = {"rovello":"lactarius-sanguifluus","pinetell":"lactarius-deliciosus","trompeta":"craterellus-cornucopioides","camagroc":"craterellus-lutescens","llengua":"hydnum-repandum","molleric":"suillus-granulatus","tinta":"coprinus-comatus","cep":"boletus-edulis","rossinyol":"cantharellus-cibarius","fredolic":"tricholoma-terreum","llenega":"hygrophorus-latitabundus","carlet":"hygrophorus-russula","camasec":"marasmius-oreades","apagallums":"macrolepiota-procera","girgola":"pleurotus-eryngii","camadeperdiu":"chroogomphus-rutilus","petdellop":"lycoperdon-perlatum","pgegant":"calvatia-gigantea","putriformis":"bovistella-utriformis","reig":"amanita-caesarea","llora":"russula-virescens","pimpinella":"lepista-nuda","camperol":"agaricus-campestris","bolaneu":"agaricus-arvensis","ovoidea":"amanita-ovoidea","phalloides":"amanita-phalloides","virosa":"amanita-virosa","lepiota":"lepiota-brunneoincarnata","galerina":"galerina-marginata","orellanus":"cortinarius-orellanus","paxillus":"paxillus-involutus","muscaria":"amanita-muscaria","pantherina":"amanita-pantherina","proxima":"amanita-proxima","pardinum":"tricholoma-pardinum","entoloma":"entoloma-sinuatum","omphalotus":"omphalotus-olearius","lactllet":"lactarius-torminosus","satanas":"rubroboletus-satanas","escleroderma":"scleroderma-citrinum","clitocybe":"clitocybe-rivulosa","inocybe":"inosperma-erubescens","equestre":"tricholoma-equestre","xanthodermus":"agaricus-xanthodermus","atramentaria":"coprinopsis-atramentaria","formosa":"ramaria-formosa","emetica":"russula-emetica","hygrophoropsis":"hygrophoropsis-aurantiaca","tylopilus":"tylopilus-felleus","rhacodes":"chlorophyllum-rhacodes"};
-    var RUTAS = { bolets: "#/", avui: "#/hoy", pluja: "#/lluvia", troballes: "#/hallazgos", seguretat: "#/guia/seguridad", sos: "#/guia/intoxicacion",
-      aprendre: "#/guia/anatomia", explora: "#/arboles", bosc: "#/arboles", "cara-a-cara": "#/rasgos" };
-    var h = decodeURIComponent(location.hash.replace(/^#\/?/, "")), p = h.split("/"), v = p[0], a = p.slice(1).join("/");
-    var destino = "guia/";
-    if (v === "test") destino = "quiz/";
-    else if (v === "bolet" && ES[a]) destino = "guia/#/especie/" + ES[a];
-    else if (v === "mapa") destino = "guia/#/mapa" + (a ? "/" + a : "");
-    else if (RUTAS[v]) destino = "guia/" + RUTAS[v];
-    location.replace(destino);
-  })();
-</script>
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="extra/lluvia-hallazgos.css">
 </head>
 <body>
-  <p>Cistella Segura está en <a href="guia/">su nueva web</a>.</p>
+<header class="top">
+  <a class="marca" href="#/">Cistella <em>Segura</em></a>
+  <button class="menu-btn" aria-label="Menú" aria-expanded="false">☰</button>
+  <nav class="nav" aria-label="Secciones">
+    <a href="#/">Especies</a>
+    <a href="#/rasgos">Por rasgos</a>
+    <a href="#/calendario">Calendario</a>
+    <a href="#/guia/seguridad">Aprende</a>
+    <details class="mas">
+      <summary>Más</summary>
+      <div class="mas-menu">
+        <a href="#/lluvia">Cuándo salir tras la lluvia</a>
+        <a href="#/hallazgos">Mis hallazgos</a>
+        <a href="#/arboles">Árboles</a>
+        <a href="#/galeria">Galería de fotos</a>
+        <a href="#/cuaderno">Cuaderno de campo</a>
+        <a href="#/libros">Libros PDF</a>
+        <a href="quiz/">Quiz 🍄</a>
+        <a href="#/inventario">Inventario</a>
+        <a href="#/fuentes">Fuentes</a>
+      </div>
+    </details>
+  </nav>
+</header>
+<div class="aviso-global" role="note">
+  <b>Ninguna web, guía, foto ni aplicación certifica que una seta sea comestible.</b> Ante la duda, no la recolecte para comer.
+  Intoxicación: <b>112</b> · Información Toxicológica 24 h: <b>91 562 04 20</b>.
+  <a href="#/guia/intoxicacion">Qué hacer</a>
+</div>
+<main id="app" tabindex="-1"></main>
+<footer class="pie">
+  <div id="pie-meta"></div>
+  <div>Nombres según Catalogue of Life (Species Fungorum); registros de GBIF e iNaturalist; fotografías con licencia Creative Commons, con su autoría en cada ficha. <a href="#/fuentes">Fuentes</a> · <a href="#/calidad">Datos inciertos</a></div>
+</footer>
+<div id="visor" class="visor" hidden></div>
+<script src="datos/db.js"></script>
+<script src="datos/cistella.js"></script>
+<script src="extra/comun.js"></script>
+<script src="extra/lluvia.js"></script>
+<script src="extra/hallazgos.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

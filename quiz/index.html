@@ -738,7 +738,7 @@ function home() {
       <div class="set"><p>Preguntes</p>${seg("n", [[5, "5"], [10, "10"], [20, "20"], [50, "50"], [0, "∞"]], cfg.n)}</div>
     </div>
     <button class="btn3d btn-go play" data-act="start">Juga!${best ? `<small>🏆 Rècord: ${best}</small>` : ""}</button>
-    <a class="guia-card" href="../guia/"><span class="ico">🧺</span><span><b>Cistella Segura · la web</b><small>163 fitxes, el temps d'avui per zones, mapa, calendari i llibres en PDF</small></span><span aria-hidden="true">›</span></a>
+    <a class="guia-card" href="../"><span class="ico">🧺</span><span><b>Cistella Segura · la web</b><small>163 fitxes, el temps d'avui per zones, mapa, calendari i llibres en PDF</small></span><span aria-hidden="true">›</span></a>
     <p class="foot">Fotos d'iNaturalist (Creative Commons). L'autor surt a la fitxa de cada foto.</p>`);
 }
 
@@ -822,7 +822,7 @@ function cmpTable(g, hlId) {
     <tbody>${g.rows.map(r => `<tr>${r.map((c, i) => `<td class="${i && g.cols[i - 1] === hlId ? "hl" : ""}">${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
 }
 const badge = sp => `<span class="badge b-${sp.estat}">${ESTAT[sp.estat]}</span>`;
-const guiaLink = sp => sp.guia ? `<p class="guia-link"><a href="../guia/#/especie/${esc(sp.guia)}" target="_blank" rel="noopener">📗 Fitxa completa a la guia <small>(en castellà: confusions, hàbitat, calendari, fonts)</small></a></p>` : "";
+const guiaLink = sp => sp.guia ? `<p class="guia-link"><a href="../#/especie/${esc(sp.guia)}" target="_blank" rel="noopener">📗 Fitxa completa a la guia <small>(en castellà: confusions, hàbitat, calendari, fonts)</small></a></p>` : "";
 const credit = f => f ? `<p class="credit">📷 ${esc(f.autor)} · ${esc(f.llic)} · <a href="${esc(f.url)}" target="_blank" rel="noopener">iNaturalist</a></p>` : "";
 function points(q) {
   let p = Q.hard ? Math.max(4, 20 - 4 * (q.hints || 0)) : 10;

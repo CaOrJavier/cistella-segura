@@ -1,10 +1,10 @@
 // Setas esenciales de Cataluña · Cuaderno de bolsillo (A6, castellano)
-// Monta el librito a partir de los datos de la guía (../guia/datos/db.js): las 79 especies «esenciales».
+// Monta el librito a partir de los datos de la web (../datos/db.js): las 79 especies «esenciales».
 "use strict";
 (() => {
   const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const cap = s => (s ? s.charAt(0).toUpperCase() + s.slice(1) : "");
-  const G = s => "../guia/" + s;
+  const G = s => "../" + s;
   const book = document.getElementById("book");
   const V = DB.vocabulario;
   const ARB = Object.fromEntries(DB.arboles.map(a => [a.id, a]));

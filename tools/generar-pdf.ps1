@@ -5,7 +5,7 @@
 # Us (des de l'arrel del repositori):  powershell -ExecutionPolicy Bypass -File tools\generar-pdf.ps1
 $root = Split-Path -Parent $PSScriptRoot
 # El quadern català fa servir butxaca\dades.js (dades fixes de l'antiga web catalana, ja retirada).
-# El quadern castellà llegeix directament guia\datos\db.js.
+# El quadern castellà llegeix directament datos\db.js.
 
 # Edge (o Chrome)
 $edge = @(

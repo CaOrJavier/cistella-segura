@@ -1,6 +1,6 @@
 /* Utilidades compartidas por las secciones que vienen de la antigua web Cistella Segura
-   (extra/hoy.js, extra/mapa.js, extra/lluvia.js, extra/hallazgos.js).
-   Necesita datos/db.js (DB) y datos/cistella.js (BOLETS, FOTOS, ZONES, MAPA, MAPA_INT…).
+   (extra/lluvia.js, extra/hallazgos.js).
+   Necesita datos/db.js (DB) y datos/cistella.js (BOLETS, FOTOS, PLUJA, TROBALLES, ZONES…).
    Las secciones se registran en window.VISTAS_EXTRA[ruta] = (arg, GUIA) => { … } y app.js las abre con #/ruta. */
 (function () {
   "use strict";
@@ -41,13 +41,13 @@
     nombre: (id) => { const e = ESP[CAT2ES[id]]; return e ? cap((e.nombres.ca || [])[0] || (e.nombres.es || [])[0]) || e.nombre : (BYCAT[id] || {}).nom || id; },
     cientifico: (id) => { const e = ESP[CAT2ES[id]]; return e ? e.nombre : (BYCAT[id] || {}).lat || ""; },
     // miniatura: la de la guía si existe; si no, la de la web catalana
-    foto: (id) => { const e = ESP[CAT2ES[id]]; const f = e && (e.fotos || [])[0]; if (f) return f.t || f.g; const c = (FOTOS[id] || [])[0]; return c ? "../" + (c.th || c.src) : ""; },
-    fotoGrande: (id) => { const e = ESP[CAT2ES[id]]; const f = e && (e.fotos || [])[0]; if (f) return f.g || f.t; const c = (FOTOS[id] || [])[0]; return c ? "../" + c.src : ""; },
+    foto: (id) => { const e = ESP[CAT2ES[id]]; const f = e && (e.fotos || [])[0]; if (f) return f.t || f.g; const c = (FOTOS[id] || [])[0]; return c ? (c.th || c.src) : ""; },
+    fotoGrande: (id) => { const e = ESP[CAT2ES[id]]; const f = e && (e.fotos || [])[0]; if (f) return f.g || f.t; const c = (FOTOS[id] || [])[0]; return c ? c.src : ""; },
     // estado: comestible · condicionada · toxica · mortal · no_comestible (el de la guía si existe)
     estado: (id) => { const e = ESP[CAT2ES[id]]; if (e) return e.comestibilidad.cat; const s = (BYCAT[id] || {}).estat; return { toxic: "toxica", precaucio: "no_comestible" }[s] || s || "desconocida"; },
     comestible: (id) => ["comestible", "condicionada"].includes(window.CS.estado(id)),
-    // rutas de la antigua web (fotos/…) vistas desde guia/
-    ruta: (p) => "../" + p,
+    // rutas de las fotos de la antigua web (fotos/…): la web ya está en la raíz, se usan tal cual
+    ruta: (p) => p,
     MES_CORTO: ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"],
     MES_LARGO: ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"],
     // colores por estado: las mismas variables CSS que los distintivos de la guía (con modo oscuro)

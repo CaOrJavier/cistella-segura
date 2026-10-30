@@ -130,7 +130,6 @@
     const grupos = [...new Set(FAC.map((f) => f.g))];
     app.innerHTML = `
       <h1>Las setas de Cataluña</h1>
-      <div id="hoy-resumen"></div>
       <p class="muted">${ESP.length} especies con ficha (guía esencial y catálogo) y ${DB.registro.length.toLocaleString("es")} especies más en el <a href="#/inventario">inventario de registros</a>. Busque por cualquier nombre o combine filtros.${(DB.libros || []).length ? ` <a href="#/libros">Descargue los libros en PDF</a>.` : ""}</p>
       ${DB.cuaderno ? `<a class="aviso-cuaderno" href="#/cuaderno"><img src="cuaderno/t01.jpg" alt=""><span><b>Cuaderno de campo para imprimir</b>${DB.cuaderno.paginas} páginas A5 en color con las comestibles, las peligrosas y sus árboles, para doblar y llevar en la mochila.</span><span aria-hidden="true">›</span></a>` : ""}
       <input class="q" type="search" placeholder="Nombre catalán, castellano o científico, sinónimo, familia…" value="${esc(state.q)}" aria-label="Buscar">
@@ -150,8 +149,6 @@
           <div class="tarjetas" id="res"></div>
         </section>
       </div>`;
-    // resumen del tiempo de hoy por zonas (extra/hoy.js), si está disponible
-    try { if (window.CS && CS.hoyResumen) CS.hoyResumen($("#hoy-resumen")); } catch (e) { /* sin resumen */ }
     const q = $(".q"); q.addEventListener("input", () => { state.q = q.value; pintarResultados(); });
     $("#ordenar").onchange = (ev) => { state.orden = ev.target.value; pintarResultados(); };
     $("#limpiar").onclick = () => { state.f = {}; state.q = ""; state.alt = [0, 3000]; state.excep = false; vistaBuscador(); };
@@ -215,16 +212,6 @@
   function fuentesHTML(e) {
     return (e.fuentes || []).map((k) => { const f = DB.fuentes[k]; return f ? `<li><b>[${esc(k)}]</b> ${esc(f.cita)}${f.url ? ` <a href="${esc(f.url)}" rel="noopener" target="_blank">enlace</a>` : ""} <span class="muted">(${esc(f.tipo)})</span></li>` : `<li>${esc(k)}</li>`; }).join("");
   }
-  // Minimapa de observaciones (extra/mapa.js) para las setas que tienen datos en el mapa
-  function mapaFicha(e) {
-    try {
-      if (!window.CS || !CS.miniMapa) return "";
-      const cat = Object.keys(CS.CAT2ES).find((k) => CS.CAT2ES[k] === e.id);
-      if (!cat) return "";
-      const svg = CS.miniMapa(cat, { pie: true, titulo: "Observaciones de " + titulo(e) + " en Cataluña" });
-      return svg ? `<div class="mapa-ficha">${svg}<p class="no-print"><a href="#/mapa/${cat}">Ver en el mapa interactivo →</a></p></div>` : "";
-    } catch (err) { return ""; }
-  }
   let galeriaActual = [];
   function vistaFicha(id) {
     const e = BYID[id]; if (!e) return vistaNoEncontrada();
@@ -269,7 +256,7 @@
         ["Dónde mirar", esc(ec.donde_mirar || "")],
       ]))}
       ${seccion("Cómo encontrarla", dl([["Priorice", esc(b.prioridad)], ["Árbol", esc(b.arbol)], ["Parte del bosque", esc(b.parte)], ["Al emerger", esc(b.emergente)], ["Ejemplares ocultos", esc(b.ocultos)], ["Al encontrar una", esc(b.ampliar)], ["Especies acompañantes", esc(b.acompanantes)], ["Cuándo cambiar de zona", esc(b.cambiar)]]) + (b.local ? `<p class="small muted"><b>Experiencia local (orientativo):</b> ${esc(b.local)}</p>` : ""))}
-      ${seccion("Dónde se ha registrado en Cataluña", `${mapaFicha(e)}${(e.distribucion || {}).texto ? `<p>${esc(e.distribucion.texto)}</p>` : ""}${(e.distribucion || {}).altitud ? `<p><b>Altitud orientativa:</b> ${e.distribucion.altitud.min}–${e.distribucion.altitud.max} m${e.distribucion.altitud.nota ? ` (${esc(e.distribucion.altitud.nota)})` : ""}</p>` : ""}
+      ${seccion("Dónde se ha registrado en Cataluña", `${(e.distribucion || {}).texto ? `<p>${esc(e.distribucion.texto)}</p>` : ""}${(e.distribucion || {}).altitud ? `<p><b>Altitud orientativa:</b> ${e.distribucion.altitud.min}–${e.distribucion.altitud.max} m${e.distribucion.altitud.nota ? ` (${esc(e.distribucion.altitud.nota)})` : ""}</p>` : ""}
         ${r ? `<p><b>Registros (${esc(r.consulta)}):</b> ${r.n} en GBIF, ${r.pliegos} pliegos de herbario y ${r.observaciones} observaciones. Evidencia: <b>${esc(FK.evid.lab(r.evidencia))}</b>.</p>${zonas ? `<p><b>Zonas:</b> ${zonas}.</p>` : ""}${comarcas ? `<p class="small"><b>Comarcas:</b> ${comarcas}.</p>` : ""}<p class="small muted">Comarcas asignadas por coordenadas; los registros no son un mapa de distribución y la ausencia de registros no significa ausencia de la especie.</p>` : ""}`)}
       ${seccion("Descripción", dl([["Sombrero", mo.sombrero], ["Himenio", mo.himenoforo], ["Pie", mo.pie], ["Velo", mo.velo], ["Carne", mo.carne], ["Látex", mo.latex], ["Olor", mo.olor], ["Sabor", mo.sabor], ["Esporada", mo.esporada], ["Microscopía", mo.microscopia], ["Tamaño", mo.tamano], ["Edad", mo.edad], ["Cambios", mo.cambios]].map(([k, v]) => [k, v ? esc(v) : ""])))}
       ${seccion("Nombres y taxonomía", `<p><b>Catalán:</b> ${esc(nombres(e, "ca").join(", ") || "—")} · <b>Castellano:</b> ${esc(nombres(e, "es").join(", ") || "—")}</p>${(e.nombres || {}).notas ? (e.nombres.notas.map((n) => `<p class="small">${esc(n)}</p>`).join("")) : ""}${e.taxonomia_nota ? `<p class="small">${esc(e.taxonomia_nota)}</p>` : ""}${e.familia_nota ? `<p class="small muted">${esc(e.familia_nota)}</p>` : ""}${(e.sinonimos || []).length ? `<p class="small"><b>Sinónimos:</b> <i>${esc(e.sinonimos.join("; "))}</i></p>` : ""}
@@ -473,9 +460,19 @@
   window.GUIA = { app, esc, cap, norm, titulo, nombres, badge, tarjeta, mesesHTML, catOf, BYID, ESP, store, MESES, MESES_L, abrirVisor: (fotos, i) => { galeriaActual = fotos; abrirVisor(i); } };
 
   // ---------------- Router ----------------
+  // Enlaces antiguos: los de la web catalana (#/bolet/rovello, #/troballes…) y las secciones retiradas (#/hoy, #/mapa)
+  const ANTIGUAS = { bolets: "", avui: "", hoy: "", mapa: "", pluja: "lluvia", troballes: "hallazgos", seguretat: "guia/seguridad", sos: "guia/intoxicacion",
+    aprendre: "guia/anatomia", explora: "arboles", bosc: "arboles", "cara-a-cara": "rasgos" };
+  function rutaAntigua(v, a) {
+    if (v === "bolet") return window.CS && CS.CAT2ES[a] ? "especie/" + CS.CAT2ES[a] : "";
+    return ANTIGUAS[v];
+  }
   function render() {
     const h = decodeURIComponent(location.hash.replace(/^#\/?/, ""));
     const [v, a] = [h.split("/")[0], h.split("/").slice(1).join("/")];
+    if (v === "test") { location.replace("quiz/"); return; }
+    const nueva = rutaAntigua(v, a);
+    if (nueva !== undefined) { location.replace("#/" + nueva); return; }
     document.title = "Cistella Segura · Setas de Cataluña";
     $$(".nav a").forEach((x) => x.classList.toggle("activo", x.getAttribute("href") === "#/" + (v ? v + (v === "guia" ? "/seguridad" : "") : "")));
     $(".nav").classList.remove("abierta");
