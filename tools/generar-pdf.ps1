@@ -1,6 +1,7 @@
 # Genera els PDF del quadern de butxaca amb Microsoft Edge (o Chrome) en mode headless:
 #   offline\cistella-segura-butxaca.pdf             A6, per llegir al mobil o portar a la copisteria
 #   offline\cistella-segura-butxaca-imprimir-A4.pdf A4, per imprimir a casa, retallar, doblegar i grapar
+#   offline\setas-esenciales-bolsillo*.pdf          el mateix, en castella, amb les 79 especies essencials de la guia
 # Us (des de l'arrel del repositori):  powershell -ExecutionPolicy Bypass -File tools\generar-pdf.ps1
 $root = Split-Path -Parent $PSScriptRoot
 
@@ -35,3 +36,6 @@ function Print-Pdf([string]$html, [string]$desti) {
 
 Print-Pdf (Join-Path $root 'butxaca\index.html') (Join-Path $root 'offline\cistella-segura-butxaca.pdf')
 Print-Pdf (Join-Path $root 'butxaca\imprimir-a4.html') (Join-Path $root 'offline\cistella-segura-butxaca-imprimir-A4.pdf')
+# Setas esenciales (castellano), a partir de los datos de la guía
+Print-Pdf (Join-Path $root 'butxaca\setas.html') (Join-Path $root 'offline\setas-esenciales-bolsillo.pdf')
+Print-Pdf (Join-Path $root 'butxaca\setas-imprimir-a4.html') (Join-Path $root 'offline\setas-esenciales-bolsillo-imprimir-A4.pdf')

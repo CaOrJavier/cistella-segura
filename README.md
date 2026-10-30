@@ -13,6 +13,7 @@
 
 **Per portar al bosc**
 - **Quadern de butxaca A6** (76 pàgines, català): [cistella-segura-butxaca.pdf](https://caorjavier.github.io/cistella-segura/offline/cistella-segura-butxaca.pdf) · per imprimir a casa en A4: [cistella-segura-butxaca-imprimir-A4.pdf](https://caorjavier.github.io/cistella-segura/offline/cistella-segura-butxaca-imprimir-A4.pdf) ([com imprimir-lo](butxaca/COMO-IMPRIMIR.md)). Es genera des de `butxaca/` amb les dades de la web.
+- **Setas esenciales · cuaderno de bolsillo A6** (104 páginas, castellano): las 79 especies esenciales de la guía, generadas a partir de `guia/datos/db.js`: [setas-esenciales-bolsillo.pdf](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-bolsillo.pdf) · para imprimir en casa en A4 (dos cuadernillos): [setas-esenciales-bolsillo-imprimir-A4.pdf](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-bolsillo-imprimir-A4.pdf).
 - **Cuaderno de campo A5** (48 páginas, castellano): 26 comestibles, 22 peligrosas y 8 árboles. Versión A5 y versión A4 para doblar, a [Releases](https://github.com/CaOrJavier/cistella-segura/releases/tag/guia-2026.1). Vista prèvia a [/guia/#/cuaderno](https://caorjavier.github.io/cistella-segura/guia/#/cuaderno).
 
 **Per llegir i consultar**
@@ -32,7 +33,8 @@
 index.html     web Cistella Segura (català)
 fotos/         fotos de la web
 offline/       llibres PDF i la web en un sol fitxer
-butxaca/       generador del quadern de butxaca (tools/generar-pdf.ps1 fa els PDF)
+butxaca/       generador dels quaderns de butxaca: index.html (català) i setas.html (castellà)
+tools/         generar-pdf.ps1 fa tots els PDF de butxaca amb Edge
 guia/          guia «Setas de Cataluña» (castellano): app.js, datos/db.js, fotos/, cuaderno/
 quiz/          quiz de bolets: index.html, fotos/, icones
 ```

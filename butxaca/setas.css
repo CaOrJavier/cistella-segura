@@ -1,0 +1,70 @@
+/* Setas esenciales · añadidos a butxaca.css */
+
+/* fichas con poco texto: la foto crece hasta llenar la página */
+.ph { max-height: 92mm; }
+
+/* meses excepcionales */
+.mes span.ex { background: var(--st-bg, var(--ok-bg)); color: var(--st, var(--ok)); }
+
+/* fitxa: anillo, volva y hábitat */
+.fct.no { color: var(--faint); }
+.fct.alarm { color: var(--deadly); font-weight: 800; }
+.fct.hab { gap: .5mm; }
+.fct.hab svg { fill: var(--muted); }
+.kick .dif { font-weight: 700; margin-left: -.6mm; }
+.st-mortal .sp-head .lvl i { border-color: #fff; }
+.st-mortal .sp-head .lvl i.on { background: #fff; }
+
+/* rasgos de alarma */
+.checks.alarm h3 { color: var(--st); }
+.checks.alarm li::before { content: "!"; color: var(--st); font-weight: 800; left: .4mm; }
+
+/* confusiones: etiqueta de peligro */
+.conf li.cf::before { content: "•"; font-size: 7pt; top: -.3mm; }
+.st-comestible .conf li.cf::before, .st-precaucio.sp .conf li.cf::before { color: var(--deadly); }
+.cf-tag { display: inline-block; font-size: 4.4pt; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; line-height: 1.25; padding: 0 .8mm; border-radius: .5mm; color: #fff; vertical-align: .25mm; background: var(--muted); }
+.cf-tag.cf-mortal { background: var(--deadly); }
+.cf-tag.cf-toxica { background: var(--warn); }
+.cf-tag.cf-no_comestible { background: var(--care); }
+.cf-tag.cf-condicionada { background: var(--care); }
+.cf-tag.cf-comestible { background: var(--ok); }
+.sp:not(.st-comestible) .conf li.cf::before { content: "≈"; }
+/* comestibles «condicionadas»: la caja de confusiones también en rojo */
+.sp.edible .conf { background: var(--deadly-bg); border-left-color: var(--deadly); }
+.sp.edible .conf h3 { color: var(--deadly); }
+.sp.edible .conf li.cf::before { content: "•"; color: var(--deadly); }
+
+/* las 12 reglas: frase seguida, con la negrita dentro */
+.reglas p { font-size: 6.4pt; line-height: 1.27; color: var(--muted); }
+.reglas p b { display: inline; font-size: 7pt; color: var(--ink); }
+.reglas li:last-child p b { color: var(--ink); }
+.reglas .nn { font-size: 10pt; }
+.dense .reglas p { font-size: 6.1pt; }
+.dense .reglas p b { font-size: 6.6pt; }
+
+/* tres comprobaciones */
+.tres li { display: grid; grid-template-columns: 9mm 1fr; gap: 0 2mm; padding: 1.4mm 0; border-bottom: .2mm solid var(--paper-3); }
+.tres li:last-child { border-bottom: 0; }
+.tres .tn { font-family: var(--display); font-weight: 800; font-size: 24pt; line-height: .85; color: var(--deadly); text-align: center; }
+.tres b { display: block; font-family: var(--display); font-weight: 800; font-size: 10pt; line-height: 1.1; margin-bottom: .6mm; }
+.tres span { font-size: 7.6pt; line-height: 1.3; color: var(--ink-2); }
+
+/* calendario sin columna de lluvia */
+.cal.cal-es { grid-template-columns: 1fr auto 8mm; flex: 1 1 auto; }
+.cal.cal-es .cn, .cal.cal-es .mes, .cal.cal-es .pl { display: flex; align-items: center; }
+.cal.cal-es .cn { justify-content: space-between; }
+.cal-dif { display: flex; justify-content: flex-end; align-items: center; height: auto; }
+.cal-dif .lvl i { width: 1.3mm; height: 1.3mm; }
+
+/* síndromes */
+.fase { font-size: 5.2pt; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin: 1mm 0 .6mm; padding-bottom: .4mm; border-bottom: .3mm solid var(--line); }
+.sind { padding: .35mm 0 .45mm 2mm; border-left: .7mm solid var(--warn); margin-bottom: .55mm; }
+.sind.grave { border-left-color: var(--deadly); }
+.sind b { display: block; font-family: var(--display); font-weight: 800; font-size: 7.3pt; line-height: 1.1; }
+.sind.grave b { color: var(--deadly); }
+.sind span { display: block; font-size: 5.9pt; line-height: 1.22; margin-top: .2mm; }
+.sind i { display: block; font-size: 5.1pt; line-height: 1.2; color: var(--muted); margin-top: .2mm; }
+
+/* SOS */
+.sos-alarma { margin-top: 1.6mm; padding: 1.3mm 1.8mm; border-radius: 1.2mm; background: rgb(0 0 0 / .18); font-size: 6.5pt; line-height: 1.3; font-weight: 700; }
+.sos-f li b { font-weight: 800; }
