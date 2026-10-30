@@ -51,7 +51,8 @@
   const car = (e) => e.caracteres || {};
   const eco = (e) => e.ecologia || {};
   const FAC = [
-    { k: "guia", t: "Guía", g: "Selección", get: (e) => [...(e.guias || []), e.alerta ? "alerta" : null], lab: (v) => ({ esencial: "Guía esencial", catalogo: "Catálogo", alerta: "Fichas de alerta" }[v] || v) },
+    // «catalogo» lo tienen las 163 fichas (el catálogo ya no se ofrece como libro): no sirve como filtro
+    { k: "guia", t: "Guía", g: "Selección", get: (e) => [...(e.guias || []).filter((x) => x !== "catalogo"), e.alerta ? "alerta" : null], lab: (v) => ({ esencial: "Las 79 de los libros", alerta: "Fichas de alerta" }[v] || v) },
     { k: "cat", t: "Comestibilidad y seguridad", g: "Seguridad", get: (e) => [catOf(e)], lab: (v) => V.comestibilidad[v] ? V.comestibilidad[v].etiqueta : v, orden: (v) => (V.comestibilidad[v] || {}).orden || 9 },
     { k: "flag", t: "Avisos", g: "Seguridad", get: (e) => [(e.identificacion || {}).dificultad === "alta" ? "compleja" : null, peligrosa(e) ? "peligrosa" : null, e.controversia ? "controversia" : null], lab: (v) => ({ compleja: "Identificación compleja", peligrosa: "Se confunde con tóxicas o mortales", controversia: "Comestibilidad o taxonomía discutida" }[v]) },
     { k: "orden", t: "Orden", g: "Taxonomía", sel: true, get: (e) => [e.orden] },
@@ -155,7 +156,7 @@
       </section>
       <div class="destacados no-print">
         <a class="dest dest-quiz" href="quiz/"><span class="dest-ico" aria-hidden="true">🍄</span><span><b>Quiz de setas</b><small>¿Sabrías distinguirlas? Ponte a prueba con fotos reales.</small></span></a>
-        <a class="dest dest-libros" href="#/libros"><span class="dest-ico" aria-hidden="true">📚</span><span><b>Libros en PDF</b><small>Guías y cuadernos para leer o imprimir. Hojéalos antes de descargar.</small></span></a>
+        <a class="dest dest-libros" href="#/libros"><span class="dest-ico" aria-hidden="true">📚</span><span><b>Libros en PDF</b><small>Un cuaderno de bolsillo para el bosque y una guía para estudiar. Hojéalos antes de descargar.</small></span></a>
         ${(() => { const g = EN_ARCHIVO || store.get("sinInternet", null);
           return `<a class="dest dest-red${g ? " guardada" : ""}" href="#/sin-internet"><span class="dest-ico" aria-hidden="true">${g ? "✓" : "⬇"}</span><span><b>${g ? "Lista para usar sin internet" : "Usar sin internet"}</b><small>${g ? "Está guardada en este dispositivo." : "Guárdala en el móvil antes de ir al bosque."}</small></span></a>`; })()}
       </div>
@@ -576,50 +577,9 @@
       <p class="muted">Avisos generados al validar la base de datos y cuestiones pendientes señaladas en las fichas. Base de datos generada el ${esc(DB.meta.generado)}.</p>
       <div class="tabla-scroll"><table class="tabla"><tr><th>Especie</th><th>Tipo</th><th>Cuestión</th></tr>${filas.sort((a, b) => a[0].nombre.localeCompare(b[0].nombre)).map(([e, t, m]) => `<tr><td><a href="#/especie/${e.id}"><i>${esc(e.nombre)}</i></a></td><td>${esc(t)}</td><td>${esc(m)}</td></tr>`).join("")}</table></div>`;
   }
-  function vistaCuaderno() {
-    const C = DB.cuaderno;
-    if (!C) { app.innerHTML = `<h1>Cuaderno de campo</h1><p class="muted">El cuaderno no está incluido en esta copia de la web.</p>`; return; }
-    const pad = (n) => String(n).padStart(2, "0");
-    galeriaActual = Array.from({ length: C.paginas }, (_, i) => ({ g: `cuaderno/p${pad(i + 1)}.jpg`, t: `cuaderno/t${pad(i + 1)}.jpg`, pie: "Cuaderno de campo", libro: true }));
-    const pag = (i) => `<button class="pag-c" data-foto="${i}" aria-label="Ver la página ${i + 1}"><img loading="lazy" src="${galeriaActual[i].t}" alt="Página ${i + 1}"><span>${i + 1}</span></button>`;
-    const pliegos = [[0]];
-    for (let i = 1; i < C.paginas - 1; i += 2) pliegos.push([i, i + 1]);
-    pliegos.push([C.paginas - 1]);
-    const mb = (x) => String(x).replace(".", ",");
-    app.innerHTML = `<h1>Cuaderno de campo</h1>
-      <p>Un librillo de <b>${C.paginas} páginas A5 en color</b> para llevar en la mochila: ${C.comestibles || 26} comestibles en fichas de una página con cuatro fotos y las especies con que se confunden, ${C.peligrosas || 20} peligrosas, las confusiones más peligrosas lado a lado, ${C.arboles || 8} árboles con foto del tronco, la hoja y el fruto, calendario y qué hacer ante una intoxicación. Se imprime en <b>${C.hojas} hojas A4</b>, se dobla por la mitad y se grapa.</p>
-      <div class="descargas">
-        <a class="btn prim" href="${esc(C.pdf_a4)}" target="_blank" rel="noopener">Descargar para imprimir en casa · A4 · ${mb(C.a4_mb)} MB</a>
-        <a class="btn" href="${esc(C.pdf_a5)}" target="_blank" rel="noopener">PDF en páginas A5 · ${mb(C.a5_mb)} MB</a>
-      </div>
-      <details class="caja como-imprimir"><summary><b>Cómo imprimirlo y doblarlo</b></summary>
-        <svg viewBox="0 0 640 150" role="img" aria-label="Imprimir a doble cara, doblar por la mitad y grapar">
-          <g font-family="inherit" font-size="15" fill="currentColor">
-            <rect x="20" y="30" width="150" height="100" rx="6" fill="#fff" stroke="#3f6136" stroke-width="3"/><line x1="95" y1="30" x2="95" y2="130" stroke="#bbb" stroke-dasharray="5 4"/>
-            <text x="40" y="86" font-size="26" fill="#3f6136">48</text><text x="118" y="86" font-size="26" fill="#3f6136">1</text>
-            <text x="20" y="20">1 · A4 a doble cara</text>
-            <path d="M200 80h40m-10-8 10 8-10 8" stroke="#3f6136" stroke-width="3" fill="none"/>
-            <path d="M270 40 L360 40 L360 130 L270 130 Z" fill="#fff" stroke="#3f6136" stroke-width="3"/><path d="M360 40 L400 55 L400 140 L360 130" fill="#e5f1e1" stroke="#3f6136" stroke-width="3"/>
-            <text x="262" y="20">2 · Dobla todas juntas</text>
-            <path d="M430 80h40m-10-8 10 8-10 8" stroke="#3f6136" stroke-width="3" fill="none"/>
-            <rect x="500" y="35" width="90" height="100" rx="6" fill="#fff" stroke="#3f6136" stroke-width="3"/>
-            <rect x="494" y="58" width="12" height="4" fill="#555"/><rect x="494" y="108" width="12" height="4" fill="#555"/>
-            <text x="492" y="20">3 · Grapa el lomo</text>
-          </g>
-        </svg>
-        <ol>
-          <li>Descarga el PDF <b>para imprimir en casa</b> (A4). Imprime a <b>doble cara</b>, opción <b>«voltear por el borde corto»</b>, a <b>tamaño real (100 %)</b>, sin «ajustar a la página».</li>
-          <li>Si tu impresora no imprime a doble cara: imprime primero las páginas impares del PDF, vuelve a meter las hojas por la otra cara (prueba antes con una) e imprime las pares.</li>
-          <li>Pon las ${C.hojas} hojas en orden, dóblalas juntas por la mitad y grapa por el lomo con 2 grapas (una grapadora de brazo largo ayuda).</li>
-          <li>Mejor en papel de 90–120 g. En una copistería puedes pedir un <b>librillo A5 grapado</b> con el PDF de páginas A5.</li>
-        </ol>
-      </details>
-      <h2>Hojéalo</h2>
-      <p class="muted small">Toca una página para verla en grande; con las flechas pasas a la siguiente.</p>
-      <div class="pliegos">${pliegos.map((pl) => `<div class="pliego${pl.length === 1 ? " solo" : ""}">${pl.map(pag).join("")}</div>`).join("")}</div>`;
-    $$("[data-foto]").forEach((b) => (b.onclick = () => abrirVisor(+b.dataset.foto)));
-  }
   // ---------------- Vista: libros en PDF, con páginas de muestra para hojearlos antes de descargar ----------------
+  // Dos libros, cada uno con su uso: el cuaderno de bolsillo (A6) para llevar al bosque y la guía (A5) para estudiar.
+  // El cuaderno de campo A5 y el catálogo se retiraron por repetir contenido; sus PDF siguen en las «releases» de GitHub.
   // Las muestras son imágenes sacadas de los PDF: libros/<libro>/pNNN.jpg (grande) y tNNN.jpg (miniatura)
   const MUESTRAS = {
     bolsillo: { total: 112, pags: [[1, "Portada"], [2, "Sumario"], [3, "Las 12 reglas"], [4, "Cómo mirar una seta"], [6, "Índice visual: las comestibles"], [8, "Índice visual: las de alerta"], [9, "Calendario"],
@@ -628,19 +588,12 @@
     esencial: { total: 336, pags: [[1, "Portada"], [3, "Índice"], [6, "Antes de salir: seguridad"], [11, "Partes de una seta"], [14, "Cómo buscar setas"], [24, "Ficha de árbol: pino carrasco"],
       [176, "Ficha del rovelló (1 de 4)"], [177, "Rovelló: cómo no confundirlo (2 de 4)"], [178, "Rovelló: cuándo y dónde (3 de 4)"], [179, "Rovelló: descripción (4 de 4)"],
       [246, "Ficha de la farinera borda, mortal (1 de 2)"], [247, "Farinera borda: síntomas y confusiones (2 de 2)"], [304, "Calendario de fructificación"], [335, "Cuaderno de campo para anotar las salidas"]] },
-    catalogo: { total: 565, pags: [[1, "Portada"], [3, "Índice"], [5, "Antes de salir: seguridad"], [10, "Partes de una seta"], [13, "Cómo se ha hecho este catálogo"], [47, "Orden Agaricales"], [49, "Familia de las amanitas"],
-      [67, "Ficha de la farinera borda (mortal)"], [68, "Farinera borda: síntomas y confusiones"], [270, "Inventario: otras especies con registros"], [350, "Ficha del rovelló"], [351, "Rovelló: cómo no confundirlo"], [352, "Rovelló: cuándo y dónde"],
-      [517, "Calendario de fructificación"], [524, "Qué hacer ante una intoxicación"]] },
   };
   const LIBROS = [
-    { g: "bolsillo", corto: "Cuaderno de bolsillo", tit: "Setas esenciales · cuaderno de bolsillo", formato: "112 páginas A6 (10,5 × 14,8 cm)",
+    { g: "bolsillo", corto: "Cuaderno de bolsillo", uso: "Para llevar al bosque", tit: "Setas esenciales · cuaderno de bolsillo", formato: "112 páginas A6 (10,5 × 14,8 cm)",
       txt: "Las 79 setas que hay que conocer, una por página: fotos, cómo reconocerla, dónde sale y con qué no confundirla. Con las confusiones mortales lado a lado, los árboles con foto de la hoja y del tronco, calendario, índice visual y qué hacer ante una intoxicación. Cabe en el bolsillo." },
-    { g: "esencial", corto: "Guía esencial", tit: "Setas comestibles esenciales de Cataluña", formato: "336 páginas A5",
-      txt: "La guía de campo completa: cada comestible en cuatro páginas (fotos, rasgos que hay que comprobar, cómo no confundirla, cuándo y dónde sale), las tóxicas y mortales, los árboles, el calendario y un glosario." },
-    { g: "cuaderno", corto: "Cuaderno de campo", tit: "Cuaderno de campo", formato: "48 páginas A5 · se imprime en 12 hojas A4",
-      txt: (C) => `Un librillo para la mochila: ${C.comestibles || 26} comestibles con cuatro fotos y sus confusiones, ${C.peligrosas || 20} peligrosas, ${C.arboles || 8} árboles, calendario y qué hacer ante una intoxicación. Se imprime en casa, se dobla y se grapa.` },
-    { g: "catalogo", corto: "Catálogo", tit: "Catálogo micológico de Cataluña · volumen 1", formato: "565 páginas A5",
-      txt: "Para profundizar: fichas desarrolladas por órdenes y familias, e inventario de las especies con registros en Cataluña." },
+    { g: "esencial", corto: "Guía esencial", uso: "Para estudiar en casa", tit: "Setas comestibles esenciales de Cataluña", formato: "336 páginas A5",
+      txt: "Las mismas 79 setas, a fondo: cada comestible en cuatro páginas (fotos, rasgos que hay que comprobar, cómo no confundirla, cuándo y dónde sale), las tóxicas y mortales, los árboles, el calendario y un glosario." },
   ];
   // Los cuadernos de bolsillo están en la propia web (offline/), no en las «releases» de GitHub
   const BOLSILLO = [
@@ -656,12 +609,9 @@
         <li><b>Ordena</b> las mitades por el número pequeño de abajo: un montón con las A (A 1/14, A 2/14…) y otro con las B (B 1/14…).</li>
         <li><b>Dobla</b> cada montón por la mitad y <b>grapa</b> por el pliegue con 2 grapas.</li></ol></details>`,
     esencial: `<p class="small muted">Para imprimir: A5 a doble cara sin cambiar el orden de las páginas (cada ficha empieza en página par), papel mate de 100–115 g y espiral o encuadernación cosida para que se abra plano. Para el móvil, la edición <b>ligera</b>.</p>`,
-    cuaderno: `<p class="small"><a href="#/cuaderno">Cómo imprimirlo y doblarlo, paso a paso →</a></p>`,
-    catalogo: `<p class="small muted">Para el móvil, la edición <b>ligera</b>. Para imprimirlo, mejor en dos tomos.</p>`,
   };
   function paginasLibro(g) {
-    const C = DB.cuaderno || {}, pad = (n) => String(n).padStart(2, "0"), n3 = (n) => String(n).padStart(3, "0");
-    if (g === "cuaderno") return Array.from({ length: C.paginas || 0 }, (_, i) => ({ n: i + 1, et: i ? "" : "Portada", g: `cuaderno/p${pad(i + 1)}.jpg`, t: `cuaderno/t${pad(i + 1)}.jpg` }));
+    const n3 = (n) => String(n).padStart(3, "0");
     return ((MUESTRAS[g] || {}).pags || []).map(([n, et]) => ({ n, et, g: `libros/${g}/p${n3(n)}.jpg`, t: `libros/${g}/t${n3(n)}.jpg` }));
   }
   function verLibro(g, i) {
@@ -670,15 +620,15 @@
     abrirVisor(i);
   }
   function vistaLibros() {
-    const C = DB.cuaderno || {}, L = (DB.libros || []).concat(BOLSILLO), mb = (x) => String(x).replace(".", ",");
+    const L = (DB.libros || []).concat(BOLSILLO), mb = (x) => String(x).replace(".", ",");
     const fila = (l) => `<li class="libro"><a class="btn prim" href="${esc(l.url)}" target="_blank" rel="noopener">Descargar</a><div><b>${esc(l.ed)}</b> <span class="muted">· ${l.pag ? l.pag + " págs. · " : ""}${mb(l.mb)} MB</span>${l.uso ? `<br><span class="small">${esc(l.uso)}</span>` : ""}</div></li>`;
     const libro = (b) => {
       const P = paginasLibro(b.g), eds = L.filter((l) => l.guia === b.g);
       if (!eds.length) return "";
-      const ver = b.g === "cuaderno" ? `Hojear las ${P.length} páginas` : `Ver ${P.length} páginas por dentro`;
+      const ver = `Ver ${P.length} páginas por dentro`;
       return `<section class="libro-c" id="libro-${b.g}">
         ${P.length ? `<button class="libro-tapa" data-libro="${b.g}" data-i="0" aria-label="Ver por dentro: ${esc(b.tit)}"><img src="${P[0].t}" alt="Portada de ${esc(b.tit)}" loading="lazy"><span>Ver por dentro</span></button>` : ""}
-        <div class="libro-cab"><h2>${esc(b.tit)}</h2><p class="libro-formato">${esc(b.formato)}</p><p class="libro-txt">${esc(typeof b.txt === "function" ? b.txt(C) : b.txt)}</p></div>
+        <div class="libro-cab"><p class="libro-uso">${esc(b.uso)}</p><h2>${esc(b.tit)}</h2><p class="libro-formato">${esc(b.formato)}</p><p class="libro-txt">${esc(b.txt)}</p></div>
         <div class="libro-resto">
           ${P.length > 1 ? `<div class="libro-hojas">${P.slice(1, 15).map((p, i) => `<button data-libro="${b.g}" data-i="${i + 1}" aria-label="Ver la página ${p.n}${p.et ? ": " + esc(p.et) : ""}" title="${esc(p.et || "Página " + p.n)}"><img src="${p.t}" alt="" loading="lazy"><span>${p.n}</span></button>`).join("")}</div>
           <button class="btn" data-libro="${b.g}" data-i="0">👁 ${ver}</button>` : ""}
@@ -688,8 +638,8 @@
     };
     const hay = LIBROS.filter((b) => L.some((l) => l.guia === b.g));
     app.innerHTML = `<h1>Libros en PDF</h1>
-      <p class="ap-intro">Hojéalos antes de descargarlos: toca la portada o cualquier página para verla en grande.</p>
-      ${hay.length > 1 ? `<div class="libro-saltos">${hay.map((b) => `<button class="btn" data-ir="libro-${b.g}">${esc(b.corto)}</button>`).join("")}</div>` : ""}
+      <p class="ap-intro">Dos libros con las mismas 79 setas: uno pequeño para llevar al bosque y otro grande para estudiar en casa. Hojéalos antes de descargarlos: toca la portada o cualquier página para verla en grande.</p>
+      ${hay.length > 2 ? `<div class="libro-saltos">${hay.map((b) => `<button class="btn" data-ir="libro-${b.g}">${esc(b.corto)}</button>`).join("")}</div>` : ""}
       ${hay.length ? hay.map(libro).join("") : `<p class="muted">Los PDF no están disponibles en esta copia de la web.</p>`}
       <p class="small muted">Todos salen de la misma base de datos que esta web. Muchas fotografías tienen licencia CC BY-NC: los PDF son para uso personal o sin ánimo de lucro.</p>`;
     $$("[data-libro]").forEach((x) => (x.onclick = () => verLibro(x.dataset.libro, +x.dataset.i)));
@@ -711,8 +661,8 @@
   function archivosSinInternet(arbol, todas) {
     return arbol.filter((x) => x.type === "blob").filter(({ path: p }) =>
       /^(index\.html|app\.js|app\.css|manifest\.webmanifest|icono-\d+\.png)$/.test(p) || /^(datos|extra|fonts)\//.test(p) ||
-      /^fotos\/(t|montnegre\/t)\/[^/]+$/.test(p) || /^(cuaderno|libros\/[^/]+)\/t\d+\.jpg$/.test(p) ||
-      (todas && /^(fotos|cuaderno|libros)\/.+\.(jpe?g|png|webp)$/i.test(p)));
+      /^fotos\/(t|montnegre\/t)\/[^/]+$/.test(p) || /^libros\/[^/]+\/t\d+\.jpg$/.test(p) ||
+      (todas && /^(fotos|libros)\/.+\.(jpe?g|png|webp)$/i.test(p)));
   }
   // La lista de archivos sale de GitHub: así siempre coincide con lo publicado
   let arbolRepo = null;
@@ -819,7 +769,7 @@
         : `${estado}
         <div class="si-opciones">
           <button class="si-op" data-guardar="pequenas"><b>Con fotos pequeñas</b><span data-peso="pequenas">unos 25 MB</span><small>Ocupa poco. Las fotos se ven más pequeñas.</small></button>
-          <button class="si-op" data-guardar="todas"><b>Con todas las fotos en grande</b><span data-peso="todas">unos 175 MB</span><small>Como en la web. Mejor con wifi.</small></button>
+          <button class="si-op" data-guardar="todas"><b>Con todas las fotos en grande</b><span data-peso="todas">unos 160 MB</span><small>Como en la web. Mejor con wifi.</small></button>
         </div>
         <div id="si-progreso" hidden><div class="si-barra"><span></span></div><p class="small" id="si-txt"></p></div>
         <p><button class="btn prim" id="si-instalar" ${instalar ? "" : "hidden"}>📲 Instalar como app</button></p>
@@ -831,11 +781,11 @@
       <section class="si-c">
         <h2>💻 En el ordenador</h2>
         <p>Descarga la web entera en un archivo ZIP. Descomprímelo y abre <b>index.html</b> con doble clic: se abre en el navegador, sin internet.</p>
-        <p><a class="btn prim" href="${ZIP}">Descargar la web (ZIP)</a> <span class="muted small" data-peso="zip">unos 175 MB</span></p>
+        <p><a class="btn prim" href="${ZIP}">Descargar la web (ZIP)</a> <span class="muted small" data-peso="zip">unos 160 MB</span></p>
       </section>
       <section class="si-c">
         <h2>📕 En papel</h2>
-        <p>Sin depender de la batería: <a href="#/libros">libros y cuadernos en PDF</a> para leer o imprimir.</p>
+        <p>Sin depender de la batería: el <a href="#/libros">cuaderno de bolsillo en PDF</a>, para imprimirlo y llevarlo en la mochila.</p>
       </section>
       <p class="small muted">Sin internet no funcionan «Cuándo salir tras la lluvia» (necesita saber cuánto ha llovido), el quiz ni la descarga de los PDF.</p>`;
     // pesos exactos, sacados de la lista de archivos
@@ -872,7 +822,7 @@
   // ---------------- Router ----------------
   // Enlaces antiguos: los de la web catalana (#/bolet/rovello, #/troballes…) y las secciones retiradas (#/hoy, #/mapa)
   const ANTIGUAS = { bolets: "", avui: "", hoy: "", mapa: "", pluja: "lluvia", troballes: "hallazgos", seguretat: "guia/seguridad", sos: "guia/intoxicacion",
-    aprendre: "guia/anatomia", explora: "arboles", bosc: "arboles", "cara-a-cara": "rasgos" };
+    aprendre: "guia/anatomia", explora: "arboles", bosc: "arboles", "cara-a-cara": "rasgos", cuaderno: "libros" };
   function rutaAntigua(v, a) {
     if (v === "bolet") return window.CS && CS.CAT2ES[a] ? "especie/" + CS.CAT2ES[a] : "";
     return ANTIGUAS[v];
@@ -890,7 +840,7 @@
     const extra = (window.VISTAS_EXTRA || {})[v];
     ({ ...(extra ? { [v]: () => extra(a, window.GUIA) } : {}), "": vistaBuscador, especie: () => vistaFicha(a), rasgos: vistaRasgos, arboles: vistaArboles, arbol: () => vistaArbol(a), calendario: vistaCalendario,
       // secciones retiradas: los enlaces antiguos llevan a «Por rasgos» o al buscador
-      comparar: () => location.replace("#/rasgos"), habitats: () => location.replace("#/rasgos"), taxonomia: () => location.replace("#/"), galeria: () => vistaGaleria(a), inventario: vistaInventario, guia: () => vistaGuia(a), fuentes: vistaFuentes, calidad: vistaCalidad, libros: vistaLibros, cuaderno: vistaCuaderno, "sin-internet": vistaSinInternet }[v] || vistaNoEncontrada)();
+      comparar: () => location.replace("#/rasgos"), habitats: () => location.replace("#/rasgos"), taxonomia: () => location.replace("#/"), galeria: () => vistaGaleria(a), inventario: vistaInventario, guia: () => vistaGuia(a), fuentes: vistaFuentes, calidad: vistaCalidad, libros: vistaLibros, "sin-internet": vistaSinInternet }[v] || vistaNoEncontrada)();
     window.scrollTo(0, 0);
   }
   // el Quiz ya está en «Más» (index.html); solo se añade si faltara

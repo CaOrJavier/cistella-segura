@@ -19,7 +19,7 @@ jobs:
       - name: Hacer el ZIP
         run: |
           mkdir -p dist/cistella-segura
-          cp -r index.html app.js app.css manifest.webmanifest icono-*.png datos extra fonts fotos cuaderno libros dist/cistella-segura/
+          cp -r index.html app.js app.css manifest.webmanifest icono-*.png datos extra fonts fotos libros dist/cistella-segura/
           printf '%s\r\n' \
             "CISTELLA SEGURA - SETAS DE CATALUNA - copia para usar sin internet" \
             "" \

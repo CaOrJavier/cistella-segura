@@ -11,12 +11,12 @@ self.addEventListener("activate", (e) => e.waitUntil(self.clients.claim()));
 
 const esEstatico = (p) => /\.(jpe?g|png|webp|gif|woff2?|ttf)$/i.test(p);
 // fotos/g/x.jpg → fotos/t/x.jpg · fotos/x.jpg → fotos/t/x.jpg · fotos/montnegre/x.jpg → fotos/montnegre/t/x.jpg
-// cuaderno/p01.jpg → cuaderno/t01.jpg · libros/esencial/p001.jpg → libros/esencial/t001.jpg
+// libros/esencial/p001.jpg → libros/esencial/t001.jpg
 function miniatura(p) {
   return p.replace(/\/fotos\/g\//, "/fotos/t/")
     .replace(/\/fotos\/([^/]+\.jpe?g)$/i, "/fotos/t/$1")
     .replace(/\/fotos\/montnegre\/([^/]+)$/, "/fotos/montnegre/t/$1")
-    .replace(/\/(cuaderno|libros\/[^/]+)\/p(\d+\.jpg)$/, "/$1/t$2");
+    .replace(/\/(libros\/[^/]+)\/p(\d+\.jpg)$/, "/$1/t$2");
 }
 
 self.addEventListener("fetch", (e) => {

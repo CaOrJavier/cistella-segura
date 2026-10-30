@@ -1,6 +1,6 @@
 # 🍄 Cistella Segura · [caorjavier.github.io/cistella-segura](https://caorjavier.github.io/cistella-segura/)
 
-Web para **identificar** las setas de Cataluña: 163 fichas en castellano (con los nombres en catalán y científicos), búsqueda por rasgos, calendario, seguridad, un quiz con fotos y libros en PDF para imprimir o llevar en el móvil.
+Web para **identificar** las setas de Cataluña: 163 fichas en castellano (con los nombres en catalán y científicos), búsqueda por rasgos, seguridad, un quiz con fotos, dos libros en PDF (uno de bolsillo para el bosque y una guía para estudiar) y modo sin internet.
 
 ## Qué hay en la web
 
@@ -9,22 +9,23 @@ Web para **identificar** las setas de Cataluña: 163 fichas en castellano (con l
 - **Aprende**: seguridad, qué hacer ante una intoxicación, anatomía, cómo buscar y glosario.
 - **Quiz** con fotos y **Libros** en PDF, también en la portada.
 - Botón **⬇ Usar sin internet** arriba: guarda la web en el móvil. La web avisa cuando no hay conexión.
-- En **Más**: calendario, cuándo salir tras la lluvia, árboles, galería, cuaderno de campo, inventario de ≈ 4.000 especies y fuentes.
+- En **Más**: calendario, cuándo salir tras la lluvia, árboles, galería, inventario de ≈ 4.000 especies y fuentes.
 
 ## Sin internet
 
-En la web, **Más → Usar sin internet**:
+En la web, botón **⬇ Usar sin internet** (arriba):
 
-- **En el móvil o la tableta:** botón «Guardar en este dispositivo», con fotos pequeñas (≈ 27 MB) o con todas las fotos (≈ 174 MB). Después se puede añadir a la pantalla de inicio y se abre como una app, sin cobertura.
+- **En el móvil o la tableta:** botón «Guardar en este dispositivo», con fotos pequeñas (≈ 25 MB) o con todas las fotos (≈ 160 MB). Después se puede añadir a la pantalla de inicio y se abre como una app, sin cobertura.
 - **En el ordenador:** [descarga la web en ZIP](https://github.com/CaOrJavier/cistella-segura/releases/download/web-local/cistella-segura-web.zip), descomprímela y abre `index.html`. El ZIP se rehace solo con cada cambio de la web (`.github/workflows/web-zip.yml`).
 
-## Libros y cuadernos
+## Libros
 
-Todos se descargan desde la web (**Más → Libros PDF**) o desde [Releases](https://github.com/CaOrJavier/cistella-segura/releases/tag/guia-2026.1).
+Dos libros con las mismas 79 setas, cada uno para una cosa. Se hojean y se descargan en la web (**Libros**).
 
-- **Setas esenciales · cuaderno de bolsillo A6** (112 páginas): las 79 especies esenciales, las 22 confusiones mortales lado a lado y 20 árboles con foto de la hoja y del tronco, en [A6](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-bolsillo.pdf) o [A4 para imprimir en casa](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-bolsillo-imprimir-A4.pdf) ([cómo imprimirlo](butxaca/COMO-IMPRIMIR.md)).
-- **Quadern de butxaca A6** (76 páginas, en catalán, 50 setas): en [A6](https://caorjavier.github.io/cistella-segura/offline/cistella-segura-butxaca.pdf) o [A4](https://caorjavier.github.io/cistella-segura/offline/cistella-segura-butxaca-imprimir-A4.pdf).
-- **Cuaderno de campo A5** (48 páginas), ***Setas comestibles esenciales de Cataluña*** (336 páginas) y ***Catálogo micológico de Cataluña, vol. 1*** (565 páginas): en Releases.
+- **Para llevar al bosque · Setas esenciales, cuaderno de bolsillo A6** (112 páginas): una página por seta, las 22 confusiones mortales lado a lado y 20 árboles con foto de la hoja y del tronco. En [A6](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-bolsillo.pdf) o [A4 para imprimir en casa](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-bolsillo-imprimir-A4.pdf) ([cómo imprimirlo](butxaca/COMO-IMPRIMIR.md)). También en catalán (50 setas): [A6](https://caorjavier.github.io/cistella-segura/offline/cistella-segura-butxaca.pdf) o [A4](https://caorjavier.github.io/cistella-segura/offline/cistella-segura-butxaca-imprimir-A4.pdf).
+- **Para estudiar en casa · *Setas comestibles esenciales de Cataluña*** (A5, 336 páginas): las mismas setas a fondo, cuatro páginas por comestible. En [Releases](https://github.com/CaOrJavier/cistella-segura/releases/tag/guia-2026.1).
+
+El *Cuaderno de campo A5* y el *Catálogo micológico de Cataluña* ya no se ofrecen en la web porque repetían contenido (el cuaderno A5 está entero en el de bolsillo; el catálogo, en las 163 fichas de la web). Sus PDF siguen en [Releases](https://github.com/CaOrJavier/cistella-segura/releases/tag/guia-2026.1).
 
 ## Estructura del repositorio
 
@@ -36,7 +37,6 @@ datos/db.js        las 163 especies, árboles, textos y vocabulario
 datos/cistella.js  datos de «Cuándo salir» y «Mis hallazgos»
 extra/             esas dos secciones
 fotos/             fotos de las fichas (g/, t/) y de los hallazgos (montnegre/)
-cuaderno/          páginas del cuaderno de campo
 quiz/              quiz de setas (en catalán)
 offline/           cuadernos de bolsillo en PDF
 butxaca/           generadores de los cuadernos de bolsillo
