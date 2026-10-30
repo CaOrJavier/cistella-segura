@@ -80,7 +80,7 @@
     { k: "textura", t: "Textura", g: "Rasgos", get: (e) => car(e).textura || [], lab: (v) => cap(v.replace(/_/g, " ")) },
   ];
   const FK = Object.fromEntries(FAC.map((f) => [f.k, f]));
-  const state = { q: "", f: {}, orden: "familia", alt: [0, 3000], comp: store.get("comp", []), excep: false };
+  const state = { q: "", f: {}, orden: "familia", alt: [0, 3000], excep: false };
   function valsOf(f, e) { return f.get(e).filter((x) => x !== null && x !== undefined && x !== ""); }
   function pasa(e, skip) {
     if (state.q) { const t = norm(state.q).split(/\s+/).filter(Boolean); if (!t.every((w) => e._q.includes(w))) return false; }
@@ -112,7 +112,6 @@
   }
   function fotoBg(e, cual = "t") { const p = (e.fotos || [])[0]; return p ? `style="background-image:url('${p[cual]}')"` : ""; }
   function tarjeta(e) {
-    const enc = state.comp.includes(e.id);
     return `<article class="tarjeta"><a class="cubre" href="#/especie/${e.id}" aria-label="${esc(titulo(e))}"></a>
       <div class="img" ${fotoBg(e)}></div>
       <div class="cuerpo">
@@ -123,27 +122,15 @@
         ${mesesHTML(e)}
         <div class="small muted">${esc((eco(e).habitats || []).slice(0, 2).map((h) => lab("habitat", h)).join(" · "))}</div>
         ${peligrosa(e) && ["comestible", "condicionada"].includes(catOf(e)) ? `<div class="alerta-mini">⚠ Se confunde con especies tóxicas o mortales</div>` : ""}
-        <label class="comp"><input type="checkbox" data-comp="${e.id}" ${enc ? "checked" : ""}> Comparar</label>
       </div></article>`;
-  }
-  function enlazarComparar(root) {
-    $$("input[data-comp]", root).forEach((c) => c.addEventListener("change", () => {
-      const id = c.dataset.comp;
-      state.comp = c.checked ? [...new Set([...state.comp, id])].slice(-4) : state.comp.filter((x) => x !== id);
-      store.set("comp", state.comp); pintarBarraComp();
-    }));
-  }
-  function pintarBarraComp() {
-    const b = $("#barra-comp"); if (!b) return;
-    b.innerHTML = state.comp.length ? `Para comparar: ${state.comp.map((id) => esc(titulo(BYID[id]))).join(", ")} · <a href="#/comparar/${state.comp.join(",")}">Abrir comparador</a> · <button class="btn" id="limpiar-comp">Vaciar</button>` : "Marque «Comparar» en hasta cuatro fichas para verlas lado a lado.";
-    const l = $("#limpiar-comp"); if (l) l.onclick = () => { state.comp = []; store.set("comp", []); render(); };
   }
 
   // ---------------- Vista: buscador ----------------
   function vistaBuscador() {
     const grupos = [...new Set(FAC.map((f) => f.g))];
     app.innerHTML = `
-      <h1>Setas de Cataluña</h1>
+      <h1>Las setas de Cataluña</h1>
+      <div id="hoy-resumen"></div>
       <p class="muted">${ESP.length} especies con ficha (guía esencial y catálogo) y ${DB.registro.length.toLocaleString("es")} especies más en el <a href="#/inventario">inventario de registros</a>. Busque por cualquier nombre o combine filtros.${(DB.libros || []).length ? ` <a href="#/libros">Descargue los libros en PDF</a>.` : ""}</p>
       ${DB.cuaderno ? `<a class="aviso-cuaderno" href="#/cuaderno"><img src="cuaderno/t01.jpg" alt=""><span><b>Cuaderno de campo para imprimir</b>${DB.cuaderno.paginas} páginas A5 en color con las comestibles, las peligrosas y sus árboles, para doblar y llevar en la mochila.</span><span aria-hidden="true">›</span></a>` : ""}
       <input class="q" type="search" placeholder="Nombre catalán, castellano o científico, sinónimo, familia…" value="${esc(state.q)}" aria-label="Buscar">
@@ -160,10 +147,11 @@
         </aside>
         <section>
           <div id="nota-filtro"></div>
-          <div id="barra-comp" class="small muted no-print"></div>
           <div class="tarjetas" id="res"></div>
         </section>
       </div>`;
+    // resumen del tiempo de hoy por zonas (extra/hoy.js), si está disponible
+    try { if (window.CS && CS.hoyResumen) CS.hoyResumen($("#hoy-resumen")); } catch (e) { /* sin resumen */ }
     const q = $(".q"); q.addEventListener("input", () => { state.q = q.value; pintarResultados(); });
     $("#ordenar").onchange = (ev) => { state.orden = ev.target.value; pintarResultados(); };
     $("#limpiar").onclick = () => { state.f = {}; state.q = ""; state.alt = [0, 3000]; state.excep = false; vistaBuscador(); };
@@ -202,7 +190,7 @@
     $("#nota-filtro").innerHTML = cats.some((c) => ["comestible", "condicionada"].includes(c))
       ? `<div class="nota-filtro"><b>Este filtro no es una autorización para comer.</b> «Comestible» describe a la especie correctamente identificada, no al ejemplar que usted tiene delante. Revise los rasgos decisivos y las confusiones de cada ficha; ante la mínima duda, no la consuma.</div>` : "";
     $("#res").innerHTML = res.length ? res.map(tarjeta).join("") : `<p>No hay especies con esa combinación. Quite algún filtro o busque en el <a href="#/inventario">inventario</a>.</p>`;
-    enlazarComparar($("#res")); pintarBarraComp(); pintarFacetas();
+    pintarFacetas();
   }
 
   // ---------------- Vista: ficha ----------------
@@ -216,8 +204,7 @@
       return `<tr class="p-${c.peligro || "desconocida"}"><td>${nom}<br>${badge(c.peligro)}</td><td><b>${esc(c.diferencia || "")}</b>
         ${c.comparten ? `<div class="small"><b>Se parecen en:</b> ${esc(c.comparten)}</div>` : ""}
         ${c.donde ? `<div class="small"><b>Dónde mirarlo:</b> ${esc(c.donde)}</div>` : ""}
-        ${c.dificultad ? `<div class="small"><b>Límites:</b> ${esc(c.dificultad)}</div>` : ""}
-        ${o ? `<div class="small no-print"><a href="#/comparar/${e.id},${o.id}">Comparar lado a lado</a></div>` : ""}</td></tr>`;
+        ${c.dificultad ? `<div class="small"><b>Límites:</b> ${esc(c.dificultad)}</div>` : ""}</td></tr>`;
     }).join("")}</table>`;
   }
   function histoHTML(e) {
@@ -228,23 +215,33 @@
   function fuentesHTML(e) {
     return (e.fuentes || []).map((k) => { const f = DB.fuentes[k]; return f ? `<li><b>[${esc(k)}]</b> ${esc(f.cita)}${f.url ? ` <a href="${esc(f.url)}" rel="noopener" target="_blank">enlace</a>` : ""} <span class="muted">(${esc(f.tipo)})</span></li>` : `<li>${esc(k)}</li>`; }).join("");
   }
+  // Minimapa de observaciones (extra/mapa.js) para las setas que tienen datos en el mapa
+  function mapaFicha(e) {
+    try {
+      if (!window.CS || !CS.miniMapa) return "";
+      const cat = Object.keys(CS.CAT2ES).find((k) => CS.CAT2ES[k] === e.id);
+      if (!cat) return "";
+      const svg = CS.miniMapa(cat, { pie: true, titulo: "Observaciones de " + titulo(e) + " en Cataluña" });
+      return svg ? `<div class="mapa-ficha">${svg}<p class="no-print"><a href="#/mapa/${cat}">Ver en el mapa interactivo →</a></p></div>` : "";
+    } catch (err) { return ""; }
+  }
   let galeriaActual = [];
   function vistaFicha(id) {
     const e = BYID[id]; if (!e) return vistaNoEncontrada();
-    document.title = titulo(e) + " · Setas de Cataluña";
+    document.title = titulo(e) + " · Cistella Segura";
     const com = e.comestibilidad || {}, idf = e.identificacion || {}, mo = e.morfologia || {}, ec = eco(e), r = e.registros, b = e.busqueda || {};
     galeriaActual = e.fotos || [];
     const zonas = r ? Object.entries(r.zonas || {}).filter(([z]) => V.region[z]).map(([z, n]) => `${esc(V.region[z].nombre)} (${n})`).join(", ") : "";
     const comarcas = r ? Object.entries(r.comarcas || {}).map(([c, n]) => `${esc(c)} (${n})`).join(", ") : "";
     app.innerHTML = `
-      <div class="aviso-impresion">Ficha impresa de «Setas de Cataluña» (${esc(DB.meta.generado)}). Ninguna ficha certifica que un ejemplar sea comestible.</div>
+      <div class="aviso-impresion">Ficha impresa de «Cistella Segura · Setas de Cataluña» (${esc(DB.meta.generado)}). Ninguna ficha certifica que un ejemplar sea comestible.</div>
       <div class="ficha-cab">
-        <div><div class="tax">${esc(e.orden)} · <a href="#/taxonomia">${esc(e.familia)}</a> · ${esc(e.genero)}</div>
+        <div><div class="tax">${esc(e.orden)} · ${esc(e.familia)} · ${esc(e.genero)}</div>
           <h1>${esc(titulo(e))}</h1>
           <div class="nombres">${nombres(e, "ca").length ? "<b>ca:</b> " + esc(nombres(e, "ca").join(", ")) : ""}${nombres(e, "es").length ? " · <b>es:</b> " + esc(nombres(e, "es").join(", ")) : ""}</div>
           <div class="sci"><i>${esc(e.nombre)}</i> <span class="muted small">${esc(e.autor || "")}</span></div></div>
         <div style="text-align:right">${badge(catOf(e))}<br>${idf.dificultad ? `<span class="chip">Identificación ${esc(idf.dificultad)}</span>` : ""}${e.controversia ? `<span class="chip">Comestibilidad o taxonomía discutida</span>` : ""}
-          <div class="no-print" style="margin-top:.5rem"><button class="btn" onclick="window.print()">Imprimir ficha</button> <label class="small"><input type="checkbox" data-comp="${e.id}" ${state.comp.includes(e.id) ? "checked" : ""}> Comparar</label></div></div>
+          <div class="no-print" style="margin-top:.5rem"><button class="btn" onclick="window.print()">Imprimir ficha</button></div></div>
       </div>
       ${e.toxicidad ? `<div class="caja alerta"><h2>${badge(catOf(e))} ${esc(e.toxicidad.sindrome)}</h2><p>${e.toxicidad.latencia ? `<b>Aparición de síntomas:</b> ${esc(e.toxicidad.latencia)}. ` : ""}${esc(e.toxicidad.sintomas || "")}</p>${e.toxicidad.nota ? `<p class="small">${esc(e.toxicidad.nota)}</p>` : ""}<p class="small"><a href="#/guia/intoxicacion">Qué hacer ante una intoxicación</a></p></div>` : ""}
       <div class="ficha-grid">
@@ -272,7 +269,7 @@
         ["Dónde mirar", esc(ec.donde_mirar || "")],
       ]))}
       ${seccion("Cómo encontrarla", dl([["Priorice", esc(b.prioridad)], ["Árbol", esc(b.arbol)], ["Parte del bosque", esc(b.parte)], ["Al emerger", esc(b.emergente)], ["Ejemplares ocultos", esc(b.ocultos)], ["Al encontrar una", esc(b.ampliar)], ["Especies acompañantes", esc(b.acompanantes)], ["Cuándo cambiar de zona", esc(b.cambiar)]]) + (b.local ? `<p class="small muted"><b>Experiencia local (orientativo):</b> ${esc(b.local)}</p>` : ""))}
-      ${seccion("Dónde se ha registrado en Cataluña", `${(e.distribucion || {}).texto ? `<p>${esc(e.distribucion.texto)}</p>` : ""}${(e.distribucion || {}).altitud ? `<p><b>Altitud orientativa:</b> ${e.distribucion.altitud.min}–${e.distribucion.altitud.max} m${e.distribucion.altitud.nota ? ` (${esc(e.distribucion.altitud.nota)})` : ""}</p>` : ""}
+      ${seccion("Dónde se ha registrado en Cataluña", `${mapaFicha(e)}${(e.distribucion || {}).texto ? `<p>${esc(e.distribucion.texto)}</p>` : ""}${(e.distribucion || {}).altitud ? `<p><b>Altitud orientativa:</b> ${e.distribucion.altitud.min}–${e.distribucion.altitud.max} m${e.distribucion.altitud.nota ? ` (${esc(e.distribucion.altitud.nota)})` : ""}</p>` : ""}
         ${r ? `<p><b>Registros (${esc(r.consulta)}):</b> ${r.n} en GBIF, ${r.pliegos} pliegos de herbario y ${r.observaciones} observaciones. Evidencia: <b>${esc(FK.evid.lab(r.evidencia))}</b>.</p>${zonas ? `<p><b>Zonas:</b> ${zonas}.</p>` : ""}${comarcas ? `<p class="small"><b>Comarcas:</b> ${comarcas}.</p>` : ""}<p class="small muted">Comarcas asignadas por coordenadas; los registros no son un mapa de distribución y la ausencia de registros no significa ausencia de la especie.</p>` : ""}`)}
       ${seccion("Descripción", dl([["Sombrero", mo.sombrero], ["Himenio", mo.himenoforo], ["Pie", mo.pie], ["Velo", mo.velo], ["Carne", mo.carne], ["Látex", mo.latex], ["Olor", mo.olor], ["Sabor", mo.sabor], ["Esporada", mo.esporada], ["Microscopía", mo.microscopia], ["Tamaño", mo.tamano], ["Edad", mo.edad], ["Cambios", mo.cambios]].map(([k, v]) => [k, v ? esc(v) : ""])))}
       ${seccion("Nombres y taxonomía", `<p><b>Catalán:</b> ${esc(nombres(e, "ca").join(", ") || "—")} · <b>Castellano:</b> ${esc(nombres(e, "es").join(", ") || "—")}</p>${(e.nombres || {}).notas ? (e.nombres.notas.map((n) => `<p class="small">${esc(n)}</p>`).join("")) : ""}${e.taxonomia_nota ? `<p class="small">${esc(e.taxonomia_nota)}</p>` : ""}${e.familia_nota ? `<p class="small muted">${esc(e.familia_nota)}</p>` : ""}${(e.sinonimos || []).length ? `<p class="small"><b>Sinónimos:</b> <i>${esc(e.sinonimos.join("; "))}</i></p>` : ""}
@@ -280,7 +277,6 @@
       ${seccion("Fuentes y control de calidad", `<ul class="small">${fuentesHTML(e)}</ul>${(e.control || {}).morfologia ? `<p class="small">${esc(e.control.morfologia)}</p>` : ""}${((e.control || {}).pendiente || []).map((p) => `<p class="small"><b>Pendiente:</b> ${esc(p)}</p>`).join("")}${(DB.control[e.id] || []).filter((q) => q.nivel !== "pendiente").map((q) => `<p class="small"><b>${esc(q.nivel)}:</b> ${esc(q.msg)}</p>`).join("")}<p class="small muted">Última revisión: ${esc((e.control || {}).revisado || DB.meta.generado)}.</p>`)}
       ${e.datos_faltan ? `<div class="caja"><b>Datos que faltan o son inciertos:</b> ${esc(e.datos_faltan)}</div>` : ""}`;
     $$("[data-foto]").forEach((b) => (b.onclick = () => abrirVisor(+b.dataset.foto)));
-    enlazarComparar(app);
   }
   function abrirVisor(i) {
     const v = $("#visor"); const n = galeriaActual.length; if (!n) return;
@@ -293,31 +289,6 @@
     $(".sig", v).onclick = () => abrirVisor(i + 1);
   }
   document.addEventListener("keydown", (ev) => { if (ev.key === "Escape") $("#visor").hidden = true; });
-
-  // ---------------- Vista: comparador ----------------
-  function vistaComparar(ids) {
-    const lista = (ids ? ids.split(",") : state.comp).filter((id) => BYID[id]).slice(0, 4);
-    const opciones = ESP.slice().sort(ORDENES.catalan).map((e) => `<option value="${e.id}">${esc(titulo(e))} — ${esc(e.nombre)}</option>`).join("");
-    const filas = [
-      ["Foto", (e) => (e.fotos[0] ? `<img src="${e.fotos[0].t}" alt="">` : "")],
-      ["Nombres", (e) => `<b><a href="#/especie/${e.id}">${esc(titulo(e))}</a></b><br><i>${esc(e.nombre)}</i><br>${esc(nombres(e, "es").join(", "))}`],
-      ["Comestibilidad", (e) => badge(catOf(e)) + (e.toxicidad ? `<br><span class="small">${esc(e.toxicidad.sindrome)}; síntomas ${esc(e.toxicidad.latencia || "")}</span>` : "")],
-      ["Rasgos decisivos", (e) => `<ul class="small">${((e.identificacion || {}).claves || []).map((c) => `<li>${esc(c)}</li>`).join("")}</ul>`],
-      ["Bajo el sombrero", (e) => esc(lab("himenoforo", car(e).himenoforo)) + "<br><span class='small'>" + esc((e.morfologia || {}).himenoforo || "") + "</span>"],
-      ["Pie", (e) => esc((e.morfologia || {}).pie || "")],
-      ["Anillo / volva", (e) => `${car(e).anillo ? "Anillo" : "Sin anillo"} · ${car(e).volva ? "Volva" : "Sin volva"}`],
-      ["Carne y látex", (e) => esc([(e.morfologia || {}).carne, (e.morfologia || {}).latex].filter(Boolean).join(" Látex: "))],
-      ["Olor", (e) => esc((e.morfologia || {}).olor || "")],
-      ["Hábitat", (e) => esc((eco(e).habitats || []).map((h) => lab("habitat", h)).join(", ")) + "<br><span class='small'>" + esc((eco(e).arboles || []).map((a) => arbolNombre(a.id)).join(", ")) + "</span>"],
-      ["Meses", (e) => mesesHTML(e)],
-    ];
-    app.innerHTML = `<h1>Comparador</h1>
-      <p class="muted">Compare hasta cuatro especies. Las diferencias que importan están en «Rasgos decisivos» y en la tabla de confusiones de cada ficha.</p>
-      <p class="no-print"><select id="add"><option value="">Añadir especie…</option>${opciones}</select> <button class="btn" id="vaciar">Vaciar</button></p>
-      ${lista.length ? `<div class="comparador"><table>${filas.map(([t, f]) => `<tr><th>${t}</th>${lista.map((id) => `<td>${f(BYID[id])}</td>`).join("")}</tr>`).join("")}</table></div>` : "<p>Añada especies con el selector o marcando «Comparar» en las fichas.</p>"}`;
-    $("#add").onchange = (ev) => { if (!ev.target.value) return; const l = [...new Set([...lista, ev.target.value])].slice(-4); state.comp = l; store.set("comp", l); location.hash = "#/comparar/" + l.join(","); };
-    $("#vaciar").onclick = () => { state.comp = []; store.set("comp", []); location.hash = "#/comparar"; };
-  }
 
   // ---------------- Vista: buscador por rasgos ----------------
   function vistaRasgos() {
@@ -349,13 +320,12 @@
       const peligro = res.filter((e) => ["toxica", "mortal"].includes(catOf(e))).length;
       $("#cuenta").textContent = `${res.length} candidatas${peligro ? ` · ${peligro} tóxicas o mortales` : ""}`;
       $("#res").innerHTML = res.slice(0, 60).map(tarjeta).join("");
-      enlazarComparar($("#res"));
     };
     $("#limpiar").onclick = () => { state.f = {}; state.q = ""; pintar(); };
     pintar();
   }
 
-  // ---------------- Vistas: árboles, calendario, hábitats, taxonomía ----------------
+  // ---------------- Vistas: árboles y calendario ----------------
   function vistaArboles() {
     app.innerHTML = `<h1>Árboles y vegetación</h1><div class="texto">${DB.textos.arboles || ""}</div>
       <h2>Árboles</h2><div class="arbol-lista">${DB.arboles.map((a) => `<article class="tarjeta"><a class="cubre" href="#/arbol/${a.id}" aria-label="${esc(a.nombres.es[0])}"></a><div class="img" ${a.fotos && a.fotos[0] ? `style="background-image:url('${a.fotos[0].t}')"` : ""}></div><div class="cuerpo"><h3>${esc(cap(a.nombres.es[0]))}</h3><div class="es">ca: ${esc(a.nombres.ca[0])} · <i>${esc(a.nombre)}</i></div><div class="small muted">${(a.setas || []).length} setas con ficha asociadas</div></div></article>`).join("")}</div>
@@ -374,7 +344,6 @@
       ${seccion("Dónde crece", dl([["Clima", esc(ec.clima)], ["Suelo", esc(ec.suelo)], ["Altitud", esc(ec.altitud)], ["En Cataluña", esc(ec.distribucion)], ["Bosques", esc(ec.bosques)]]))}</div></div>
       ${seccion("Setas asociadas", `<p>${esc(a.setas_nota || "")}</p><p class="small muted">«Micorriza»: asociación establecida; «habitual/ocasional»: aparece con frecuencia sin relación demostrada de forma específica.</p><div class="tarjetas">${setas.map(tarjeta).join("")}</div>`)}`;
     $$("[data-foto]").forEach((b) => (b.onclick = () => abrirVisor(+b.dataset.foto)));
-    enlazarComparar(app);
   }
   function vistaCalendario() {
     const filtro = store.get("cal", "comestibles");
@@ -387,27 +356,6 @@
       <h2>Todo el año</h2><div class="tabla-scroll"><table class="tabla"><tr><th>Especie</th>${MESES.map((m) => `<th>${m}</th>`).join("")}</tr>
       ${lista.map((e) => `<tr><td><a href="#/especie/${e.id}">${esc(titulo(e))}</a> <i class="small muted">${esc(e.nombre)}</i></td>${MESES.map((_, i) => `<td class="m ${e._meses.includes(i + 1) ? "h" : e._mx.includes(i + 1) ? "x" : ""}"></td>`).join("")}</tr>`).join("")}</table></div>`;
     $$("[data-cal]").forEach((b) => (b.onclick = () => { store.set("cal", b.dataset.cal); vistaCalendario(); }));
-    enlazarComparar(app);
-  }
-  function vistaHabitats() {
-    const cuenta = {}; ESP.forEach((e) => (eco(e).habitats || []).forEach((h) => (cuenta[h] = (cuenta[h] || 0) + 1)));
-    app.innerHTML = `<h1>Consulta por hábitat</h1><p class="muted">Elija un hábitat para ver las especies con ficha que viven en él.</p>
-      <div class="arbol-lista">${Object.keys(V.habitat).filter((h) => cuenta[h]).map((h) => `<button class="caja" style="text-align:left" data-h="${h}"><b>${esc(V.habitat[h].nombre)}</b><br><span class="muted small">${cuenta[h]} especies${V.habitat[h].arbol && ARB[V.habitat[h].arbol] ? " · árbol: " + esc(arbolNombre(V.habitat[h].arbol)) : ""}</span></button>`).join("")}</div>`;
-    $$("[data-h]").forEach((b) => (b.onclick = () => { state.f = { habitat: [b.dataset.h] }; state.q = ""; location.hash = "#/"; }));
-  }
-  function vistaTaxonomia() {
-    const reg = DB.registro, ord = {};
-    const add = (o, f, g, item, ficha) => { o = o || "Sin orden"; f = f || "Sin familia"; ((((ord[o] = ord[o] || {})[f] = ord[o][f] || {})[g] = ord[o][f][g] || [])).push({ item, ficha }); };
-    ESP.forEach((e) => add(e.orden, e.familia, e.genero, e, true));
-    reg.forEach((r) => add(r.o, r.f, r.g, r, false));
-    const tx = Object.fromEntries((DB.taxonomia.ordenes || []).map((o) => [o.id, o]));
-    const nOrd = (o) => Object.values(ord[o]).reduce((a, f) => a + Object.values(f).reduce((b, g) => b + g.length, 0), 0);
-    app.innerHTML = `<h1>Órdenes, familias y géneros</h1><p class="muted">Todas las especies con registros en Cataluña. En negrita, las que tienen ficha.</p>
-      ${Object.keys(ord).sort((a, b) => nOrd(b) - nOrd(a)).map((o) => `<details class="caja"><summary><b>${esc(o)}</b> ${tx[o] ? "· " + esc(tx[o].es) : ""} <span class="muted">(${nOrd(o)} especies)</span></summary>
-        ${tx[o] ? `<p class="small">${esc(tx[o].texto)}</p>` : ""}
-        ${Object.keys(ord[o]).sort().map((f) => `<details style="margin-left:1rem"><summary>${esc(f)} <span class="muted small">(${Object.values(ord[o][f]).reduce((a, g) => a + g.length, 0)})</span></summary>
-          ${Object.keys(ord[o][f]).sort().map((g) => `<div style="margin-left:1rem" class="small"><i><b>${esc(g)}</b></i>: ${ord[o][f][g].sort((a, b) => (a.ficha ? a.item.nombre : a.item.n).localeCompare(b.ficha ? b.item.nombre : b.item.n)).map((x) => x.ficha ? `<a href="#/especie/${x.item.id}"><b><i>${esc(x.item.nombre)}</i></b></a>` : `<i>${esc(x.item.n)}</i>`).join(", ")}</div>`).join("")}
-        </details>`).join("")}</details>`).join("")}`;
   }
   function vistaGaleria(id) {
     const lista = id && BYID[id] ? [BYID[id]] : ESP;
@@ -521,17 +469,27 @@
   }
   function vistaNoEncontrada() { app.innerHTML = `<h1>No encontrado</h1><p><a href="#/">Volver al buscador</a></p>`; }
 
+  // Utilidades para las secciones que vienen de Cistella Segura (extra/*.js): se registran en window.VISTAS_EXTRA
+  window.GUIA = { app, esc, cap, norm, titulo, nombres, badge, tarjeta, mesesHTML, catOf, BYID, ESP, store, MESES, MESES_L, abrirVisor: (fotos, i) => { galeriaActual = fotos; abrirVisor(i); } };
+
   // ---------------- Router ----------------
   function render() {
     const h = decodeURIComponent(location.hash.replace(/^#\/?/, ""));
     const [v, a] = [h.split("/")[0], h.split("/").slice(1).join("/")];
-    document.title = "Setas de Cataluña";
+    document.title = "Cistella Segura · Setas de Cataluña";
     $$(".nav a").forEach((x) => x.classList.toggle("activo", x.getAttribute("href") === "#/" + (v ? v + (v === "guia" ? "/seguridad" : "") : "")));
     $(".nav").classList.remove("abierta");
-    ({ "": vistaBuscador, especie: () => vistaFicha(a), comparar: () => vistaComparar(a), rasgos: vistaRasgos, arboles: vistaArboles, arbol: () => vistaArbol(a), calendario: vistaCalendario, habitats: vistaHabitats, taxonomia: vistaTaxonomia, galeria: () => vistaGaleria(a), inventario: vistaInventario, guia: () => vistaGuia(a || "seguridad"), fuentes: vistaFuentes, calidad: vistaCalidad, libros: vistaLibros, cuaderno: vistaCuaderno }[v] || vistaNoEncontrada)();
+    $$(".nav details").forEach((d) => (d.open = false));
+    const extra = (window.VISTAS_EXTRA || {})[v];
+    ({ ...(extra ? { [v]: () => extra(a, window.GUIA) } : {}), "": vistaBuscador, especie: () => vistaFicha(a), rasgos: vistaRasgos, arboles: vistaArboles, arbol: () => vistaArbol(a), calendario: vistaCalendario,
+      // secciones retiradas: los enlaces antiguos llevan a «Por rasgos» o al buscador
+      comparar: () => location.replace("#/rasgos"), habitats: () => location.replace("#/rasgos"), taxonomia: () => location.replace("#/"), galeria: () => vistaGaleria(a), inventario: vistaInventario, guia: () => vistaGuia(a || "seguridad"), fuentes: vistaFuentes, calidad: vistaCalidad, libros: vistaLibros, cuaderno: vistaCuaderno }[v] || vistaNoEncontrada)();
     window.scrollTo(0, 0);
   }
-  if (DB.enlaces && DB.enlaces.quiz) $(".nav").insertAdjacentHTML("beforeend", `<a href="${esc(DB.enlaces.quiz)}">Quiz 🍄</a>`);
+  // el Quiz ya está en «Más» (index.html); solo se añade si faltara
+  if (DB.enlaces && DB.enlaces.quiz && !$(`.nav a[href="${DB.enlaces.quiz}"]`)) $(".nav").insertAdjacentHTML("beforeend", `<a href="${esc(DB.enlaces.quiz)}">Quiz 🍄</a>`);
+  // cierra «Más» al hacer clic fuera
+  document.addEventListener("click", (ev) => { $$(".nav details[open]").forEach((d) => { if (!d.contains(ev.target)) d.open = false; }); });
   $(".menu-btn").onclick = (ev) => { const n = $(".nav"); n.classList.toggle("abierta"); ev.currentTarget.setAttribute("aria-expanded", n.classList.contains("abierta")); };
   $("#pie-meta").textContent = `Edición ${DB.meta.version} · datos generados el ${DB.meta.generado} · ${ESP.length} fichas · ${DB.registro.length.toLocaleString("es")} especies más en el inventario.`;
   window.addEventListener("hashchange", render);

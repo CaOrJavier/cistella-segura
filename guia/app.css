@@ -29,14 +29,29 @@ button { cursor: pointer; }
 
 .top { display: flex; align-items: center; gap: 1rem; padding: .6rem 1rem; background: var(--panel); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; }
 .marca { font: 700 1.2rem var(--serif); color: var(--ink); text-decoration: none; white-space: nowrap; }
-.nav { display: flex; flex-wrap: wrap; gap: .2rem .9rem; }
+.marca em { color: var(--focus); }
+.mapa-ficha { max-width: 340px; margin: 0 0 .8rem; }
+.mapa-ficha svg { width: 100%; height: auto; }
+.nav { display: flex; flex-wrap: wrap; align-items: center; gap: .2rem .9rem; }
 .nav a { text-decoration: none; color: var(--muted); font-weight: 600; font-size: .93rem; padding: .2rem 0; }
 .nav a.activo { color: var(--accent); border-bottom: 2px solid var(--accent); }
+/* «Más»: lo menos usado, en un desplegable */
+.nav .mas { position: relative; }
+.nav .mas summary { list-style: none; cursor: pointer; color: var(--muted); font-weight: 600; font-size: .93rem; padding: .2rem 0; }
+.nav .mas summary::-webkit-details-marker { display: none; }
+.nav .mas summary::after { content: " ▾"; font-size: .8em; }
+.nav .mas[open] summary { color: var(--accent); }
+.nav .mas-menu { position: absolute; top: calc(100% + .4rem); right: 0; min-width: 15rem; display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); box-shadow: 0 6px 20px rgb(0 0 0 / .12); padding: .4rem 0; z-index: 30; }
+.nav .mas-menu a { padding: .45rem 1rem; }
+.nav .mas-menu a:hover { background: var(--soft); color: var(--ink); }
+.nav .mas-menu a.activo { border-bottom: 0; background: var(--soft); }
 .menu-btn { display: none; margin-left: auto; background: none; border: 1px solid var(--line); border-radius: 8px; padding: .2rem .6rem; }
 @media (max-width: 860px) {
   .menu-btn { display: block; }
-  .nav { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--panel); flex-direction: column; padding: .6rem 1rem 1rem; border-bottom: 1px solid var(--line); }
+  .nav { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--panel); flex-direction: column; align-items: stretch; padding: .6rem 1rem 1rem; border-bottom: 1px solid var(--line); }
   .nav.abierta { display: flex; }
+  .nav .mas-menu { position: static; box-shadow: none; border: 0; padding: 0 0 0 .8rem; min-width: 0; }
+  .nav .mas-menu a { padding: .3rem 0; }
 }
 .aviso-global { background: var(--mortal-bg); color: var(--ink); border-bottom: 1px solid var(--line); padding: .45rem 1rem; font-size: .88rem; }
 main { max-width: 1240px; margin: 0 auto; padding: 1rem; min-height: 70vh; }

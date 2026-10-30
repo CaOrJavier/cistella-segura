@@ -4,11 +4,10 @@
 #   offline\setas-esenciales-bolsillo*.pdf          el mateix, en castella, amb les 79 especies essencials de la guia
 # Us (des de l'arrel del repositori):  powershell -ExecutionPolicy Bypass -File tools\generar-pdf.ps1
 $root = Split-Path -Parent $PSScriptRoot
+# El quadern català fa servir butxaca\dades.js (dades fixes de l'antiga web catalana, ja retirada).
+# El quadern castellà llegeix directament guia\datos\db.js.
 
-# 1. Dades fresques de la web
-& (Join-Path $PSScriptRoot 'extraer-dades.ps1')
-
-# 2. Edge (o Chrome)
+# Edge (o Chrome)
 $edge = @(
   "${env:ProgramFiles(x86)}\Microsoft\Edge\Application\msedge.exe",
   "$env:ProgramFiles\Microsoft\Edge\Application\msedge.exe",

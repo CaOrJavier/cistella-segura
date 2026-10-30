@@ -1,44 +1,44 @@
-# 🍄 [Obre la web: caorjavier.github.io/cistella-segura](https://caorjavier.github.io/cistella-segura/)
+# 🍄 [Abrir la web: caorjavier.github.io/cistella-segura](https://caorjavier.github.io/cistella-segura/)
 
-**Cistella Segura** reuneix en un sol lloc tot el material per aprendre a reconèixer els bolets de Catalunya: una web-quadern de camp en català, una guia completa en castellà, un quiz amb fotos i llibres en PDF per imprimir o portar al mòbil.
+**Cistella Segura** es una sola web para aprender a reconocer las setas de Cataluña: 163 fichas en castellano (con los nombres en catalán y científicos), búsqueda por rasgos, el tiempo de hoy en cada zona boletera, mapa, calendario, seguridad, un quiz con fotos y libros en PDF para imprimir o llevar en el móvil.
 
-| Part | On és | Què és |
-|---|---|---|
-| **Cistella Segura** | [/](https://caorjavier.github.io/cistella-segura/) | Quadern de camp en català: 50 bolets, mapa, avui al bosc, cara a cara, seguretat. |
-| **Guia «Setas de Cataluña»** | [/guia/](https://caorjavier.github.io/cistella-segura/guia/) | 163 fitxes en castellà, buscador, comparador, calendari, arbres, hàbitats, inventari d'≈ 4.000 espècies. |
-| **Quiz de bolets** | [/quiz/](https://caorjavier.github.io/cistella-segura/quiz/) | 66 bolets i 1.077 fotos per entrenar l'ull. Cada resposta enllaça amb la fitxa de la guia. |
-| **Llibres PDF** | [Releases](https://github.com/CaOrJavier/cistella-segura/releases/tag/guia-2026.1) i [/offline/](https://caorjavier.github.io/cistella-segura/offline/) | Vegeu a sota. |
+## Qué hay en la web
 
-## Llibres i quaderns
+Menú principal:
+- **Especies:** buscador con filtros y las 163 fichas: rasgos decisivos, confusiones peligrosas, morfología, hábitat, árboles, calendario, registros en Cataluña y fuentes.
+- **Por rasgos:** se marcan los rasgos observados (debajo del sombrero, sustrato, árbol, color, anillo, volva, látex, mes) y quedan las candidatas.
+- **Hoy en el bosque:** semáforo de 26 zonas boleteras con la lluvia y la temperatura de los últimos días (Open-Meteo, en directo) y qué buscar en cada zona.
+- **Mapa:** qué sale en una zona (o «¿Dónde estoy?») y dónde sale cada seta, con las observaciones confirmadas de iNaturalist.
+- **Calendario** y **Aprende** (seguridad, qué hacer ante una intoxicación, anatomía, cómo buscar, glosario).
 
-**Per portar al bosc**
-- **Quadern de butxaca A6** (76 pàgines, català): [cistella-segura-butxaca.pdf](https://caorjavier.github.io/cistella-segura/offline/cistella-segura-butxaca.pdf) · per imprimir a casa en A4: [cistella-segura-butxaca-imprimir-A4.pdf](https://caorjavier.github.io/cistella-segura/offline/cistella-segura-butxaca-imprimir-A4.pdf) ([com imprimir-lo](butxaca/COMO-IMPRIMIR.md)). Es genera des de `butxaca/` amb les dades de la web.
-- **Setas esenciales · cuaderno de bolsillo A6** (104 páginas, castellano): las 79 especies esenciales de la guía, generadas a partir de `guia/datos/db.js`: [setas-esenciales-bolsillo.pdf](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-bolsillo.pdf) · para imprimir en casa en A4 (dos cuadernillos): [setas-esenciales-bolsillo-imprimir-A4.pdf](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-bolsillo-imprimir-A4.pdf).
-- **Cuaderno de campo A5** (48 páginas, castellano): 26 comestibles, 22 peligrosas y 8 árboles. Versión A5 y versión A4 para doblar, a [Releases](https://github.com/CaOrJavier/cistella-segura/releases/tag/guia-2026.1). Vista prèvia a [/guia/#/cuaderno](https://caorjavier.github.io/cistella-segura/guia/#/cuaderno).
+En **Más:** cuándo salir tras la lluvia (calculadora), mis hallazgos (salida al Montnegre-Corredor del 18/10/2026), árboles, galería, cuaderno de campo, libros PDF, quiz, inventario de ≈ 4.000 especies y fuentes.
 
-**Per llegir i consultar**
-- **Llibre de la web** (català): [cistella-segura-llibre.pdf](https://caorjavier.github.io/cistella-segura/offline/cistella-segura-llibre.pdf) i la web sencera en un sol fitxer: [cistella-segura.html](https://caorjavier.github.io/cistella-segura/offline/cistella-segura.html).
-- ***Setas comestibles esenciales de Cataluña*** (336 pàgines): 47 comestibles i 32 fitxes d'alerta. Edicions mòbil, color, blanc i negre i impremta.
-- ***Catálogo micológico de Cataluña, vol. 1*** (565 pàgines): 163 fitxes i inventari complet. Edicions mòbil, color, blanc i negre i en dos toms.
+## Libros y cuadernos
 
-## La web Cistella Segura
+**Para llevar al bosque**
+- **Setas esenciales · cuaderno de bolsillo A6** (104 páginas, castellano): las 79 especies esenciales: [setas-esenciales-bolsillo.pdf](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-bolsillo.pdf) · para imprimir en casa en A4 (dos cuadernillos): [setas-esenciales-bolsillo-imprimir-A4.pdf](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-bolsillo-imprimir-A4.pdf) ([cómo imprimirlo](butxaca/COMO-IMPRIMIR.md)).
+- **Quadern de butxaca A6** (76 páginas, catalán, 50 setas): [cistella-segura-butxaca.pdf](https://caorjavier.github.io/cistella-segura/offline/cistella-segura-butxaca.pdf) · en A4: [cistella-segura-butxaca-imprimir-A4.pdf](https://caorjavier.github.io/cistella-segura/offline/cistella-segura-butxaca-imprimir-A4.pdf).
+- **Cuaderno de campo A5** (48 páginas): 26 comestibles, 22 peligrosas y 8 árboles, en [Releases](https://github.com/CaOrJavier/cistella-segura/releases/tag/guia-2026.1).
 
-- **Avui al bosc:** semàfor de 26 zones boletaires amb la pluja i la temperatura dels últims dies (Open-Meteo, en directe) i què toca buscar a cada zona.
-- **Els bolets:** una fitxa per bolet (50), amb fotos de cada edat, el mapa d'on surt i els bessons perillosos.
-- **Mapa interactiu**, **Tipus de bosc**, **Quan sortir** (dies després de la pluja), **Cara a cara**, **Aprèn a mirar**, **Seguretat**, **Les meves troballes** (Montnegre-Corredor, 18/10/2026), **Entrena l'ull** i **SOS**.
+**Para leer y consultar** (en [Releases](https://github.com/CaOrJavier/cistella-segura/releases/tag/guia-2026.1))
+- ***Setas comestibles esenciales de Cataluña*** (336 páginas): 47 comestibles y 32 fichas de alerta.
+- ***Catálogo micológico de Cataluña, vol. 1*** (565 páginas): 163 fichas e inventario completo.
+- Libro de la antigua web catalana: [cistella-segura-llibre.pdf](https://caorjavier.github.io/cistella-segura/offline/cistella-segura-llibre.pdf).
 
-## Estructura del repositori
+## Estructura del repositorio
 
 ```
-index.html     web Cistella Segura (català)
-fotos/         fotos de la web
-offline/       llibres PDF i la web en un sol fitxer
-butxaca/       generador dels quaderns de butxaca: index.html (català) i setas.html (castellà)
-tools/         generar-pdf.ps1 fa tots els PDF de butxaca amb Edge
-guia/          guia «Setas de Cataluña» (castellano): app.js, datos/db.js, fotos/, cuaderno/
-quiz/          quiz de bolets: index.html, fotos/, icones
+index.html     portada: lleva a guia/ (y traduce los enlaces de la antigua web catalana)
+guia/          LA WEB: index.html, app.js, app.css, datos/db.js (163 especies), fotos/, cuaderno/
+guia/extra/    hoy en el bosque, mapa, cuándo salir y hallazgos (vienen de la antigua web catalana)
+guia/datos/cistella.js   datos de esas secciones: zonas, mapa, lluvia, hallazgos
+quiz/          quiz de setas (en catalán): index.html, fotos/
+fotos/         fotos de la antigua web catalana (hallazgos del Montnegre y cuaderno catalán)
+offline/       libros PDF
+butxaca/       generadores de los cuadernos de bolsillo: setas.html (castellano) e index.html (catalán)
+tools/         generar-pdf.ps1 hace todos los PDF de bolsillo con Edge
 ```
 
-> **Avís:** és una eina d'aprenentatge i no substitueix la revisió d'un micòleg. Cap web, guia, foto ni aplicació certifica que un bolet sigui comestible. Si dubtes, no te'l mengis. Intoxicació: **112** · Informació Toxicològica 24 h: **91 562 04 20**.
+> **Aviso:** es una herramienta para aprender y no sustituye la revisión de un micólogo. Ninguna web, guía, foto ni aplicación certifica que una seta sea comestible. Ante la duda, no la recolecte para comer. Intoxicación: **112** · Información Toxicológica 24 h: **91 562 04 20**.
 
-Fotos: observacions d'[iNaturalist](https://www.inaturalist.org) i fotos de [Wikimedia Commons](https://commons.wikimedia.org) amb llicència Creative Commons (CC BY, CC BY-NC, CC BY-SA, CC0…) o de domini públic, amb l'autor i la llicència a cada foto; i fotos pròpies sense dades d'ubicació. Moltes són CC BY-NC: la web i els PDF són per a ús personal o sense ànim de lucre. Noms segons Catalogue of Life (Species Fungorum); registres de GBIF i iNaturalist. Mapes: observacions confirmades d'iNaturalist a Catalunya. Meteo: [Open-Meteo](https://open-meteo.com). Idea del semàfor de zones inspirada en [vadebolets.cat](https://www.vadebolets.cat).
+Fotos de [iNaturalist](https://www.inaturalist.org) y [Wikimedia Commons](https://commons.wikimedia.org) con licencia Creative Commons (CC BY, CC BY-NC, CC BY-SA, CC0…) o de dominio público, con el autor y la licencia en cada foto, y fotos propias sin datos de ubicación. Muchas son CC BY-NC: la web y los PDF son para uso personal o sin ánimo de lucro. Nombres según Catalogue of Life (Species Fungorum); registros de GBIF e iNaturalist. Meteo: [Open-Meteo](https://open-meteo.com). Idea del semáforo de zonas inspirada en [vadebolets.cat](https://www.vadebolets.cat).
