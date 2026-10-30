@@ -209,3 +209,87 @@
 .lal-dif { font-size: 6pt; line-height: 1.28; margin-top: .4mm; }
 .lal-donde { font-size: 5.6pt; line-height: 1.25; margin-top: .3mm; color: var(--ink-2); }
 .lal-donde b { font-size: 4.9pt; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--deadly); }
+
+/* =========================================================
+   CUADERNO DE BOLSILLO: LETRA PARA LEERSE BIEN IMPRESA
+   Es pequeño (A6, o A5 en la edición grande ×1,41), así que:
+   - el texto va en Fira Sans Condensed: en el mismo espacio, su «ojo» (la altura de
+     las minúsculas) es un 11 % mayor que el de Alegreya Sans; trazo firme y formas
+     abiertas que no se empastan al imprimir. Los títulos siguen en Alegreya.
+   - nada por debajo de unos 5 pt en A6 (7 pt en A5): etiquetas, pies de foto, meses…
+   - grises más oscuros: el gris claro casi desaparece en una impresora de casa.
+   ========================================================= */
+html.libro-bolsillo {
+  --body: "Fira Sans Condensed", "Alegreya Sans", "Segoe UI", system-ui, sans-serif;
+  --muted: #4a524b;
+  --faint: #697067;
+}
+.libro-bolsillo body { font-size: 6.9pt; line-height: 1.3; }
+.libro-bolsillo .dense .txt { font-size: 6.7pt; line-height: 1.27; }
+.libro-bolsillo .denser .txt { font-size: 6.45pt; line-height: 1.24; }
+/* en las páginas más llenas, la foto cede un poco antes que el texto */
+.libro-bolsillo .tight .ph { min-height: 28mm; }
+.libro-bolsillo .pareja.tight .ph { min-height: 25mm; }
+/* etiquetas en mayúsculas: algo mayores y menos espaciadas */
+.libro-bolsillo .kicker { font-size: 5.8pt; font-weight: 700; letter-spacing: .09em; }
+.libro-bolsillo .lab, .libro-bolsillo .checks h3, .libro-bolsillo .conf h3, .libro-bolsillo .h3 { font-size: 5.8pt; font-weight: 700; letter-spacing: .06em; }
+.libro-bolsillo .kick { font-size: 5.8pt; letter-spacing: .05em; }
+.libro-bolsillo .pill { font-size: 5.6pt; font-weight: 700; letter-spacing: .06em; }
+.libro-bolsillo .cf-tag { font-size: 5pt; font-weight: 700; letter-spacing: .04em; }
+.libro-bolsillo .ref { font-size: 6.2pt; font-weight: 700; }
+.libro-bolsillo .lat { font-size: 7pt; }
+/* pies de foto: más grandes y con más peso (blanco sobre foto se empasta si es fino) */
+.libro-bolsillo figcaption { font-size: 5.9pt; font-weight: 500; line-height: 1.15; }
+.libro-bolsillo .bosc-fotos figcaption, .libro-bolsillo .lal-fotos figcaption { font-size: 5pt; font-weight: 700; letter-spacing: .05em; }
+/* fila de datos y tira de meses */
+.libro-bolsillo .facts { font-size: 6.2pt; column-gap: 2mm; }
+.libro-bolsillo .mes span { width: 2.5mm; height: 3.3mm; font-size: 4.9pt; font-weight: 700; }
+/* tabla de diferencias de las parejas */
+.libro-bolsillo .cmp { font-size: 6.4pt; }
+.libro-bolsillo .cmp th:first-child { font-size: 5.5pt; font-weight: 700; letter-spacing: .05em; width: 12mm; }
+/* pie de página y pestañas del margen */
+.libro-bolsillo .pf { font-size: 5.4pt; color: var(--muted); letter-spacing: .07em; }
+.libro-bolsillo .tab span { font-size: 4.9pt; font-weight: 700; letter-spacing: .1em; }
+.libro-bolsillo .cred-linea { font-size: 5.4pt; }
+/* árboles */
+.libro-bolsillo .bosc { padding: 1mm 0 1.1mm; }
+.libro-bolsillo .bosc.cf { grid-template-columns: 31mm 1fr; }
+.libro-bolsillo .bosc h3 small { font-size: 5.6pt; }
+.libro-bolsillo .bosc .ll { font-size: 6.1pt; line-height: 1.28; }
+.libro-bolsillo .bosc .ll .lab { font-size: 5.2pt; }
+.libro-bolsillo .bosc .nm .ref { font-size: 5.9pt; }
+/* cómo mirar una seta */
+.libro-bolsillo .mirar li { font-size: 6.4pt; }
+.libro-bolsillo .bajo b { font-size: 6.4pt; }
+.libro-bolsillo .bajo span { font-size: 5.6pt; }
+.libro-bolsillo .edat figcaption { font-size: 5.8pt; font-weight: 700; }
+/* reglas y cómo leer las fichas */
+.libro-bolsillo .reglas.cortas p { font-size: 7.3pt; font-weight: 500; }
+.libro-bolsillo .ley li { font-size: 6.4pt; }
+.libro-bolsillo .ley .pill { font-size: 5pt; }
+.libro-bolsillo .ley .v > b { font-size: 6pt; }
+.libro-bolsillo .secs > b { font-size: 5.5pt; }
+
+/* =========================================================
+   PORTADA DEL CUADERNO: título, nueve fotos (comestibles, tóxicas, mortales) y urgencias
+   ========================================================= */
+.cover-m { padding: 6.2mm 6.5mm 5.6mm; display: flex; flex-direction: column; }
+.cvm-ed { display: flex; justify-content: space-between; font-size: 5.8pt; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); padding-bottom: 1.6mm; border-bottom: .35mm solid var(--ink); }
+.cvm-t { font-family: var(--display); font-weight: 800; font-size: 29pt; line-height: .95; letter-spacing: -.02em; margin-top: 3mm; color: var(--ink); white-space: nowrap; }
+.cvm-t em { font-style: italic; font-weight: 700; color: var(--accent); }
+.cvm-sub { font-family: var(--display); font-style: italic; font-weight: 700; font-size: 11pt; line-height: 1; color: var(--ink-2); margin-top: .8mm; }
+.cvm-s { font-size: 7.4pt; line-height: 1.3; color: var(--ink-2); margin-top: 2.2mm; }
+.cvm-filas { flex: 1 1 auto; display: flex; flex-direction: column; gap: 2mm; margin: 3.2mm 0 3mm; min-height: 0; }
+.cvm-fila { flex: 1 1 0; display: flex; flex-direction: column; min-height: 0; }
+.cvm-lab { display: flex; align-items: baseline; gap: 1.2mm; font-size: 6.4pt; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--st); margin-bottom: .9mm; }
+.cvm-lab b { font-family: var(--display); font-size: 10pt; font-weight: 800; letter-spacing: 0; line-height: .8; }
+.cvm-lab::after { content: ""; flex: 1; height: .35mm; background: var(--st); align-self: center; opacity: .55; }
+.cvm-fotos { flex: 1 1 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2mm; min-height: 0; }
+.cvm-f { margin: 0; position: relative; overflow: hidden; border-radius: 1.2mm; background: var(--paper-3); }
+.cvm-f img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.cvm-f figcaption { padding: 3mm 1.3mm .8mm; font-size: 6pt; font-weight: 600; line-height: 1.1; }
+.cvm-f figcaption .ref { color: #fff; opacity: .85; font-family: var(--display); font-style: italic; font-weight: 700; font-size: 6.4pt; margin-left: .4mm; }
+.cvm-sos { display: flex; align-items: center; justify-content: space-between; gap: 2mm; padding: 1.8mm 2.4mm; border: .5mm solid var(--deadly); border-radius: 1.4mm; }
+.cvm-sos b { font-family: var(--display); font-size: 9.6pt; font-weight: 800; line-height: 1.05; color: var(--deadly); }
+.cvm-sos span { font-size: 6.4pt; line-height: 1.3; color: var(--ink-2); text-align: right; }
+.cvm-sos strong { font-size: 7.6pt; font-weight: 700; color: var(--ink); }

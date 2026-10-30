@@ -17,6 +17,8 @@
   // la guía esencial (A5, butxaca/guia.html): todas las setas de la guía, cada una en una página como mucho
   // (las del cuaderno, página entera; las demás, media página) y los árboles en poco espacio.
   const GUIA = window.CUADERNO_MODO === "guia";
+  // el cuaderno de bolsillo lleva su propia letra para texto pequeño (setas.css, .libro-bolsillo)
+  document.documentElement.classList.add(GUIA ? "libro-guia" : "libro-bolsillo");
   const EDICION = "Otoño 2026";
   // portada: rossinyols en el cuaderno; ceps en la guía (para distinguirlos a primera vista)
   const PORTADA = GUIA ? { id: "boletus-edulis", papel: "recolectado" } : { id: "cantharellus-cibarius", papel: "recolectado" };
@@ -84,9 +86,9 @@
     fotos: [["lactarius-zonarius", "fotos/g/d09e00f9142d.jpg", "Enganyapastors: zonas como el pinetell."],
       ["lactarius-chrysorrheus", "fotos/g/ae48bcffefe9.jpg", "De llet groga: látex blanco que amarillea."],
       ["lactarius-zonarius", "fotos/g/ee3188e47a50.jpg", "Láminas crema, nunca verdes."]],
-    filas: [["Látex", "Blanco, no cambia de color; muy picante", "Blanco que en segundos se vuelve amarillo azufre"],
-      ["Sombrero", "Crema a naranja pálido, con zonas; borde enrollado", "Ocre salmón pálido, con manchas o zonas más oscuras"]],
-    claves: ["Látex BLANCO al cortar (rovelló: rojo vino; pinetell: naranja).", "Láminas crema o rosadas pálidas, que no se manchan de verde.",
+    filas: [["Látex", "Blanco, no cambia; muy picante", "Blanco que amarillea en segundos"],
+      ["Sombrero", "Crema a naranja pálido, con zonas", "Ocre salmón pálido, con zonas"]],
+    claves: ["Látex BLANCO al cortar (rovelló: rojo vino; pinetell: naranja).", "Láminas crema que no se manchan de verde.",
       "Bajo encinas, alcornoques y robles; no bajo pinos."],
     compruebe: "Corte el pie: si el látex es blanco, descártela."
   }, {
@@ -112,14 +114,14 @@
     q: "reig bru",
     lat: "<i>Amanita pantherina</i> y <i>A. muscaria</i> · amanita pantera, matamoscas",
     lede: "Dos amanitas con verrugas blancas y el mismo veneno.",
+    sintomas: "Confusión, agitación, alucinaciones y somnolencia; vómitos.",
     fotos: [["amanita-muscaria", "fotos/g/6fe8c495e42f.jpg", "Reig bord: rojo con verrugas blancas."],
       ["amanita-pantherina", "fotos/g/9d81561ed5de.jpg", "Pixacà: pardo con verrugas blancas."],
       ["amanita-pantherina", "fotos/g/7c1387667a07.jpg", "Pixacà: bulbo con reborde, como un calcetín."]],
     filas: [["Sombrero", "Pardo; verrugas blanco puro, en círculos", "Rojo o naranja, más grande"],
       ["Base", "Bulbo con reborde, como un calcetín", "Bulbo con anillos de volva"],
       ["Dónde", "Pinares, robledales, hayedos, encinares", "Pinares y abedulares de montaña"]],
-    claves: ["Verrugas blancas en el sombrero (la lluvia puede borrarlas).", "Láminas y pie blancos, con anillo.",
-      "Bulbo en la base: sáquela entera para verlo."],
+    claves: ["Verrugas blancas en el sombrero (la lluvia puede borrarlas).", "Láminas y pie blancos; bulbo en la base."],
     compruebe: "Láminas blancas, anillo y volva: descártela. El ou de reig tiene láminas y pie amarillos."
   }, {
     bolsillo: true,
@@ -133,7 +135,7 @@
     filas: [["Color", "Blanco sedoso, a veces lila", "Lila o rosado; borde con rayas"],
       ["Forma", "Cónico, con pico; fibras que se agrietan", "Acampanado; pie hueco y frágil"],
       ["Olor", "A tierra", "A rábano"]],
-    claves: ["Pequeñas: de 1 a 5 cm.", "Sin anillo ni volva.", "En la hojarasca de pinares, hayedos y bosques mixtos."],
+    claves: ["Pequeñas: de 1 a 5 cm.", "En la hojarasca de pinares, hayedos y bosques mixtos."],
     compruebe: "Tamaño: la pimpinella morada es grande, carnosa y huele a fruta."
   }].filter(c => !(GUIA && c.bolsillo));
   const EN_PAREJA = new Map(PAREJAS.flatMap(c => c.ids.map((id, i) => [id, [c, i]])));
@@ -212,6 +214,20 @@
   // quita las frases sobre la normativa de venta (RD 30/2009): no sirven en el monte
   // (y los trozos sin letras que quedan al cortar, como el «).» de «Inocybe sp.).»)
   const sinNormativa = t => (String(t || "").match(/[^.!?]+[.!?]+(\s|$)/g) || [String(t || "")]).filter(f => !/RD\s?30\/2009|anexo del RD|venta/i.test(f) && /[a-záéíóúñü]{2}/i.test(f)).join("").trim() || String(t || "");
+  // la primera frase, solo hasta el primer «;» si así cabe («Copa irregular y alta; la parte…» → «Copa irregular y alta.»)
+  const cortaClausula = (t, max) => {
+    const s = primera(t, 999), c = s.split(/;\s/)[0].replace(/[.,:]$/, "");
+    return c.length <= max ? c + "." : primera(s, max);
+  };
+  // la primera frase; si es larga, hasta el último «;» que quepa («…y somnolencia; vómitos; en casos graves…» → «…y somnolencia; vómitos.»)
+  const hastaComa = (t, max) => {
+    const s = primera(t, 999);
+    if (s.length <= max) return s;
+    const partes = s.replace(/[.]$/, "").split(/;\s/);
+    let out = partes[0];
+    for (const x of partes.slice(1)) { if ((out + "; " + x).length > max) break; out += "; " + x; }
+    return out.length <= max ? out + "." : primera(s, max);
+  };
   const lista = arr =>(arr.length <= 1 ? arr.join("") : arr.slice(0, -1).join(", ") + " y " + arr[arr.length - 1]);
 
   // ---------- tóxicas: qué gravedad tiene y por qué ----------
@@ -269,7 +285,9 @@
     book.appendChild(p);
     return p;
   }
-  const foot = label => `<footer class="pf"><span>${esc(label)}</span><span class="pn"></span></footer>`;
+  // cuaderno: «00» guarda el sitio del número de página (se pone al final), así el pie mide lo mismo al ajustar
+  // la página (en la guía el número entra en el margen de abajo sin que se note, y así no cambia nada)
+  const foot = label => `<footer class="pf"><span>${esc(label)}</span><span class="pn">${GUIA ? "" : "00"}</span></footer>`;
   const ref = (id, corto = false) => (BY[id] ? `<span class="ref" data-ref="${id}"${corto ? ' data-fmt="n"' : ""}>${corto ? "00" : "→ p. 00"}</span>` : "");
 
   function fit(p, steps, name) {
@@ -388,7 +406,35 @@
   // =========================================================
   // PORTADA
   // =========================================================
+  // Portada del cuaderno: título, nueve fotos en tres filas (comestibles, tóxicas, mortales) con su página
+  // y el aviso de urgencias. [especie, foto, encuadre (object-position)]
+  const PORTADA_FILAS = [
+    ["comestibles", "comestible", "Comestibles", [["cantharellus-cibarius", "fotos/g/4c81aed9b18d.jpg", "50% 45%"], ["boletus-edulis", "fotos/g/daa8b786e6b5.jpg", "45% 40%"], ["lactarius-deliciosus", "fotos/g/87b9e09821d1.jpg", "50% 45%"]]],
+    ["toxicas", "toxic", "Tóxicas", [["amanita-muscaria", "fotos/g/6fe8c495e42f.jpg", "50% 32%"], ["rubroboletus-satanas", "fotos/g/a151042e0160.jpg", "50% 42%"], ["omphalotus-olearius", "fotos/g/fb8831e7a529.jpg", "50% 50%"]]],
+    ["mortales", "mortal", "Mortales", [["amanita-phalloides", "fotos/g/47b20ff9a6ff.jpg", "50% 30%"], ["amanita-verna", "fotos/g/366ea7c73945.jpg", "50% 8%"], ["cortinarius-orellanus", "fotos/g/3a864a604452.jpg", "50% 50%"]]]
+  ];
+  function portadaBolsillo() {
+    const p = newPage(null, "cover cover-m");
+    const filas = PORTADA_FILAS.map(([sec, st, t, fotos]) => {
+      const figs = fotos.map(([id, g, pos]) => {
+        const e = BY[id], f = (e?.fotos || []).find(x => x.g === g);
+        if (!e || !f) return "";
+        EXTRA.push(["Portada", f]);
+        return `<figure class="cvm-f"><img src="${G(f.g)}" alt="" style="object-position:${pos}"><figcaption>${esc(titulo(e))} ${ref(id, true)}</figcaption></figure>`;
+      }).join("");
+      return `<div class="cvm-fila st-${st}" data-ir="${sec}"><div class="cvm-lab"><b>${GROUPS[sec].length}</b> ${t}</div><div class="cvm-fotos">${figs}</div></div>`;
+    }).join("");
+    p.innerHTML = `
+      <div class="cvm-ed"><span>Cistella Segura · cuaderno de bolsillo</span><span>${EDICION}</span></div>
+      <h1 class="cvm-t">Setas <em>esenciales</em></h1>
+      <p class="cvm-sub">de Cataluña</p>
+      <p class="cvm-s">Las ${ESENCIAL.length} que hay que conocer: cómo reconocerlas, dónde y cuándo salen, y con qué no confundirlas.</p>
+      <div class="cvm-filas">${filas}</div>
+      <div class="cvm-sos"><b>Ante la duda,<br>no la recolecte.</b><span>Emergencias <strong>112</strong><br>Toxicología 24 h <strong>91 562 04 20</strong></span></div>`;
+    if (overflows(p)) REPORT.overflow.push("portada: no cabe");
+  }
   function portada() {
+    if (!GUIA) return portadaBolsillo();
     const p = newPage(null, "cover");
     const e = DB.especies.find(x => x.id === PORTADA.id);
     const f = (e?.fotos || []).find(x => x.papel === PORTADA.papel) || e?.fotos?.[0];
@@ -595,7 +641,7 @@
       return `<article class="bosc${fotos.length ? " cf" : ""}">
         ${fotos.length ? `<div class="bosc-fotos">${fotos.map(([f, t]) => `<figure><img src="${G(f.t)}" alt=""><figcaption>${t}</figcaption></figure>`).join("")}</div>` : ""}
         <div class="bosc-txt"><h3>${esc(cap(a.nombres.es[0]))} <small>${esc(a.nombres.ca[0] || "")}</small></h3>
-        <p class="curt">${esc(primera(a.reconocer?.distancia, 120))}</p>
+        <p class="curt">${esc(GUIA ? primera(a.reconocer?.distancia, 120) : cortaClausula(a.reconocer?.distancia, 85))}</p>
         ${ok.length ? `<p class="ll ok"><span class="lab">Busque</span>${ok.map(nm).join(", ")}</p>` : ""}
         ${ko.length ? `<p class="ll ko"><span class="lab">Cuidado</span>${ko.map(nm).join(", ")}</p>` : ""}</div>
       </article>`;
@@ -606,7 +652,7 @@
       p.insertAdjacentHTML("beforeend", `
         <div class="kicker">Dónde buscar${more ? " · continuación" : ""}</div>
         <h2 class="pt">Árboles y sus setas</h2>
-        ${more ? "" : `<p class="ps">Muchas setas viven unidas a las raíces de un árbol: reconocerlo por la hoja y el tronco ayuda a saber qué buscar.</p>`}
+        ${more ? "" : `<p class="ps">${GUIA ? "Muchas setas viven unidas a las raíces de un árbol: reconocerlo por la hoja y el tronco ayuda a saber qué buscar." : "Reconocer el árbol por la hoja y el tronco ayuda a saber qué buscar."}</p>`}
         <div class="flow reparte"></div>${foot("Anexo · Árboles")}`);
       return p;
     };
@@ -902,7 +948,7 @@
       const linea = (lab, x) => `<p class="grav"><span class="lab">${esc(lab)}</span><span class="gd">${[1, 2, 3].map(i => `<i class="${i <= x.g[0] ? "on" : ""}"></i>`).join("")}</span><b>${x.g[1]}.</b> ${esc(x.c)}</p>`;
       const igual = g[0].g[1] === g[1].g[1] && g[0].c === g[1].c;
       const t = g.map(x => x.e.toxicidad).find(Boolean);
-      tox = `<div class="perill">${igual ? linea("Gravedad", g[0]) : g.map(x => linea(x.lab, x)).join("")}${t ? `<p><span class="lab">${esc(t.sindrome)}</span>Síntomas ${esc(t.latencia)}. ${esc(primera(t.sintomas, 170))}</p>` : ""}</div>`;
+      tox = `<div class="perill">${igual ? linea("Gravedad", g[0]) : g.map(x => linea(x.lab, x)).join("")}${t ? `<p><span class="lab">${esc(t.sindrome)}</span>Síntomas ${esc(t.latencia)}. ${esc(cfg.sintomas || hastaComa(t.sintomas, 95))}</p>` : ""}</div>`;
     }
     const largo = cfg.nombre.length > 20 ? " largo" : "";
     p.insertAdjacentHTML("beforeend", `
@@ -922,9 +968,13 @@
       ${foot(SECL[est.sec])}`);
     // la frase de arriba explica por qué van juntas y «Compruebe» es lo práctico: se quitan lo último
     fit(p, ["tight", "dense", quitaUltimo(".conf li"), "denser", ".lede", quitaUltimo(".checks li"), ".truc"], "pareja " + cfg.nombre);
-    // si al quitar algo después ha quedado sitio, vuelve la frase de arriba
-    const h = p.querySelector(".sp-head");
-    if (!h.querySelector(".lede")) { h.insertAdjacentHTML("beforeend", `<p class="lede">${esc(cfg.lede)}</p>`); if (overflows(p)) h.querySelector(".lede").remove(); }
+    // si al quitar algo ha quedado sitio, vuelve lo quitado por orden de importancia:
+    // primero «Compruebe», luego los rasgos y, al final, la frase de arriba
+    const vuelve = (donde, html, pos = "beforeend") => { donde.insertAdjacentHTML(pos, html); const n = pos === "beforeend" ? donde.lastElementChild : donde.firstElementChild; if (overflows(p)) { n.remove(); return false; } return true; };
+    const txt = p.querySelector(".txt"), ul = p.querySelector(".checks ul"), h = p.querySelector(".sp-head");
+    if (!p.querySelector(".truc")) vuelve(txt, `<p class="truc"><span class="lab">Compruebe</span>${esc(cfg.compruebe)}</p>`);
+    if (ul) for (const c of cfg.claves.slice(ul.children.length)) if (!vuelve(ul, `<li>${esc(c)}</li>`)) break;
+    if (!h.querySelector(".lede")) vuelve(h, `<p class="lede">${esc(cfg.lede)}</p>`);
   }
 
   // =========================================================
@@ -1093,7 +1143,9 @@
       // cada seta con la que se confunde (foto, nombre y texto) lleva a su página
       p.querySelectorAll(".conf li").forEach(li => { const ref = li.querySelector(".ref[data-ref]"); if (ref) { hechos.add(ref); pon(li, destDe(ref)); } });
       // en «Árboles y sus setas»: el nombre con su número
-      p.querySelectorAll(".nm, .ixg, .secs > span").forEach(nm => { const ref = nm.querySelector(".ref[data-ref]"); if (ref) { hechos.add(ref); pon(nm, destDe(ref)); } });
+      // filas de la portada: la etiqueta lleva al principio de su sección
+      p.querySelectorAll("[data-ir] .cvm-lab").forEach(el => pon(el, inicio[el.parentElement.dataset.ir]));
+      p.querySelectorAll(".nm, .ixg, .secs > span, .cvm-f").forEach(nm => { const ref = nm.querySelector(".ref[data-ref]"); if (ref) { hechos.add(ref); pon(nm, destDe(ref)); } });
       p.querySelectorAll(".ref[data-ref]").forEach(ref => { if (!hechos.has(ref)) pon(ref, destDe(ref)); });
       // la pestaña del margen lleva al principio de su sección; en la portada, «comestibles», «mortales», «tóxicas»
       const tab = p.querySelector(".tab");
@@ -1123,7 +1175,9 @@
   const fonts = [
     '800 19pt "Alegreya"', '700 9pt "Alegreya"', 'italic 500 7pt "Alegreya"', 'italic 700 7pt "Alegreya"', '500 7pt "Alegreya"',
     '400 7pt "Alegreya Sans"', '500 7pt "Alegreya Sans"', '700 7pt "Alegreya Sans"', '800 7pt "Alegreya Sans"', 'italic 400 7pt "Alegreya Sans"',
-    '700 10pt "Caveat"'
+    '700 10pt "Caveat"',
+    // cuaderno: letra de texto con más ojo, para que se lea bien impresa en pequeño
+    ...(GUIA ? [] : ['400 7pt "Fira Sans Condensed"', '500 7pt "Fira Sans Condensed"', '600 7pt "Fira Sans Condensed"', '700 7pt "Fira Sans Condensed"', 'italic 400 7pt "Fira Sans Condensed"', 'italic 500 7pt "Fira Sans Condensed"'])
   ];
   Promise.all(fonts.map(f => document.fonts.load(f).catch(() => null)))
     .then(() => document.fonts.ready)
