@@ -123,12 +123,15 @@
 .bosc-fotos figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: .25mm 0 .3mm; text-align: center; font-size: 4.4pt; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #fff; background: #1f2a22; }
 .bosc-txt { min-width: 0; }
 /* Cómo mirar: el dibujo algo más pequeño y, debajo del sombrero, una foto real de cada tipo */
-.anat { width: 86%; display: block; margin: -1.5mm auto 0; overflow: visible; }
+.anat { width: 80%; display: block; margin: -1.5mm auto 0; overflow: visible; }
 .bajo { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.3mm; margin: .4mm 0 1.2mm; text-align: center; }
 .bajo figure { margin: 0; }
-.bajo .im { position: relative; aspect-ratio: 1 / .82; border-radius: 1.1mm; overflow: hidden; background: var(--paper-3); }
+.bajo .im { position: relative; aspect-ratio: 1 / .74; border-radius: 1.1mm; overflow: hidden; background: var(--paper-3); }
+/* el dibujo, en un círculo blanco montado sobre el pie de la foto */
+.bajo .ico { position: relative; z-index: 1; display: grid; place-items: center; width: 8.6mm; height: 8.6mm; margin: -4.5mm auto 0; border-radius: 50%; background: #fff; box-shadow: 0 0 0 .3mm var(--line), 0 .4mm 1.2mm rgb(0 0 0 / .2); }
+.bajo .ico svg { display: block; width: 7.2mm; height: 7.2mm; }
 .bajo figcaption { position: static; padding: 0; background: none; color: var(--ink); }
-.bajo b { display: block; font-size: 6pt; font-weight: 800; margin-top: .6mm; line-height: 1.1; }
+.bajo b { display: block; font-size: 6pt; font-weight: 800; margin-top: .3mm; line-height: 1.1; }
 .bajo span { display: block; font-size: 5pt; color: var(--muted); line-height: 1.15; }
 
 /* tóxicas y mortales: gravedad (●●○) y por qué, encima del síndrome */

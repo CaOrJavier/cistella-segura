@@ -328,6 +328,27 @@
     fit(p, [".ps", "dense", p2 => p2.querySelectorAll('.reglas li[data-cont="0"] p span').forEach(s => s.remove())], "reglas");
   }
 
+  // Dibujos sencillos de lo que hay bajo el sombrero, vistos de lado (24 × 24): sombrero claro, lo de debajo
+  // grande y en trazo oscuro, pie blanco. Van en un círculo blanco al pie de cada foto.
+  const DIBUJO_BAJO = (() => {
+    const T = "#5a4330", CAP = "#e8c79c", PIE = "#fbf6ec";
+    const pie = `<path d="M10.4 13.6 10.1 21.8h3.8l-.3-8.2z" fill="${PIE}" stroke="${T}" stroke-width=".85" stroke-linejoin="round"/>`;
+    const som = `<path d="M2.4 9.2C2.4 4.9 6.6 2.4 12 2.4s9.6 2.5 9.6 6.8z" fill="${CAP}" stroke="${T}" stroke-width=".9" stroke-linejoin="round"/>`;
+    const rep = (n, f) => Array.from({ length: n }, (_, i) => f(i)).join("");
+    const svg = c => `<svg viewBox="0 0 24 24" aria-hidden="true">${c}</svg>`;
+    return {
+      // láminas: hojas finas y apretadas
+      laminas: svg(`${pie}<path d="M3 9.2h18l-2.6 4.4H5.6z" fill="#fff" stroke="${T}" stroke-width=".75" stroke-linejoin="round"/>${rep(9, i => { const x = 5.2 + i * 1.7; return `<path d="M${x.toFixed(2)} 9.4V${(Math.abs(i - 4) === 4 ? 12 : 13.4).toFixed(1)}" stroke="${T}" stroke-width=".6"/>`; })}${som}`),
+      // tubos: una esponja gruesa y amarilla, con agujeritos
+      poros: svg(`${pie}<path d="M3 9.2h18l-2 4.6H5z" fill="#f2d36b" stroke="${T}" stroke-width=".75" stroke-linejoin="round"/>${rep(7, i => `<circle cx="${(6.3 + i * 1.9).toFixed(2)}" cy="11.6" r=".75" fill="#fff" stroke="${T}" stroke-width=".45"/>`)}${rep(6, i => `<circle cx="${(7.25 + i * 1.9).toFixed(2)}" cy="13.1" r=".55" fill="#fff" stroke="${T}" stroke-width=".4"/>`)}${som}`),
+      // pliegues: forma de embudo y venas gruesas que bajan por el pie
+      pliegues: svg(`<path d="M2.6 5.2Q7 3.6 12 4.4T21.4 5.2Q18.6 9 14.1 12.6V21.6H9.9V12.6Q5.4 9 2.6 5.2z" fill="${CAP}" stroke="${T}" stroke-width=".8" stroke-linejoin="round"/><path d="M4.8 6.4Q8 9.4 10.4 12.8M7.8 6.9Q9.6 9.6 11 13.4M12 7.1V14M16.2 6.9Q14.4 9.6 13 13.4M19.2 6.4Q16 9.4 13.6 12.8M9.6 9.6 8.2 7.4M14.4 9.6 15.8 7.4" fill="none" stroke="${T}" stroke-width=".7" stroke-linecap="round"/>`),
+      // aguijones: púas que cuelgan
+      aguijones: svg(`${pie}${rep(8, i => { const x = 4.4 + i * 2.17, l = (i === 0 || i === 7) ? 2.4 : 4.2; return `<path d="M${(x - .85).toFixed(2)} 9 ${x.toFixed(2)} ${(9 + l).toFixed(2)} ${(x + .85).toFixed(2)} 9z" fill="#fff" stroke="${T}" stroke-width=".6" stroke-linejoin="round"/>`; })}${som}`),
+      // interior: una bola sin sombrero, cortada: blanca y lisa por dentro
+      gleba: svg(`<path d="M11.3 4.6a8 8 0 0 0 0 16z" fill="${CAP}" stroke="${T}" stroke-width=".8" stroke-linejoin="round"/>${[[7.4, 8.4], [5.6, 11.6], [8.4, 12.4], [6.2, 15.2], [8.8, 16.6], [9.6, 7]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r=".55" fill="${T}" opacity=".55"/>`).join("")}<path d="M12.9 4.6a8 8 0 0 1 0 16z" fill="#fff" stroke="${T}" stroke-width=".8" stroke-linejoin="round"/><path d="M12.9 4.6v16" stroke="${T}" stroke-width=".8"/>`)
+    };
+  })();
   function mirarPage() {
     const p = newPage("guia");
     // qué hay bajo el sombrero: una foto real de cada tipo (se ve mucho mejor que un dibujo pequeño)
@@ -341,7 +362,7 @@
     const formas = BAJO.map(([k, id, g, d]) => {
       const f = ((TODAS[id] || {}).fotos || []).find(x => x.g === g);
       if (f) EXTRA.push(["Cómo mirar · bajo el sombrero", f]);
-      return `<figure><div class="im">${f ? `<img src="${G(f.t || f.g)}" alt="">` : ""}</div><figcaption><b>${esc((V.himenoforo[k] || k).split(/[ (]/)[0])}</b><span>${d}</span></figcaption></figure>`;
+      return `<figure><div class="im">${f ? `<img src="${G(f.t || f.g)}" alt="">` : ""}</div><span class="ico">${DIBUJO_BAJO[k]}</span><figcaption><b>${esc((V.himenoforo[k] || k).split(/[ (]/)[0])}</b><span>${d}</span></figcaption></figure>`;
     }).join("");
     const ETAPAS = [["joven", "Joven", true], ["adulto", "En su punto", true], ["viejo", "Viejo", false], ["descompuesto", "Pasado", false]];
     // una comestible con foto de las cuatro edades (si no hay, la que tenga más)
