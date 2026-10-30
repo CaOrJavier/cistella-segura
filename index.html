@@ -23,24 +23,24 @@
   <nav class="nav" aria-label="Secciones">
     <a href="#/">Especies</a>
     <a href="#/rasgos">Por rasgos</a>
-    <a href="#/calendario">Calendario</a>
     <a href="#/guia">Aprende</a>
+    <a href="quiz/" class="nav-quiz">Quiz 🍄</a>
+    <a href="#/libros">Libros</a>
     <details class="mas">
       <summary>Más</summary>
       <div class="mas-menu">
+        <a href="#/calendario">Calendario</a>
         <a href="#/lluvia">Cuándo salir tras la lluvia</a>
-        <a href="#/hallazgos">Mis hallazgos</a>
         <a href="#/arboles">Árboles</a>
         <a href="#/galeria">Galería de fotos</a>
         <a href="#/cuaderno">Cuaderno de campo</a>
-        <a href="#/libros">Libros PDF</a>
         <a href="#/sin-internet">Usar sin internet</a>
-        <a href="quiz/">Quiz 🍄</a>
         <a href="#/inventario">Inventario</a>
         <a href="#/fuentes">Fuentes</a>
       </div>
     </details>
   </nav>
+  <a class="sin-btn" href="#/sin-internet" title="Guarda la web en este dispositivo para usarla sin cobertura"><span aria-hidden="true">⬇</span> <span class="largo">Usar sin internet</span><span class="corto">Guardar</span></a>
 </header>
 <div class="aviso-global" role="note">
   <span><b>⚠ Ninguna web ni app certifica que una seta sea comestible.</b><span class="ancho"> Ante la duda, no la recolecte.</span></span>
@@ -53,6 +53,7 @@
   <div>Nombres según Catalogue of Life (Species Fungorum); registros de GBIF e iNaturalist; fotografías con licencia Creative Commons, con su autoría en cada ficha. <a href="#/fuentes">Fuentes</a> · <a href="#/calidad">Datos inciertos</a></div>
 </footer>
 <div id="visor" class="visor" hidden></div>
+<div id="aviso-red" class="aviso-red" role="status" aria-live="polite" hidden></div>
 <script src="datos/db.js"></script>
 <script src="datos/cistella.js"></script>
 <script src="extra/comun.js"></script>

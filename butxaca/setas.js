@@ -431,6 +431,38 @@
   }
 
   // =========================================================
+  // CONFUSIONES MORTALES, LADO A LADO (lo que tenía el cuaderno de campo A5)
+  // Cada comestible con la mortal con la que se confunde: las dos fotos juntas y la diferencia.
+  // =========================================================
+  function confusionesPages() {
+    const pares = [];
+    for (const m of GROUPS.mortales) {
+      for (const a of GROUPS.comestibles) {
+        const c = (a.confusiones || []).find(x => x.id === m.id);
+        if (c) pares.push([a, m, c]);
+      }
+    }
+    const items = pares.map(([a, m, c]) => {
+      const foto = (e, cls, txt) => `<figure class="${cls}"><img src="${thumb(e.id)}" alt=""><figcaption>${txt}</figcaption></figure>`;
+      return `<article class="lal">
+        <div class="lal-fotos">${foto(a, "ok", EST[a.comestibilidad.cat].pill)}${foto(m, "ko", "Mortal")}</div>
+        <div class="lal-txt"><h3><span class="nm ok">${tituloHTML(a)}${ref(a.id, true)}</span> <span class="vs">o</span> <span class="nm ko">${tituloHTML(m)}${ref(m.id, true)}</span></h3>
+          <p class="lal-dif">${esc(hasta(c.diferencia, 170))}</p>
+          ${c.donde ? `<p class="lal-donde"><b>Mírelo:</b> ${esc(primera(c.donde, 90))}</p>` : ""}</div>
+      </article>`;
+    });
+    flow(items, more => {
+      const p = newPage("mortales");
+      p.insertAdjacentHTML("beforeend", `
+        <div class="kicker">Lado a lado${more ? " · continuación" : ""}</div>
+        <h2 class="pt">Las confusiones mortales</h2>
+        ${more ? "" : `<p class="ps">A la izquierda, la comestible; a la derecha, la mortal con la que se confunde. Apréndase la diferencia antes de salir.</p>`}
+        <div class="flow"></div>${foot("Mortales · Confusiones")}`);
+      return p;
+    }, "confusiones");
+  }
+
+  // =========================================================
   // FICHA
   // =========================================================
   function fichaPage(e) {
@@ -664,7 +696,9 @@
       `<div class="ix-legend"><span class="st-mortal"><i class="d"></i>Mortal</span><span class="st-toxic"><i class="d"></i>Tóxica</span><span class="st-precaucio"><i class="d"></i>No comestible</span></div>`, 35);
     calendarioPages();
     arbolesPages();
-    ORDEN.forEach(fichaPage);
+    GROUPS.comestibles.forEach(fichaPage);
+    confusionesPages();
+    [...GROUPS.mortales, ...GROUPS.toxicas].forEach(fichaPage);
     sindromesPages();
     casaPage();
     const primeraNota = hallazgosPage(true);
@@ -697,7 +731,8 @@
     fillToc([
       { t: "Guía", d: "reglas, cómo mirar, índice, calendario, árboles", c: SEC.guia.c, n: secFirst("guia") },
       { t: "Comestibles", d: `${GROUPS.comestibles.length} especies`, c: SEC.comestibles.c, n: secFirst("comestibles") },
-      { t: "Mortales", d: `${GROUPS.mortales.length} especies`, c: SEC.mortales.c, n: secFirst("mortales") },
+      { t: "Confusiones", d: "las mortales, lado a lado", c: SEC.mortales.c, n: first(p => p.querySelector(".lal")) },
+      { t: "Mortales", d: `${GROUPS.mortales.length} especies`, c: SEC.mortales.c, n: first(p => p.dataset.sec === "mortales" && !p.querySelector(".lal")) },
       { t: "Tóxicas", d: `${GROUPS.toxicas.length} especies`, c: SEC.toxicas.c, n: secFirst("toxicas") },
       { t: "Síndromes", d: "según cuándo aparecen los síntomas", c: SEC.anexo.c, n: secFirst("anexo") },
       { t: "Mis hallazgos", d: "para anotar", c: SEC.anexo.c, n: first(p => p.querySelector(".log")) },

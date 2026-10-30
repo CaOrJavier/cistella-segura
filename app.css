@@ -61,6 +61,30 @@ img { max-width: 100%; }
   .nav a, .nav .mas summary { font-size: 1.02rem; padding: .6rem .8rem; }
   .nav .mas-menu { position: static; box-shadow: none; border: 0; padding: 0 0 0 .8rem; min-width: 0; background: none; }
 }
+/* Quiz destacado en el menú */
+.nav a.nav-quiz { color: var(--accent-2); }
+.nav a.nav-quiz:hover { background: var(--tox-bg); color: var(--accent-2); }
+/* Botón «Usar sin internet» de la cabecera (en el móvil, al lado de ☰) */
+.sin-btn { flex: none; display: inline-flex; align-items: center; gap: .35rem; margin-left: .4rem; padding: .4rem .9rem; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: .9rem; text-decoration: none; white-space: nowrap; transition: filter .15s; }
+.sin-btn:hover { color: var(--accent-ink); filter: brightness(1.1); }
+.sin-btn.guardada { background: var(--ok-bg); color: var(--ok); }
+.sin-btn.guardada:hover { color: var(--ok); }
+.sin-btn .corto { display: none; }
+@media (max-width: 860px) {
+  .sin-btn { order: 1; margin-left: auto; padding: .35rem .75rem; font-size: .85rem; }
+  .sin-btn .largo { display: none; } .sin-btn .corto { display: inline; }
+  .menu-btn { order: 2; margin-left: .5rem; }
+}
+/* Avisos abajo de la pantalla (invitación a guardarla, sin conexión…) */
+.aviso-red { position: fixed; left: 50%; bottom: 1rem; transform: translateX(-50%); z-index: 40; width: min(640px, calc(100% - 1.5rem)); display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .8rem; padding: .8rem 2.6rem .8rem 1.1rem; border-radius: var(--r); background: #1f2a22; color: #fff; box-shadow: 0 10px 34px rgb(0 0 0 / .35); font-size: .95rem; line-height: 1.4; animation: aviso-sube .25s ease-out; }
+.aviso-red[hidden] { display: none; }
+.aviso-red .aviso-txt { flex: 1 1 16rem; }
+.aviso-red .aviso-bot { display: flex; gap: .4rem; }
+.aviso-red .btn { background: transparent; color: #fff; border-color: rgb(255 255 255 / .4); }
+.aviso-red .btn.prim { background: #95c083; color: #0f140e; border-color: #95c083; }
+.aviso-red .aviso-x { position: absolute; top: .45rem; right: .55rem; border: 0; background: none; color: rgb(255 255 255 / .75); font-size: 1rem; padding: .2rem .4rem; }
+@keyframes aviso-sube { from { opacity: 0; transform: translate(-50%, 12px); } }
+@media print { .sin-btn, .aviso-red, .destacados { display: none !important; } }
 .aviso-global { display: flex; flex-wrap: wrap; justify-content: center; gap: .2rem .9rem; background: var(--mortal-bg); color: var(--ink); border-bottom: 1px solid color-mix(in srgb, var(--mortal) 25%, transparent); padding: .4rem 1rem; font-size: .86rem; text-align: center; }
 .aviso-global b { color: var(--mortal); }
 @media (max-width: 600px) { .aviso-global { font-size: .8rem; padding: .35rem .8rem; } .aviso-global .ancho { display: none; } }
@@ -119,6 +143,17 @@ main { max-width: 1240px; margin: 0 auto; padding: 1.4rem clamp(1rem, 3vw, 2rem)
 .atajo.prim:hover { background: #c96124; }
 .hero-credito { position: absolute; right: .8rem; bottom: .5rem; font-size: .68rem; color: rgb(255 255 255 / .7); }
 .hero-credito a { color: inherit; }
+/* Portada: Quiz, Libros y Sin internet, bien a la vista */
+.destacados { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; margin: -.4rem 0 1.6rem; }
+.dest { display: flex; align-items: center; gap: .85rem; padding: .9rem 1rem; border-radius: var(--r); background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow); color: var(--ink); text-decoration: none; transition: transform .15s, box-shadow .15s, border-color .15s; }
+.dest:hover { color: var(--ink); transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: var(--accent); }
+.dest b { display: block; font-family: var(--serif); font-size: 1.08rem; line-height: 1.2; }
+.dest small { display: block; color: var(--muted); font-size: .86rem; line-height: 1.35; margin-top: .15rem; }
+.dest-ico { flex: none; display: grid; place-items: center; width: 2.8rem; height: 2.8rem; border-radius: 50%; font-size: 1.45rem; background: var(--accent-soft); }
+.dest-quiz .dest-ico { background: var(--tox-bg); }
+.dest-red .dest-ico { background: var(--accent); color: var(--accent-ink); font-weight: 800; }
+.dest-red.guardada .dest-ico { background: var(--ok-bg); color: var(--ok); }
+@media (max-width: 860px) { .destacados { grid-template-columns: 1fr; gap: .55rem; } .dest { padding: .75rem .9rem; } }
 
 /* ---------- Buscador ---------- */
 .q { width: 100%; padding: .7rem .95rem; border: 1.5px solid var(--line); border-radius: var(--r-sm); background: var(--panel); font-size: 1.05rem; }

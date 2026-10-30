@@ -27,6 +27,9 @@ body { background: #8f948a; }
 .howto ol { list-style: decimal; padding-left: 6mm; }
 .howto li { margin: 1.4mm 0; padding-left: 1mm; }
 .howto p { margin-top: 3mm; color: var(--muted); font-size: 9pt; }
+/* instrucciones resumidas en el sumario, cuando no queda media hoja libre */
+.howto-mini { margin-top: 2mm; padding: 1.4mm 2mm; border: .25mm dashed var(--line); border-radius: 1.2mm; font-size: 5.8pt; line-height: 1.3; color: var(--ink-2); }
+.howto-mini b { color: var(--accent); }
 
 @media print {
   body { background: none; }

@@ -153,6 +153,12 @@
         </div>
         ${hf ? `<span class="hero-credito">Foto: ${esc(hf.autor || "")} (${esc(hf.licencia || "")})</span>` : ""}
       </section>
+      <div class="destacados no-print">
+        <a class="dest dest-quiz" href="quiz/"><span class="dest-ico" aria-hidden="true">🍄</span><span><b>Quiz de setas</b><small>¿Sabrías distinguirlas? Ponte a prueba con fotos reales.</small></span></a>
+        <a class="dest dest-libros" href="#/libros"><span class="dest-ico" aria-hidden="true">📚</span><span><b>Libros en PDF</b><small>Guías y cuadernos para leer o imprimir. Hojéalos antes de descargar.</small></span></a>
+        ${(() => { const g = EN_ARCHIVO || store.get("sinInternet", null);
+          return `<a class="dest dest-red${g ? " guardada" : ""}" href="#/sin-internet"><span class="dest-ico" aria-hidden="true">${g ? "✓" : "⬇"}</span><span><b>${g ? "Lista para usar sin internet" : "Usar sin internet"}</b><small>${g ? "Está guardada en este dispositivo." : "Guárdala en el móvil antes de ir al bosque."}</small></span></a>`; })()}
+      </div>
       <div class="barra" id="resultados"><span id="cuenta"></span>
         <span class="acciones no-print"><button class="btn" id="ver-filtros" aria-expanded="${!!state.verFiltros}" aria-controls="filtros">Filtros</button>
         <label>Ordenar <select id="ordenar">
@@ -616,9 +622,9 @@
   // ---------------- Vista: libros en PDF, con páginas de muestra para hojearlos antes de descargar ----------------
   // Las muestras son imágenes sacadas de los PDF: libros/<libro>/pNNN.jpg (grande) y tNNN.jpg (miniatura)
   const MUESTRAS = {
-    bolsillo: { total: 108, pags: [[1, "Portada"], [2, "Sumario"], [3, "Las 12 reglas"], [4, "Cómo mirar una seta"], [6, "Índice visual: las comestibles"], [8, "Índice visual: las de alerta"], [9, "Calendario"],
-      [11, "Árboles y sus setas, con la hoja y el tronco"], [14, "Árboles y sus setas (continuación)"], [16, "Ficha del rovelló"], [23, "Ficha del cep"], [38, "Ficha del ou de reig"], [64, "Ficha de la farinera borda (mortal)"],
-      [95, "Si alguien se encuentra mal"], [97, "Mis hallazgos"], [108, "Contraportada: qué hacer ante una intoxicación"]] },
+    bolsillo: { total: 112, pags: [[1, "Portada"], [2, "Sumario"], [3, "Las 12 reglas"], [4, "Cómo mirar una seta"], [6, "Índice visual: las comestibles"], [8, "Índice visual: las de alerta"], [9, "Calendario"],
+      [11, "Árboles y sus setas, con la hoja y el tronco"], [14, "Árboles y sus setas (continuación)"], [16, "Ficha del rovelló"], [23, "Ficha del cep"], [38, "Ficha del ou de reig"],
+      [63, "Las confusiones mortales, lado a lado"], [68, "Ficha de la farinera borda (mortal)"], [99, "Si alguien se encuentra mal"], [101, "Mis hallazgos"], [112, "Contraportada: qué hacer ante una intoxicación"]] },
     esencial: { total: 336, pags: [[1, "Portada"], [3, "Índice"], [6, "Antes de salir: seguridad"], [11, "Partes de una seta"], [14, "Cómo buscar setas"], [24, "Ficha de árbol: pino carrasco"],
       [176, "Ficha del rovelló (1 de 4)"], [177, "Rovelló: cómo no confundirlo (2 de 4)"], [178, "Rovelló: cuándo y dónde (3 de 4)"], [179, "Rovelló: descripción (4 de 4)"],
       [246, "Ficha de la farinera borda, mortal (1 de 2)"], [247, "Farinera borda: síntomas y confusiones (2 de 2)"], [304, "Calendario de fructificación"], [335, "Cuaderno de campo para anotar las salidas"]] },
@@ -627,8 +633,8 @@
       [517, "Calendario de fructificación"], [524, "Qué hacer ante una intoxicación"]] },
   };
   const LIBROS = [
-    { g: "bolsillo", corto: "Cuaderno de bolsillo", tit: "Setas esenciales · cuaderno de bolsillo", formato: "108 páginas A6 (10,5 × 14,8 cm)",
-      txt: "Las 79 setas que hay que conocer, una por página: fotos, cómo reconocerla, dónde sale y con qué no confundirla. Con calendario, los árboles con foto de la hoja y del tronco, índice visual y qué hacer ante una intoxicación. Cabe en el bolsillo." },
+    { g: "bolsillo", corto: "Cuaderno de bolsillo", tit: "Setas esenciales · cuaderno de bolsillo", formato: "112 páginas A6 (10,5 × 14,8 cm)",
+      txt: "Las 79 setas que hay que conocer, una por página: fotos, cómo reconocerla, dónde sale y con qué no confundirla. Con las confusiones mortales lado a lado, los árboles con foto de la hoja y del tronco, calendario, índice visual y qué hacer ante una intoxicación. Cabe en el bolsillo." },
     { g: "esencial", corto: "Guía esencial", tit: "Setas comestibles esenciales de Cataluña", formato: "336 páginas A5",
       txt: "La guía de campo completa: cada comestible en cuatro páginas (fotos, rasgos que hay que comprobar, cómo no confundirla, cuándo y dónde sale), las tóxicas y mortales, los árboles, el calendario y un glosario." },
     { g: "cuaderno", corto: "Cuaderno de campo", tit: "Cuaderno de campo", formato: "48 páginas A5 · se imprime en 12 hojas A4",
@@ -638,8 +644,8 @@
   ];
   // Los cuadernos de bolsillo están en la propia web (offline/), no en las «releases» de GitHub
   const BOLSILLO = [
-    { guia: "bolsillo", ed: "A6", uso: "Para leerlo en el móvil o llevarlo a la copistería: pide «cuadernillo A6 a color, a sangre», con espiral o en rústica.", mb: 30.0, pag: 108, url: "offline/setas-esenciales-bolsillo.pdf" },
-    { guia: "bolsillo", ed: "Para imprimir en casa (A4)", uso: "14 hojas A4 a doble cara: se cortan por la mitad, se doblan y se grapan en dos cuadernillos.", mb: 30.5, url: "offline/setas-esenciales-bolsillo-imprimir-A4.pdf" },
+    { guia: "bolsillo", ed: "A6", uso: "Para leerlo en el móvil o llevarlo a la copistería: pide «cuadernillo A6 a color, a sangre», con espiral o en rústica.", mb: 30.2, pag: 112, url: "offline/setas-esenciales-bolsillo.pdf" },
+    { guia: "bolsillo", ed: "Para imprimir en casa (A4)", uso: "14 hojas A4 a doble cara: se cortan por la mitad, se doblan y se grapan en dos cuadernillos.", mb: 30.7, url: "offline/setas-esenciales-bolsillo-imprimir-A4.pdf" },
     { guia: "bolsillo", ed: "En catalán · 50 setas", uso: "Quadern de butxaca, 76 páginas A6 (las muestras de arriba son de la edición en castellano).", mb: 15.4, pag: 76, url: "offline/cistella-segura-butxaca.pdf" },
     { guia: "bolsillo", ed: "En catalán, para imprimir en casa (A4)", uso: "10 hojas A4, un solo cuadernillo.", mb: 15.8, url: "offline/cistella-segura-butxaca-imprimir-A4.pdf" },
   ];
@@ -647,7 +653,7 @@
     bolsillo: `<details class="caja como-imprimir"><summary><b>Cómo imprimirlo en casa</b></summary><ol>
         <li>Descarga el PDF <b>para imprimir en casa (A4)</b>. Imprime a <b>doble cara</b>, volteando por el <b>borde largo</b>, a <b>tamaño real (100 %)</b>.</li>
         <li><b>Corta</b> las hojas por la mitad, por la línea de puntos ✂.</li>
-        <li><b>Ordena</b> las mitades por el número pequeño de abajo: un montón con las A (A 1/14, A 2/14…) y otro con las B (B 1/13…).</li>
+        <li><b>Ordena</b> las mitades por el número pequeño de abajo: un montón con las A (A 1/14, A 2/14…) y otro con las B (B 1/14…).</li>
         <li><b>Dobla</b> cada montón por la mitad y <b>grapa</b> por el pliegue con 2 grapas.</li></ol></details>`,
     esencial: `<p class="small muted">Para imprimir: A5 a doble cara sin cambiar el orden de las páginas (cada ficha empieza en página par), papel mate de 100–115 g y espiral o encuadernación cosida para que se abra plano. Para el móvil, la edición <b>ligera</b>.</p>`,
     cuaderno: `<p class="small"><a href="#/cuaderno">Cómo imprimirlo y doblarlo, paso a paso →</a></p>`,
@@ -747,6 +753,7 @@
     for (const req of await cache.keys()) if (!quiere.has(new URL(req.url).pathname)) await cache.delete(req);
     const info = { fecha: new Date().toISOString().slice(0, 10), todas, bytes: total, n: lista.length - fallos.length, fallos: fallos.length };
     store.set("sinInternet", info);
+    pintarSinBtn();
     return info;
   }
   async function borrarSinInternet() {
@@ -754,7 +761,47 @@
     const aqui = new URL(".", location.href).href;   // solo el de esta web, no otros de github.io
     for (const r of await navigator.serviceWorker.getRegistrations()) if (r.scope === aqui) await r.unregister();
     store.set("sinInternet", null);
+    pintarSinBtn();
   }
+
+  // Botón de la cabecera: «⬇ Usar sin internet» o, si ya está guardada, «✓ Guardada»
+  function pintarSinBtn() {
+    const b = $(".sin-btn"); if (!b) return;
+    const ok = EN_ARCHIVO || !!store.get("sinInternet", null);
+    b.classList.toggle("guardada", ok);
+    b.firstElementChild.textContent = ok ? "✓" : "⬇";
+    $(".largo", b).textContent = EN_ARCHIVO ? "Copia sin internet" : ok ? "Guardada sin internet" : "Usar sin internet";
+    $(".corto", b).textContent = ok ? "Guardada" : "Guardar";
+  }
+  // Avisos abajo de la pantalla: invitación a guardarla y cambios de conexión
+  let avisoReloj = 0;
+  function avisar(html, { botones = [], ms = 0, alCerrar = null } = {}) {
+    const a = $("#aviso-red"); if (!a) return;
+    clearTimeout(avisoReloj);
+    a.innerHTML = `<span class="aviso-txt">${html}</span><span class="aviso-bot">${botones.map((b, i) => `<button class="btn${i ? "" : " prim"}" data-i="${i}">${esc(b.t)}</button>`).join("")}</span><button class="aviso-x" aria-label="Cerrar el aviso">✕</button>`;
+    a.hidden = false;
+    $$("button[data-i]", a).forEach((x) => (x.onclick = () => { a.hidden = true; botones[+x.dataset.i].f(); }));
+    $(".aviso-x", a).onclick = () => { a.hidden = true; if (alCerrar) alCerrar(); };
+    if (ms) avisoReloj = setTimeout(() => (a.hidden = true), ms);
+  }
+  const DIA = 864e5;
+  function invitarSinInternet() {
+    if (!puedeGuardar || store.get("sinInternet", null)) return;
+    if (Date.now() < store.get("invitarDesde", 0)) return;
+    setTimeout(() => {
+      if (location.hash.startsWith("#/sin-internet") || store.get("sinInternet", null)) return;
+      store.set("invitarDesde", Date.now() + 7 * DIA);            // si no contesta, se vuelve a avisar en una semana
+      const noAhora = () => store.set("invitarDesde", Date.now() + 30 * DIA);
+      avisar("<b>¿Vas al bosque?</b> Guarda la web en este dispositivo y úsala aunque no haya cobertura.",
+        { botones: [{ t: "Guardar", f: () => (location.hash = "#/sin-internet") }, { t: "Ahora no", f: noAhora }], alCerrar: noAhora });
+    }, 6000);
+  }
+  const sinRedTxt = () => store.get("sinInternet", null)
+    ? "📵 <b>Sin conexión.</b> Sigues usando la copia guardada en este dispositivo."
+    : "📵 <b>Sin conexión.</b> Solo verás lo que ya hayas abierto. Cuando tengas internet, guarda la web para el bosque.";
+  // Android/Chrome: botón para instalarla como app (se ofrece en «Usar sin internet»)
+  let instalar = null;
+  window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); instalar = e; const b = $("#si-instalar"); if (b) b.hidden = false; });
   function vistaSinInternet() {
     const info = store.get("sinInternet", null);
     const estado = info
@@ -775,6 +822,7 @@
           <button class="si-op" data-guardar="todas"><b>Con todas las fotos en grande</b><span data-peso="todas">unos 175 MB</span><small>Como en la web. Mejor con wifi.</small></button>
         </div>
         <div id="si-progreso" hidden><div class="si-barra"><span></span></div><p class="small" id="si-txt"></p></div>
+        <p><button class="btn prim" id="si-instalar" ${instalar ? "" : "hidden"}>📲 Instalar como app</button></p>
         <details class="caja si-inicio"><summary><b>Después: ponla en la pantalla de inicio</b></summary><ul>
           <li><b>Android (Chrome):</b> menú ⋮ → <b>Instalar aplicación</b> o <b>Añadir a pantalla de inicio</b>.</li>
           <li><b>iPhone (Safari):</b> botón Compartir → <b>Añadir a pantalla de inicio</b>.</li></ul>
@@ -814,6 +862,8 @@
     }));
     const borrar = $("#si-borrar");
     if (borrar) borrar.onclick = async () => { borrar.disabled = true; await borrarSinInternet(); vistaSinInternet(); };
+    const inst = $("#si-instalar");
+    if (inst) inst.onclick = async () => { if (!instalar) return; instalar.prompt(); await instalar.userChoice.catch(() => {}); instalar = null; inst.hidden = true; };
   }
 
   // Utilidades para las secciones que vienen de Cistella Segura (extra/*.js): se registran en window.VISTAS_EXTRA
@@ -851,6 +901,13 @@
   $("#pie-meta").textContent = `Edición ${DB.meta.version} · datos generados el ${DB.meta.generado} · ${ESP.length} fichas · ${DB.registro.length.toLocaleString("es")} especies más en el inventario.`;
   // Sin internet: si se guardó en este dispositivo, se mantiene activo el service worker (y así se actualiza)
   if (puedeGuardar && store.get("sinInternet", null)) navigator.serviceWorker.register("sw.js").catch(() => {});
+  pintarSinBtn();
+  invitarSinInternet();
+  if (!EN_ARCHIVO) {
+    window.addEventListener("offline", () => avisar(sinRedTxt(), { ms: 8000 }));
+    window.addEventListener("online", () => avisar("📶 Vuelves a tener conexión.", { ms: 3000 }));
+    if (navigator.onLine === false) avisar(sinRedTxt(), { ms: 8000 });
+  }
   // En la copia descargada (ZIP, file://) no van el quiz ni los PDF de bolsillo: esos enlaces abren la web
   if (EN_ARCHIVO) document.addEventListener("click", (ev) => {
     const a = ev.target.closest && ev.target.closest('a[href^="quiz/"], a[href^="offline/"]');

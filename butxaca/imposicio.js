@@ -67,6 +67,14 @@
     const N = pages.length;               // multiple de 4
     const parts = Math.ceil(N / MAX);
     const mida = Math.ceil(N / parts / 4) * 4;
+    // Si cap quadernet deixa mitja fulla lliure, les instruccions no hi caben: van, resumides, a la pàgina 2 (sumari)
+    const sobra = [];
+    for (let s = 0; s < N; s += mida) sobra.push((Math.min(mida, N - s) / 4) % 2 === 1);
+    if (!sobra.some(Boolean) && pages[1]) {
+      const p = pages[1];
+      p.querySelector(".pf")?.insertAdjacentHTML("beforebegin", `<div class="howto-mini"><b>Para montarlo:</b> imprime a doble cara (borde largo, tamaño real), corta las hojas por ✂, ordena las mitades por su número pequeño${parts > 1 ? " (un montón con las A y otro con las B)" : ""}, dobla ${parts > 1 ? "cada montón" : "el montón"} por la mitad y grapa por el pliegue.</div>`);
+      if (p.scrollHeight > p.clientHeight + 1) p.querySelector(".howto-mini").remove();
+    }
 
     const out = el("main");
     out.id = "sheets";

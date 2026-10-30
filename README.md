@@ -6,8 +6,10 @@ Web para **identificar** las setas de Cataluña: 163 fichas en castellano (con l
 
 - **Especies:** buscador con filtros y las 163 fichas: rasgos decisivos, confusiones peligrosas, morfología, hábitat, árboles, calendario, registros en Cataluña y fuentes.
 - **Por rasgos:** se marcan los rasgos observados (debajo del sombrero, sustrato, árbol, color, anillo, volva, látex, mes) y quedan las candidatas.
-- **Calendario** y **Aprende**: seguridad, qué hacer ante una intoxicación, anatomía, cómo buscar y glosario.
-- En **Más**: cuándo salir tras la lluvia, mis hallazgos (Montnegre-Corredor, 18/10/2026), árboles, galería, cuaderno de campo, libros PDF, quiz, inventario de ≈ 4.000 especies y fuentes.
+- **Aprende**: seguridad, qué hacer ante una intoxicación, anatomía, cómo buscar y glosario.
+- **Quiz** con fotos y **Libros** en PDF, también en la portada.
+- Botón **⬇ Usar sin internet** arriba: guarda la web en el móvil. La web avisa cuando no hay conexión.
+- En **Más**: calendario, cuándo salir tras la lluvia, árboles, galería, cuaderno de campo, inventario de ≈ 4.000 especies y fuentes.
 
 ## Sin internet
 
@@ -20,7 +22,7 @@ En la web, **Más → Usar sin internet**:
 
 Todos se descargan desde la web (**Más → Libros PDF**) o desde [Releases](https://github.com/CaOrJavier/cistella-segura/releases/tag/guia-2026.1).
 
-- **Setas esenciales · cuaderno de bolsillo A6** (108 páginas): las 79 especies esenciales y 20 árboles con foto de la hoja y del tronco, en [A6](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-bolsillo.pdf) o [A4 para imprimir en casa](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-bolsillo-imprimir-A4.pdf) ([cómo imprimirlo](butxaca/COMO-IMPRIMIR.md)).
+- **Setas esenciales · cuaderno de bolsillo A6** (112 páginas): las 79 especies esenciales, las 22 confusiones mortales lado a lado y 20 árboles con foto de la hoja y del tronco, en [A6](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-bolsillo.pdf) o [A4 para imprimir en casa](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-bolsillo-imprimir-A4.pdf) ([cómo imprimirlo](butxaca/COMO-IMPRIMIR.md)).
 - **Quadern de butxaca A6** (76 páginas, en catalán, 50 setas): en [A6](https://caorjavier.github.io/cistella-segura/offline/cistella-segura-butxaca.pdf) o [A4](https://caorjavier.github.io/cistella-segura/offline/cistella-segura-butxaca-imprimir-A4.pdf).
 - **Cuaderno de campo A5** (48 páginas), ***Setas comestibles esenciales de Cataluña*** (336 páginas) y ***Catálogo micológico de Cataluña, vol. 1*** (565 páginas): en Releases.
 
