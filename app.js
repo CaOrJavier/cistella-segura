@@ -126,19 +126,40 @@
   }
 
   // ---------------- Vista: buscador ----------------
+  // Atajos de la portada: filtros de un toque
+  const RAPIDOS = { comestibles: { cat: ["comestible", "condicionada"] }, peligrosas: { cat: ["toxica", "mortal"] }, mes: { mes: [String(new Date().getMonth() + 1)] } };
+  const igual = (a, b) => JSON.stringify((a || []).slice().sort()) === JSON.stringify((b || []).slice().sort());
+  const rapidoActivo = (k) => Object.entries(RAPIDOS[k]).every(([f, v]) => igual(state.f[f], v));
+  function fotoPortada() {
+    const fs = (BYID["boletus-edulis"] || {}).fotos || [];
+    return fs.find((f) => f.papel === "recolectado" && /cesta/i.test(f.pie || "")) || fs.find((f) => f.papel === "recolectado") || fs[0];
+  }
   function vistaBuscador() {
     const grupos = [...new Set(FAC.map((f) => f.g))];
+    const hf = fotoPortada();
     app.innerHTML = `
-      <h1>Las setas de Cataluña</h1>
-      <p class="muted">${ESP.length} especies con ficha (guía esencial y catálogo) y ${DB.registro.length.toLocaleString("es")} especies más en el <a href="#/inventario">inventario de registros</a>. Busque por cualquier nombre o combine filtros.${(DB.libros || []).length ? ` <a href="#/libros">Descargue los libros en PDF</a>.` : ""}</p>
-      ${DB.cuaderno ? `<a class="aviso-cuaderno" href="#/cuaderno"><img src="cuaderno/t01.jpg" alt=""><span><b>Cuaderno de campo para imprimir</b>${DB.cuaderno.paginas} páginas A5 en color con las comestibles, las peligrosas y sus árboles, para doblar y llevar en la mochila.</span><span aria-hidden="true">›</span></a>` : ""}
-      <input class="q" type="search" placeholder="Nombre catalán, castellano o científico, sinónimo, familia…" value="${esc(state.q)}" aria-label="Buscar">
-      <div class="barra"><span id="cuenta"></span>
-        <span><button class="btn no-print" id="ver-filtros">Filtros</button>
-        <label>Ordenar por <select id="ordenar">
-          ${[["familia", "Familia"], ["cientifico", "Nombre científico"], ["catalan", "Nombre catalán"], ["castellano", "Nombre castellano"], ["genero", "Género"], ["mes", "Primer mes de aparición"], ["habitat", "Hábitat"], ["registros", "Nº de registros en Cataluña"]].map(([k, t]) => `<option value="${k}" ${state.orden === k ? "selected" : ""}>${t}</option>`).join("")}
+      <section class="hero" ${hf ? `style="--hero:url('${hf.g}')"` : ""}>
+        <div class="hero-in">
+          <p class="hero-kicker">Setas de Cataluña</p>
+          <h1>Identifica las setas con seguridad</h1>
+          <p class="hero-sub">${ESP.length} fichas con fotos, los rasgos que hay que comprobar y las setas peligrosas con las que se confunden.</p>
+          <label class="hero-buscar"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+            <input class="q" type="search" placeholder="Busca un nombre: rovelló, níscalo, Boletus…" value="${esc(state.q)}" aria-label="Buscar por nombre"></label>
+          <div class="hero-atajos">
+            <a class="atajo prim" href="#/rasgos">🔍 Identificar por rasgos</a>
+            <button class="atajo" data-rapido="comestibles" aria-pressed="${rapidoActivo("comestibles")}">Comestibles</button>
+            <button class="atajo" data-rapido="peligrosas" aria-pressed="${rapidoActivo("peligrosas")}">Tóxicas y mortales</button>
+            <button class="atajo" data-rapido="mes" aria-pressed="${rapidoActivo("mes")}">Salen en ${MESES_L[new Date().getMonth()]}</button>
+          </div>
+        </div>
+        ${hf ? `<span class="hero-credito">Foto: ${esc(hf.autor || "")} (${esc(hf.licencia || "")})</span>` : ""}
+      </section>
+      <div class="barra" id="resultados"><span id="cuenta"></span>
+        <span class="acciones no-print"><button class="btn" id="ver-filtros" aria-expanded="${!!state.verFiltros}" aria-controls="filtros">Filtros</button>
+        <label>Ordenar <select id="ordenar">
+          ${[["familia", "por familia"], ["catalan", "por nombre catalán"], ["castellano", "por nombre castellano"], ["cientifico", "por nombre científico"], ["mes", "por mes de aparición"], ["registros", "por registros en Cataluña"], ["genero", "por género"], ["habitat", "por hábitat"]].map(([k, t]) => `<option value="${k}" ${state.orden === k ? "selected" : ""}>${t}</option>`).join("")}
         </select></label> <button class="btn" id="limpiar">Quitar filtros</button></span></div>
-      <div class="buscador">
+      <div class="buscador${state.verFiltros ? " con-filtros" : ""}">
         <aside class="filtros" id="filtros" aria-label="Filtros">
           ${grupos.map((g) => `<details class="grupo" ${["Seguridad", "Selección"].includes(g) ? "open" : ""}><summary>${g}</summary>${FAC.filter((f) => f.g === g).map((f) => `<div data-fac="${f.k}"></div>`).join("")}
           ${g === "Cuándo y dónde" ? `<label><input type="checkbox" id="excep" ${state.excep ? "checked" : ""}> Incluir meses excepcionales</label>
@@ -152,7 +173,18 @@
     const q = $(".q"); q.addEventListener("input", () => { state.q = q.value; pintarResultados(); });
     $("#ordenar").onchange = (ev) => { state.orden = ev.target.value; pintarResultados(); };
     $("#limpiar").onclick = () => { state.f = {}; state.q = ""; state.alt = [0, 3000]; state.excep = false; vistaBuscador(); };
-    $("#ver-filtros").onclick = () => $("#filtros").classList.toggle("abiertos");
+    $("#ver-filtros").onclick = (ev) => {
+      state.verFiltros = !state.verFiltros;
+      $(".buscador").classList.toggle("con-filtros", state.verFiltros);
+      ev.currentTarget.setAttribute("aria-expanded", state.verFiltros);
+    };
+    $$("[data-rapido]").forEach((b) => (b.onclick = () => {
+      const k = b.dataset.rapido, activo = rapidoActivo(k);
+      Object.keys(RAPIDOS[k]).forEach((f) => delete state.f[f]);
+      if (!activo) Object.assign(state.f, JSON.parse(JSON.stringify(RAPIDOS[k])));
+      pintarResultados();
+      $("#resultados").scrollIntoView({ behavior: "smooth", block: "start" });
+    }));
     $("#excep").onchange = (ev) => { state.excep = ev.target.checked; pintarResultados(); };
     $("#altmin").onchange = (ev) => { state.alt[0] = +ev.target.value || 0; pintarResultados(); };
     $("#altmax").onchange = (ev) => { state.alt[1] = +ev.target.value || 3000; pintarResultados(); };
@@ -187,11 +219,23 @@
     $("#nota-filtro").innerHTML = cats.some((c) => ["comestible", "condicionada"].includes(c))
       ? `<div class="nota-filtro"><b>Este filtro no es una autorización para comer.</b> «Comestible» describe a la especie correctamente identificada, no al ejemplar que usted tiene delante. Revise los rasgos decisivos y las confusiones de cada ficha; ante la mínima duda, no la consuma.</div>` : "";
     $("#res").innerHTML = res.length ? res.map(tarjeta).join("") : `<p>No hay especies con esa combinación. Quite algún filtro o busque en el <a href="#/inventario">inventario</a>.</p>`;
+    // atajos y botón de filtros reflejan lo que está activo
+    $$("[data-rapido]").forEach((b) => b.setAttribute("aria-pressed", rapidoActivo(b.dataset.rapido)));
+    const nf = Object.values(state.f).reduce((n, v) => n + (v || []).length, 0);
+    const vf = $("#ver-filtros"); if (vf) vf.textContent = nf ? `Filtros (${nf})` : "Filtros";
+    const lp = $("#limpiar"); if (lp) lp.hidden = !nf && !state.q;
     pintarFacetas();
   }
 
   // ---------------- Vista: ficha ----------------
-  function seccion(t, html) { return html ? `<section class="caja"><h2>${t}</h2>${html}</section>` : ""; }
+  // Secciones de la ficha. Las de consulta van plegadas para que lo importante (rasgos, confusiones, comestibilidad) quede a la vista.
+  const PLEGADAS = new Set(["Cómo encontrarla", "Dónde se ha registrado en Cataluña", "Descripción", "Nombres y taxonomía", "Fuentes y control de calidad", "Hábitat y ecología"]);
+  function seccion(t, html) {
+    if (!html) return "";
+    return PLEGADAS.has(t) ? `<details class="caja plegable"><summary><h2>${t}</h2></summary>${html}</details>` : `<section class="caja"><h2>${t}</h2>${html}</section>`;
+  }
+  // al imprimir, todo abierto
+  window.addEventListener("beforeprint", () => $$("details").forEach((d) => (d.open = true)));
   function dl(pares) { const x = pares.filter(([, v]) => v); return x.length ? `<dl class="morf">${x.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl>` : ""; }
   function confusionesHTML(e) {
     const cs = e.confusiones || []; if (!cs.length) return "";
@@ -222,13 +266,14 @@
     const comarcas = r ? Object.entries(r.comarcas || {}).map(([c, n]) => `${esc(c)} (${n})`).join(", ") : "";
     app.innerHTML = `
       <div class="aviso-impresion">Ficha impresa de «Cistella Segura · Setas de Cataluña» (${esc(DB.meta.generado)}). Ninguna ficha certifica que un ejemplar sea comestible.</div>
+      <a class="volver no-print" href="#/">← Todas las especies</a>
       <div class="ficha-cab">
         <div><div class="tax">${esc(e.orden)} · ${esc(e.familia)} · ${esc(e.genero)}</div>
           <h1>${esc(titulo(e))}</h1>
           <div class="nombres">${nombres(e, "ca").length ? "<b>ca:</b> " + esc(nombres(e, "ca").join(", ")) : ""}${nombres(e, "es").length ? " · <b>es:</b> " + esc(nombres(e, "es").join(", ")) : ""}</div>
           <div class="sci"><i>${esc(e.nombre)}</i> <span class="muted small">${esc(e.autor || "")}</span></div></div>
-        <div style="text-align:right">${badge(catOf(e))}<br>${idf.dificultad ? `<span class="chip">Identificación ${esc(idf.dificultad)}</span>` : ""}${e.controversia ? `<span class="chip">Comestibilidad o taxonomía discutida</span>` : ""}
-          <div class="no-print" style="margin-top:.5rem"><button class="btn" onclick="window.print()">Imprimir ficha</button></div></div>
+        <div class="lado">${badge(catOf(e))}<div>${idf.dificultad ? `<span class="chip">Identificación ${esc(idf.dificultad)}</span>` : ""}${e.controversia ? `<span class="chip">Comestibilidad o taxonomía discutida</span>` : ""}</div>
+          <div class="no-print"><button class="btn" onclick="window.print()">Imprimir ficha</button></div></div>
       </div>
       ${e.toxicidad ? `<div class="caja alerta"><h2>${badge(catOf(e))} ${esc(e.toxicidad.sindrome)}</h2><p>${e.toxicidad.latencia ? `<b>Aparición de síntomas:</b> ${esc(e.toxicidad.latencia)}. ` : ""}${esc(e.toxicidad.sintomas || "")}</p>${e.toxicidad.nota ? `<p class="small">${esc(e.toxicidad.nota)}</p>` : ""}<p class="small"><a href="#/guia/intoxicacion">Qué hacer ante una intoxicación</a></p></div>` : ""}
       <div class="ficha-grid">
@@ -376,16 +421,117 @@
     $("#imas").onclick = () => { lim += 500; pintar(); };
     pintar();
   }
-  function vistaGuia(k) {
-    const caps = [["seguridad", "Seguridad y normativa"], ["intoxicacion", "Intoxicaciones"], ["anatomia", "Partes de una seta"], ["buscar", "Cómo buscar"], ["metodo", "Método del catálogo"], ["glosario", "Glosario"]];
-    app.innerHTML = `<div class="subnav">${caps.map(([c, t]) => `<a class="tog" href="#/guia/${c}" aria-pressed="${c === k}">${t}</a>`).join("")}</div>
-      <article class="texto"><h1>${esc((caps.find(([c]) => c === k) || [k, k])[1])}</h1>${DB.textos[k] || "<p>Capítulo no disponible.</p>"}</article>`;
-    // números del método
-    app.innerHTML = app.innerHTML.replace("{{n_fichas}}", ESP.length).replace("{{n_registro}}", DB.registro.length.toLocaleString("es")).replace("{{fecha}}", DB.meta.inventario.fecha_consulta || "")
+  // ---------------- Vista: Aprende ----------------
+  // Los textos de la guía se muestran por puntos: se ve la idea principal y la explicación se abre al tocarla.
+  const CAPS = [
+    { k: "seguridad", t: "Las 12 reglas de oro", d: "Lo imprescindible antes de recoger una sola seta.", ico: "🛡️", empieza: true },
+    { k: "intoxicacion", t: "Si alguien se encuentra mal", d: "Qué hacer, a quién llamar y cuándo es grave.", ico: "🚑", rojo: true },
+    { k: "anatomia", t: "Partes de una seta", d: "Qué mirar y en qué orden para describirla bien.", ico: "🍄" },
+    { k: "buscar", t: "Cómo buscar setas", d: "Dónde, cuándo y cómo recorrer el bosque.", ico: "🧺" },
+    { k: "glosario", t: "Glosario", d: "Las palabras raras de las fichas, explicadas.", ico: "📖" },
+    { k: "metodo", t: "Cómo se hizo esta guía", d: "De dónde salen los datos y cuáles son sus límites.", ico: "🔬", extra: true },
+  ];
+  function textoCap(k) {
+    return (DB.textos[k] || "").replace("{{n_fichas}}", ESP.length).replace("{{n_registro}}", DB.registro.length.toLocaleString("es")).replace("{{fecha}}", DB.meta.inventario.fecha_consulta || "")
       .replace("{{n_inventario}}", (DB.registro.length + ESP.length).toLocaleString("es"))
       .replace("{{n_pliego}}", (DB.registro.filter((r) => r.e === "pliego").length + ESP.filter((e) => (e.registros || {}).evidencia === "confirmada").length).toLocaleString("es"))
       .replace("{{n_obs}}", (DB.registro.filter((r) => r.e === "observaciones").length + ESP.filter((e) => (e.registros || {}).evidencia === "observaciones").length).toLocaleString("es"))
       .replace("{{n_escasa}}", (DB.registro.filter((r) => r.e === "escasa").length + ESP.filter((e) => ["escasa", "bibliografia"].includes((e.registros || {}).evidencia)).length).toLocaleString("es"));
+  }
+  const htmlTexto = (h) => { const d = document.createElement("div"); d.innerHTML = h; return d.textContent.replace(/\s+/g, " ").trim(); };
+  const minutos = (h) => Math.max(1, Math.round(htmlTexto(h).length / 1100));
+  const primerNodo = (el) => { for (const n of el.childNodes) { if (n.nodeType === 3 && !n.textContent.trim()) continue; return n.nodeType === 1 ? n : null; } return null; };
+
+  // Una lista del texto → puntos: idea principal (la negrita) + «Leer más» con la explicación
+  function listaPuntos(lista, numerada) {
+    return `<ol class="puntos">${[...lista.children].map((li0, i) => {
+      const li = li0.cloneNode(true);
+      let etq = "", lead = "", resto = "";
+      let p = primerNodo(li);
+      if (p && p.tagName === "STRONG" && /^\[.*\]$/.test(p.textContent.trim())) { etq = p.textContent.trim().slice(1, -1); p.remove(); p = primerNodo(li); }
+      if (p && p.tagName === "STRONG") { lead = p.textContent.trim(); p.remove(); resto = li.innerHTML.trim(); }
+      else { const txt = htmlTexto(li.innerHTML); const m = txt.match(/^.+?[.:](\s|$)/); lead = m ? m[0].trim() : txt; resto = m ? esc(txt.slice(m[0].length).trim()) : ""; }
+      // la negrita a veces es solo el principio de la frase: se completa con el resto de esa frase
+      const rt = htmlTexto(resto);
+      if (/^[a-záéíóúñü,;(]/.test(rt)) {
+        const m = rt.match(/^.*?[.!?](\s|$)/), cont = m ? m[0] : rt;
+        lead = lead + (/^[,;]/.test(cont) ? "" : " ") + cont.trim(); resto = esc(rt.slice(cont.length).trim());
+      }
+      lead = lead.replace(/[:]$/, "");
+      resto = resto.replace(/^\s*[:.\-–—]\s*/, "");
+      const n = numerada ? `<span class="n">${i + 1}</span>` : `<span class="n bala" aria-hidden="true">•</span>`;
+      const et = etq ? `<span class="etq">${esc(etq)}</span>` : "";
+      const corto = htmlTexto(resto);
+      if (!corto) return `<li class="punto solo">${n}<span class="pt">${esc(lead)}${et}</span></li>`;
+      if (corto.length <= 70) return `<li class="punto solo">${n}<span class="pt">${esc(lead)}${et} <span class="muted" style="font-weight:400">— ${resto}</span></span></li>`;
+      return `<li><details class="punto"><summary>${n}<span class="pt">${esc(lead)}${et}</span></summary><div class="mas">${resto}</div></details></li>`;
+    }).join("")}</ol>`;
+  }
+  function nodoAprende(n) {
+    if (n.nodeType === 3) return `<p>${esc(n.textContent.trim())}</p>`;
+    const t = n.tagName;
+    if (t === "OL" || t === "UL") return listaPuntos(n, t === "OL");
+    if (t === "BLOCKQUOTE") return `<div class="aviso-rojo">${n.innerHTML}</div>`;
+    if (t === "TABLE") return `<div class="tabla-scroll"><table class="tabla">${n.innerHTML}</table></div>`;
+    return n.outerHTML;
+  }
+  // Un capítulo → introducción corta + bloques plegables (el primero abierto)
+  function capituloHTML(h) {
+    const d = document.createElement("div"); d.innerHTML = h;
+    const secs = []; let cur = { t: null, nodos: [] };
+    [...d.childNodes].forEach((n) => {
+      if (n.nodeType === 1 && n.tagName === "H2") { secs.push(cur); cur = { t: n.textContent.trim(), nodos: [] }; }
+      else if (n.nodeType === 1 || (n.nodeType === 3 && n.textContent.trim())) cur.nodos.push(n);
+    });
+    secs.push(cur);
+    const [intro, ...bloques] = secs;
+    let primero = true;
+    const introH = intro.nodos.map((n) => { if (primero && n.tagName === "P") { primero = false; return `<p class="ap-lead">${n.innerHTML}</p>`; } return nodoAprende(n); }).join("");
+    return introH + bloques.map((s, i) => {
+      const puntos = s.nodos.reduce((a, n) => a + (/^(OL|UL)$/.test(n.tagName || "") ? n.children.length : 0), 0);
+      return `<details class="bloque"${i === 0 ? " open" : ""}><summary><span class="num-b">${i + 1}</span><h2>${esc(s.t.replace(/^\d+\.\s*/, ""))}</h2>${puntos ? `<span class="cuenta">${puntos} puntos</span>` : ""}</summary><div class="bloque-in">${s.nodos.map(nodoAprende).join("")}</div></details>`;
+    }).join("");
+  }
+  // El glosario → tarjetas con buscador
+  function glosarioHTML(h) {
+    const d = document.createElement("div"); d.innerHTML = h;
+    const items = [...d.querySelectorAll("li")].map((li) => { const s = li.querySelector("strong"); const t = s ? s.textContent.trim() : ""; if (s) s.remove(); return { t, def: li.innerHTML.trim().replace(/^\s*:\s*/, "").replace(/^([a-záéíóúñü])/, (m) => m.toUpperCase()) }; });
+    return `<input class="q glos-buscar" type="search" placeholder="Busca una palabra: volva, himenóforo, micorriza…" aria-label="Buscar en el glosario">
+      <p class="muted small" id="glos-n">${items.length} palabras</p>
+      <div class="glos">${items.map((x) => `<div class="term" data-q="${esc(norm(x.t + " " + htmlTexto(x.def)))}"><b>${esc(x.t)}</b>${x.def}</div>`).join("")}</div>`;
+  }
+  function vistaAprende() {
+    const tarjeta = (c) => `<a class="ap-card${c.rojo ? " rojo" : ""}${c.empieza ? " empieza" : ""}" href="#/guia/${c.k}">${c.empieza ? `<span class="marca-emp">Empieza aquí</span>` : ""}<span class="ico" aria-hidden="true">${c.ico}</span><h2>${esc(c.t)}</h2><p>${esc(c.d)}</p><span class="min">${minutos(textoCap(c.k))} min · en puntos cortos</span></a>`;
+    app.innerHTML = `<h1>Aprende</h1>
+      <p class="ap-intro">Lo básico para recoger setas sin riesgos, explicado en puntos cortos. Toque un punto para leer más.</p>
+      <div class="ap-grid">${CAPS.filter((c) => !c.extra).map(tarjeta).join("")}</div>
+      <h2 class="ap-sec">Para saber más</h2>
+      <div class="ap-grid">${CAPS.filter((c) => c.extra).map(tarjeta).join("")}</div>`;
+  }
+  function vistaGuia(k) {
+    if (!k || k === "inicio") return vistaAprende();
+    const i = CAPS.findIndex((c) => c.k === k), c = CAPS[i] || { k, t: k, ico: "" };
+    const h = textoCap(k);
+    if (!h) return vistaNoEncontrada();
+    const sig = CAPS[i + 1];
+    document.title = c.t + " · Cistella Segura";
+    app.innerHTML = `<a class="volver no-print" href="#/guia">← Aprende</a>
+      <nav class="ap-temas no-print" aria-label="Temas">${CAPS.map((x) => `<a class="tog" href="#/guia/${x.k}" aria-pressed="${x.k === k}">${x.ico} ${esc(x.t)}</a>`).join("")}</nav>
+      <header class="ap-cab"><h1>${c.ico ? c.ico + " " : ""}${esc(c.t)}</h1>
+        <div class="meta"><span>${minutos(h)} min de lectura</span>${k !== "glosario" ? `<button class="btn no-print" id="abrir-todo">Abrir todo</button>` : ""}</div></header>
+      <div class="ap-cuerpo">${k === "glosario" ? glosarioHTML(h) : capituloHTML(h)}</div>
+      ${sig ? `<a class="ap-sig no-print" href="#/guia/${sig.k}"><span><small>Siguiente</small><b>${sig.ico} ${esc(sig.t)}</b></span><span aria-hidden="true">→</span></a>` : ""}`;
+    const at = $("#abrir-todo");
+    if (at) at.onclick = () => {
+      const todos = $$(".bloque, .punto", app).filter((x) => x.tagName === "DETAILS"), abrir = todos.some((x) => !x.open);
+      todos.forEach((x) => (x.open = abrir)); at.textContent = abrir ? "Cerrar todo" : "Abrir todo";
+    };
+    const gb = $(".glos-buscar");
+    if (gb) gb.oninput = () => {
+      const q = norm(gb.value.trim()); let n = 0;
+      $$(".glos .term").forEach((t) => { const ok = !q || t.dataset.q.includes(q); t.hidden = !ok; if (ok) n++; });
+      $("#glos-n").textContent = `${n} ${n === 1 ? "palabra" : "palabras"}`;
+    };
   }
   function vistaFuentes() {
     const F = DB.fuentes, tipos = [["consultada", "Fuentes consultadas"], ["datos", "Bases de datos"], ["contraste", "Obras de contraste recomendadas (no consultadas página a página)"]];
@@ -474,13 +620,13 @@
     const nueva = rutaAntigua(v, a);
     if (nueva !== undefined) { location.replace("#/" + nueva); return; }
     document.title = "Cistella Segura · Setas de Cataluña";
-    $$(".nav a").forEach((x) => x.classList.toggle("activo", x.getAttribute("href") === "#/" + (v ? v + (v === "guia" ? "/seguridad" : "") : "")));
+    $$(".nav a").forEach((x) => x.classList.toggle("activo", x.getAttribute("href") === "#/" + v));
     $(".nav").classList.remove("abierta");
     $$(".nav details").forEach((d) => (d.open = false));
     const extra = (window.VISTAS_EXTRA || {})[v];
     ({ ...(extra ? { [v]: () => extra(a, window.GUIA) } : {}), "": vistaBuscador, especie: () => vistaFicha(a), rasgos: vistaRasgos, arboles: vistaArboles, arbol: () => vistaArbol(a), calendario: vistaCalendario,
       // secciones retiradas: los enlaces antiguos llevan a «Por rasgos» o al buscador
-      comparar: () => location.replace("#/rasgos"), habitats: () => location.replace("#/rasgos"), taxonomia: () => location.replace("#/"), galeria: () => vistaGaleria(a), inventario: vistaInventario, guia: () => vistaGuia(a || "seguridad"), fuentes: vistaFuentes, calidad: vistaCalidad, libros: vistaLibros, cuaderno: vistaCuaderno }[v] || vistaNoEncontrada)();
+      comparar: () => location.replace("#/rasgos"), habitats: () => location.replace("#/rasgos"), taxonomia: () => location.replace("#/"), galeria: () => vistaGaleria(a), inventario: vistaInventario, guia: () => vistaGuia(a), fuentes: vistaFuentes, calidad: vistaCalidad, libros: vistaLibros, cuaderno: vistaCuaderno }[v] || vistaNoEncontrada)();
     window.scrollTo(0, 0);
   }
   // el Quiz ya está en «Más» (index.html); solo se añade si faltara
