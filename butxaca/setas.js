@@ -361,46 +361,8 @@
     fit(p, [".ps", "dense", p2 => p2.querySelectorAll(".list2 span").forEach(s => (s.textContent = primera(s.textContent, 150)))], "tres");
   }
 
-  function indicePages(list, titulo, sub, leyenda, porPagina = 35) {
-    for (let i = 0; i < list.length; i += porPagina) {
-      const trozo = list.slice(i, i + porPagina);
-      const filas = Math.ceil(porPagina / 5);
-      const p = newPage("guia");
-      p.insertAdjacentHTML("beforeend", `
-        <div class="kicker">Índice visual${i ? " · continuación" : ""}</div>
-        <h2 class="pt">${esc(titulo)}</h2>
-        ${i ? "" : `<p class="ps">${esc(sub)}</p>`}
-        ${leyenda || ""}
-        <div class="ix-grid" style="grid-template-rows:repeat(${filas},1fr)">${trozo.map(e => `
-          <div class="ix st-${EST[e.comestibilidad.cat].st}"><div class="ix-im"><img src="${thumb(e.id)}" alt=""></div>
-            <div class="ix-n"><span>${tituloHTML(e)}</span>${ref(e.id, true)}</div></div>`).join("")}
-          ${"<div></div>".repeat(Math.max(0, filas * 5 - trozo.length))}
-        </div>
-        ${foot("Índice visual")}`);
-      fit(p, [".ps"], "indice " + titulo);
-    }
-  }
-
-  function calendarioPages() {
-    const list = GROUPS.comestibles;
-    const mitad = Math.ceil(list.length / 2);
-    [list.slice(0, mitad), list.slice(mitad)].forEach((trozo, k) => {
-      const p = newPage("guia");
-      p.insertAdjacentHTML("beforeend", `
-        <div class="kicker">Cuándo salir${k ? " · continuación" : ""}</div>
-        <h2 class="pt">Calendario</h2>
-        ${k ? "" : `<p class="ps">Meses en que sale cada comestible y lo difícil que es identificarla.</p>`}
-        <div class="cal cal-es" style="grid-template-rows:auto repeat(${trozo.length},1fr)">
-          <span class="hd">Seta</span>
-          <span class="hd mes" style="padding-bottom:.6mm">${MESL.map(l => `<span style="background:none;color:var(--muted);height:auto">${l}</span>`).join("")}</span>
-          <span class="hd" style="text-align:right">Dific.</span>
-          ${trozo.map(e => `<div class="row st-${EST[e.comestibilidad.cat].st}"><span class="cn"><span>${tituloHTML(e)}</span>${ref(e.id, true)}</span>${meses(e.fenologia?.meses, e.fenologia?.excepcional)}<span class="pl cal-dif">${dots((DIF[e.identificacion?.dificultad] || [2])[0])}</span></div>`).join("")}
-        </div>
-        <p class="cal-note"><span class="st-comestible">${meses([10], [11])}</span> oscuro: temporada · claro: solo algunos años</p>
-        ${foot("Guía · Calendario")}`);
-      fit(p, [".ps", "dense"], "calendario");
-    });
-  }
+  // (Índice visual, calendario, «En casa», «Mis hallazgos», glosario e índice alfabético se quitaron
+  //  para que el cuaderno sea más corto de imprimir; están en el historial de git si hicieran falta.)
 
   function arbolesPages() {
     const items = DB.arboles.map(a => {
@@ -542,86 +504,26 @@
     }, "síndromes");
   }
 
-  function casaPage() {
-    const seg = html(DB.textos.seguridad);
-    const cocina = listaTras(seg, /conservaci|cocina/i).map(li => li.textContent.trim());
-    const bosque = listaTras(seg, /bosque/i).map(li => li.textContent.trim());
+  // Solo si el total no da múltiplo de 4: página en blanco para notas
+  function notasPage() {
     const p = newPage("anexo");
-    p.insertAdjacentHTML("beforeend", `
-      <div class="kicker">En casa y en el monte</div>
-      <h2 class="pt">Conservar y cocinar</h2>
-      <ul class="list2 spread" style="flex-grow:${cocina.length}">${cocina.map(t => `<li>${esc(hasta(t, 210))}</li>`).join("")}</ul>
-      <div class="h3">Seguridad en el bosque</div>
-      <ul class="list2 spread" style="flex-grow:${bosque.length}">${bosque.map(t => `<li>${esc(hasta(t, 170))}</li>`).join("")}</ul>
-      ${foot("Anexo · En casa")}`);
-    fit(p, ["dense", p2 => p2.querySelectorAll(".list2 li").forEach(li => (li.textContent = primera(li.textContent, 140)))], "casa");
-  }
-
-  function hallazgosPage(first) {
-    const p = newPage("anexo");
-    const N = 13;
-    let cells = `<span class="lh">Fecha</span><span class="lh">Lugar y bosque</span><span class="lh">Seta y notas</span>`;
-    for (let i = 0; i < N; i++) cells += `<span class="lc"></span><span class="lc"></span><span class="lc"></span>`;
-    p.insertAdjacentHTML("beforeend", `
-      ${first ? `<div class="kicker">Cuaderno de campo</div><h2 class="pt">Mis hallazgos</h2>
-      <p class="log-hint">Anótelo en el bosque: dónde, cuándo y quién lo confirmó.</p>` : `<div class="kicker">Mis hallazgos</div>`}
-      <div class="log" style="grid-template-rows:auto repeat(${N}, 1fr)">${cells}</div>
-      ${foot("Mis hallazgos")}`);
+    p.insertAdjacentHTML("beforeend", `<div class="kicker">Notas</div><div class="notas"></div>${foot("Notas")}`);
     return p;
   }
 
-  function glosarioPages() {
-    const d = html(DB.textos.glosario);
-    const items = [...d.querySelectorAll("li")].map(partes).map(([t, r]) => `<p><b>${esc(t)}</b>${esc(r)}</p>`);
-    flow(items, more => {
-      const p = newPage("anexo");
-      p.insertAdjacentHTML("beforeend", `
-        <div class="kicker">Palabras de setero${more ? " · continuación" : ""}</div>
-        <h2 class="pt">Glosario</h2>
-        <div class="flow glossa"></div>${foot("Glosario")}`);
-      return p;
-    }, "glosario");
-  }
-
-  function alfaPages() {
-    const rows = [];
-    const seen = new Set();
-    const add = (n, e, tipo) => { const k = n.toLowerCase() + "|" + e.id; if (!n || seen.has(k)) return; seen.add(k); rows.push({ n: cap(n), e, tipo }); };
-    for (const e of ORDEN) {
-      add(sinNombre(e) ? e.nombre : titulo(e), e, sinNombre(e) ? "sci" : "main");
-      e.nombres.ca.slice(1).forEach(n => add(n, e, "alt"));
-      e.nombres.es.forEach(n => add(n, e, "alt"));
-      if (!sinNombre(e)) add(e.nombre, e, "sci");
-    }
-    rows.sort((a, b) => a.n.localeCompare(b.n, "es", { sensitivity: "base" }));
-    const items = [];
-    let letra = "";
-    for (const r of rows) {
-      const L = r.n.normalize("NFD").charAt(0).toUpperCase();
-      if (L !== letra) { letra = L; items.push(`<p class="lt">${L}</p>`); }
-      const st = EST[r.e.comestibilidad.cat].st;
-      const nombre = r.tipo === "sci" ? `<i>${esc(r.n)}</i>` : esc(r.n);
-      items.push(`<p class="st-${st}${r.tipo === "main" ? "" : " alt"}"><i class="d"></i><span>${nombre}</span>${ref(r.e.id, true)}</p>`);
-    }
-    flow(items, more => {
-      const p = newPage("anexo");
-      p.insertAdjacentHTML("beforeend", `
-        <div class="kicker">Todos los nombres${more ? " · continuación" : ""}</div>
-        <h2 class="pt">Índice alfabético</h2>
-        ${more ? "" : `<p class="ps">En negrita, el nombre de la ficha. En gris, nombres en castellano o catalán y el científico.</p>`}
-        <div class="flow alfa" style="font-size:5.6pt"></div>${foot("Índice")}`);
-      return p;
-    }, "índice alfabético");
-  }
-
   function creditosPages() {
-    const lines = [];
-    const quien = fs => [...new Set(fs.map(f => `${esc(f.autor || "Propia")}${f.licencia ? ` (${esc(f.licencia)})` : ""}`))].join(" · ");
-    const ex = {};
-    for (const [donde, f] of EXTRA) (ex[donde] ||= []).push(f);
-    for (const [donde, fs] of Object.entries(ex)) lines.push(`<p><b>${esc(donde)}</b> ${quien(fs)}</p>`);
-    for (const e of ORDEN) if (PICK[e.id].length) lines.push(`<p><b>${tituloHTML(e)}</b> ${quien(PICK[e.id])}</p>`);
-    const intro = `<p class="note" style="margin-bottom:2mm">Fotos de observaciones de <b>iNaturalist</b> y de <b>Wikimedia Commons</b> con licencia Creative Commons o de dominio público; el enlace a cada original está en la web. Muchas son CC BY-NC: este cuaderno es para uso personal o sin ánimo de lucro. Textos y datos: guía <b>Setas de Cataluña</b> (Cistella Segura) · nombres según Catalogue of Life; registros de GBIF e iNaturalist.</p>`;
+    // agrupados por autor y licencia (cada autor una vez, con lo que fotografió): caben en una página
+    const porAutor = new Map();
+    const anota = (f, donde) => {
+      const k = `${f.autor || "Propia"}${f.licencia ? ` (${f.licencia})` : ""}`;
+      if (!porAutor.has(k)) porAutor.set(k, []);
+      if (!porAutor.get(k).includes(donde)) porAutor.get(k).push(donde);
+    };
+    for (const [donde, f] of EXTRA) anota(f, donde);
+    for (const e of ORDEN) for (const f of PICK[e.id]) anota(f, sinNombre(e) ? e.nombre : titulo(e));
+    const lines = [...porAutor].sort((a, b) => a[0].localeCompare(b[0], "es", { sensitivity: "base" }))
+      .map(([k, ds]) => `<p><b>${esc(k)}</b> ${esc(ds.join(", "))}</p>`);
+    const intro = `<p class="note" style="margin-bottom:1.5mm">Fotos de <b>iNaturalist</b> y <b>Wikimedia Commons</b> con licencia Creative Commons o de dominio público; el enlace a cada original está en la web. Muchas son CC BY-NC: cuaderno para uso personal o sin ánimo de lucro. Datos: Cistella Segura · Catalogue of Life, GBIF e iNaturalist.</p>`;
     let first = true;
     const mk = () => {
       const p = newPage("anexo");
@@ -684,38 +586,26 @@
   function build() {
     const root = document.documentElement.style;
     root.setProperty("--grad-cap", gradPNG("rgba(0,0,0,0)", "rgba(0,0,0,0.74)"));
-    root.setProperty("--grad-paper", gradPNG("rgba(251,248,241,0)", "rgba(251,248,241,1)"));
+    root.setProperty("--grad-paper", gradPNG("rgba(255,255,255,0)", "rgba(255,255,255,1)"));   // papel blanco (ahorro de tinta)
 
     portada();
     tocPage = newPage("guia", "toc-page");
     reglasPage();
     mirarPage();
     tresPage();
-    indicePages(GROUPS.comestibles, "Las comestibles", "En el orden del cuaderno: las parecidas, juntas. El número es la página.", "", 25);
-    indicePages([...GROUPS.mortales, ...GROUPS.toxicas], "Las de alerta", "Mortales y tóxicas: conózcalas para no recolectarlas.",
-      `<div class="ix-legend"><span class="st-mortal"><i class="d"></i>Mortal</span><span class="st-toxic"><i class="d"></i>Tóxica</span><span class="st-precaucio"><i class="d"></i>No comestible</span></div>`, 35);
-    calendarioPages();
     arbolesPages();
     GROUPS.comestibles.forEach(fichaPage);
     confusionesPages();
     [...GROUPS.mortales, ...GROUPS.toxicas].forEach(fichaPage);
     sindromesPages();
-    casaPage();
-    const primeraNota = hallazgosPage(true);
-    hallazgosPage(false);
-    glosarioPages();
-    alfaPages();
+    const antesDeCreditos = book.lastElementChild;
     creditosPages();
     sosPage();
 
-    // páginas de notas extra para que el total sea múltiplo de 4
+    // si hace falta, páginas de notas para que el total sea múltiplo de 4 (antes de los créditos)
     const extra = (4 - (book.children.length % 4)) % 4;
-    let tras = primeraNota.nextElementSibling;
-    for (let i = 0; i < extra; i++) {
-      const p = hallazgosPage(false);
-      book.insertBefore(p, tras.nextElementSibling);
-      tras = p;
-    }
+    REPORT.notas = extra;
+    for (let i = 0; i < extra; i++) book.insertBefore(notasPage(), antesDeCreditos.nextElementSibling);
 
     const pages = [...book.children];
     pages.forEach((p, i) => {
@@ -729,14 +619,12 @@
     const first = sel => { const p = pages.find(sel); return p ? p.dataset.n : ""; };
     const secFirst = s => first(p => p.dataset.sec === s && !p.classList.contains("toc-page"));
     fillToc([
-      { t: "Guía", d: "reglas, cómo mirar, índice, calendario, árboles", c: SEC.guia.c, n: secFirst("guia") },
+      { t: "Guía", d: "reglas, cómo mirar, árboles", c: SEC.guia.c, n: secFirst("guia") },
       { t: "Comestibles", d: `${GROUPS.comestibles.length} especies`, c: SEC.comestibles.c, n: secFirst("comestibles") },
       { t: "Confusiones", d: "las mortales, lado a lado", c: SEC.mortales.c, n: first(p => p.querySelector(".lal")) },
       { t: "Mortales", d: `${GROUPS.mortales.length} especies`, c: SEC.mortales.c, n: first(p => p.dataset.sec === "mortales" && !p.querySelector(".lal")) },
       { t: "Tóxicas", d: `${GROUPS.toxicas.length} especies`, c: SEC.toxicas.c, n: secFirst("toxicas") },
       { t: "Síndromes", d: "según cuándo aparecen los síntomas", c: SEC.anexo.c, n: secFirst("anexo") },
-      { t: "Mis hallazgos", d: "para anotar", c: SEC.anexo.c, n: first(p => p.querySelector(".log")) },
-      { t: "Glosario e índice", d: "palabras y todos los nombres", c: SEC.anexo.c, n: first(p => p.querySelector(".glossa")) },
       { t: "SOS", d: "si alguien se encuentra mal", c: "var(--deadly)", n: secFirst("sos") }
     ]);
     const tpn = tocPage.querySelector(".pn");
