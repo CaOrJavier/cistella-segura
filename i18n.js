@@ -57,7 +57,9 @@
       b.onclick = () => {
         if (b.dataset.idioma === IDIOMA) return;
         try { localStorage.setItem("setas:idioma", JSON.stringify(b.dataset.idioma)); } catch (e) { /* sin almacenamiento: solo esta vez */ }
-        location.reload();
+        // si la dirección lleva ?lang=…, se quita para que no vuelva al idioma de antes
+        if (/[?&]lang=/.test(location.search)) location.search = location.search.replace(/([?&])lang=[^&]*&?/, "$1").replace(/[?&]$/, "");
+        else location.reload();
       };
     });
   }

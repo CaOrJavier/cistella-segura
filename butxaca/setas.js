@@ -16,24 +16,9 @@
   const EDICION = "Otoño 2026";
   const PORTADA = { id: "cantharellus-cibarius", papel: "recolectado" };
 
-  // Cuaderno breve: solo las setas y árboles imprescindibles; las casi iguales (pinetell d'avet, cep rogenc,
-  // llenega blanca…) fuera. Las que se confunden con cada una salen dentro de su ficha, con foto pequeña.
-  const BREVE = {
-    especies: [
-      // comestibles que de verdad se recogen en Cataluña
-      "lactarius-sanguifluus", "lactarius-deliciosus", "boletus-edulis", "suillus-granulatus", "chroogomphus-rutilus",
-      "cantharellus-cibarius", "craterellus-cornucopioides", "craterellus-lutescens", "hydnum-repandum", "russula-cyanoxantha",
-      "amanita-caesarea", "macrolepiota-procera", "coprinus-comatus", "agaricus-campestris", "tricholoma-terreum", "lepista-nuda",
-      "calocybe-gambosa", "hygrophorus-latitabundus", "hygrophorus-russula", "marasmius-oreades", "pleurotus-eryngii",
-      "cyclocybe-cylindracea", "morchella-esculenta",
-      // todas las mortales
-      "paxillus-involutus", "amanita-phalloides", "amanita-verna", "amanita-virosa", "lepiota-brunneoincarnata",
-      "galerina-marginata", "inosperma-erubescens", "cortinarius-orellanus", "gyromitra-esculenta",
-      // tóxicas que se confunden con las comestibles de arriba
-      "lactarius-chrysorrheus", "rubroboletus-satanas", "amanita-muscaria", "amanita-pantherina", "tricholoma-equestre",
-      "tricholoma-pardinum", "clitocybe-rivulosa", "omphalotus-olearius", "entoloma-sinuatum"],
-    arboles: ["pinus-halepensis", "pinus-sylvestris", "pinus-nigra", "pinus-pinea", "quercus-ilex", "quercus-pubescens", "fagus-sylvatica", "castanea-sativa"],
-  };
+  // Cuaderno breve: solo las setas y árboles imprescindibles (lista en ../datos/breve.js, la misma que usa el quiz).
+  // Las que se confunden con cada una salen dentro de su ficha, con foto pequeña.
+  const BREVE = window.BREVE;
   const ESENCIAL = DB.especies.filter(e => BREVE.especies.includes(e.id));
   const BY = Object.fromEntries(ESENCIAL.map(e => [e.id, e]));
   const TODAS = Object.fromEntries(DB.especies.map(e => [e.id, e]));   // para la foto de las que se confunden

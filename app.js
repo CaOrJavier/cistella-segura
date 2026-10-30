@@ -697,6 +697,7 @@
   function archivosSinInternet(arbol, todas) {
     return arbol.filter((x) => x.type === "blob").filter(({ path: p }) =>
       /^(index\.html|app\.js|app\.css|i18n\.js|manifest\.webmanifest|icono-\d+\.png)$/.test(p) || /^(datos|extra|fonts)\//.test(p) ||
+      /^quiz\/(index\.html|quiz\.js|quiz\.css)$/.test(p) ||
       /^fotos\/(t|montnegre\/t)\/[^/]+$/.test(p) || /^libros\/[^/]+\/t\d+\.jpg$/.test(p) ||
       (todas && /^(fotos|libros)\/.+\.(jpe?g|png|webp)$/i.test(p)));
   }
@@ -718,7 +719,7 @@
     const cache = await caches.open(CACHE_SI), base = new URL(".", location.href);
     const ya = new Set((await cache.keys()).map((r) => new URL(r.url).pathname)), quiere = new Set(), fallos = [];
     // fotos y fuentes ya guardadas no se vuelven a bajar; la página, el código y los datos sí (por si han cambiado)
-    const cola = [{ path: "", size: 0 }, ...lista].map((x) => ({ ...x, url: new URL(x.path, base), fijo: /\.(jpe?g|png|webp|woff2?|ttf)$/i.test(x.path) }));
+    const cola = [{ path: "", size: 0 }, { path: "quiz/", size: 0 }, ...lista].map((x) => ({ ...x, url: new URL(x.path, base), fijo: /\.(jpe?g|png|webp|woff2?|ttf)$/i.test(x.path) }));
     let hecho = 0;
     const trabajar = async () => {
       while (cola.length) {
@@ -823,7 +824,7 @@
         <h2>📕 En papel</h2>
         <p>Sin depender de la batería: el <a href="#/libros">cuaderno de bolsillo en PDF</a>, para imprimirlo y llevarlo en la mochila.</p>
       </section>
-      <p class="small muted">Sin internet no funcionan «Cuándo salir tras la lluvia» (necesita saber cuánto ha llovido), el quiz ni la descarga de los PDF.</p>`;
+      <p class="small muted">Sin internet no funcionan «Cuándo salir tras la lluvia» (necesita saber cuánto ha llovido) ni la descarga de los PDF.</p>`;
     // pesos exactos, sacados de la lista de archivos
     listaRepo().then((arbol) => {
       const p = { pequenas: pesoDe(archivosSinInternet(arbol, false)), todas: pesoDe(archivosSinInternet(arbol, true)) };
@@ -866,7 +867,7 @@
   function render() {
     const h = decodeURIComponent(location.hash.replace(/^#\/?/, ""));
     const [v, a] = [h.split("/")[0], h.split("/").slice(1).join("/")];
-    if (v === "test") { location.replace((EN_ARCHIVO ? WEB : "") + "quiz/"); return; }
+    if (v === "test") { location.replace(EN_ARCHIVO ? "quiz/index.html" : "quiz/"); return; }
     const nueva = rutaAntigua(v, a);
     if (nueva !== undefined) { location.replace("#/" + nueva); return; }
     document.title = "Cistella Segura · Setas de Cataluña";
@@ -896,9 +897,12 @@
     window.addEventListener("online", () => avisar("📶 Vuelves a tener conexión.", { ms: 3000 }));
     if (navigator.onLine === false) avisar(sinRedTxt(), { ms: 8000 });
   }
-  // En la copia descargada (ZIP, file://) no van el quiz ni los PDF de bolsillo: esos enlaces abren la web
+  // En la copia descargada (ZIP, file://): el quiz se abre por su index.html (una carpeta no se abre sola)
+  // y los PDF de bolsillo, que no van en el ZIP, se abren en la web
   if (EN_ARCHIVO) document.addEventListener("click", (ev) => {
-    const a = ev.target.closest && ev.target.closest('a[href^="quiz/"], a[href^="offline/"]');
+    const q = ev.target.closest && ev.target.closest('a[href="quiz/"]');
+    if (q) { ev.preventDefault(); location.href = "quiz/index.html"; return; }
+    const a = ev.target.closest && ev.target.closest('a[href^="offline/"]');
     if (a) { ev.preventDefault(); window.open(WEB + a.getAttribute("href"), "_blank", "noopener"); }
   });
   // ---------------- Movimiento: aparición al hacer scroll e inclinación 3D con el ratón ----------------

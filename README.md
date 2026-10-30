@@ -4,14 +4,15 @@ Web para **identificar** las setas de Cataluña: 163 fichas en castellano (con l
 
 ## Idiomas
 
-En **castellano y catalán**: botón **ES · CA** en el menú (se recuerda la elección; si no se elige, se usa el idioma del navegador). Las traducciones están en `datos/ca.js` y las aplica `i18n.js`: los textos de las fichas se cambian antes de pintar la web y los de la interfaz al mostrarse. El quiz está solo en catalán.
+En **castellano y catalán**: botón **ES · CA** en el menú (se recuerda la elección; si no se elige, se usa el idioma del navegador). Las traducciones están en `datos/ca.js` y las aplica `i18n.js`: los textos de las fichas se cambian antes de pintar la web y los de la interfaz al mostrarse. El quiz también está en los dos idiomas.
 
 ## Qué hay en la web
 
 - **Especies:** buscador con filtros y las 163 fichas: rasgos decisivos, confusiones peligrosas, morfología, hábitat, árboles, calendario, registros en Cataluña y fuentes.
 - **Por rasgos:** se marcan los rasgos observados (debajo del sombrero, sustrato, árbol, color, anillo, volva, látex, mes) y quedan las candidatas.
 - **Aprende**: seguridad, qué hacer ante una intoxicación, anatomía, cómo buscar y glosario.
-- **Quiz** con fotos y **Libros** en PDF, también en la portada.
+- **Quiz** con las fotos de la web, en cinco modos: *¿Qué seta es?*, *¿Se come?* (comestible, no se come, tóxica o mortal), *No las confundas* (dos setas que se parecen: cuál es cuál y cómo distinguirlas), *Árboles* (por la hoja, el tronco o la forma) y *Mezcla*. Se elige con qué setas (las 41 del cuaderno de bolsillo, las 79 esenciales o las 163) y el nivel (en *Experto* se escribe el nombre). Rondas de 10, con puntos, rachas y récords; las setas que se fallan vuelven a salir más y se pueden repasar. Funciona sin internet.
+- **Libros** en PDF, también en la portada.
 - Botón **⬇ Usar sin internet** arriba: guarda la web en el móvil. La web avisa cuando no hay conexión.
 - En **Más**: calendario, cuándo salir tras la lluvia, árboles, galería, inventario de ≈ 4.000 especies y fuentes.
 
@@ -42,7 +43,8 @@ datos/db.js        las 163 especies, árboles, textos y vocabulario
 datos/cistella.js  datos de «Cuándo salir» y «Mis hallazgos»
 extra/             esas dos secciones
 fotos/             fotos de las fichas (g/, t/) y de los hallazgos (montnegre/)
-quiz/              quiz de setas (en catalán)
+quiz/              quiz de setas (usa datos/db.js, datos/breve.js y las fotos de la web)
+datos/breve.js     las 41 setas y 8 árboles del cuaderno de bolsillo (los usan el cuaderno y el quiz)
 offline/           cuadernos de bolsillo en PDF
 butxaca/           generadores de los cuadernos de bolsillo
 tools/             generar-pdf.ps1 hace los PDF de bolsillo con Edge
