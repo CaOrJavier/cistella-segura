@@ -387,11 +387,13 @@
   function vistaArbol(id) {
     const a = ARB[id]; if (!a) return vistaNoEncontrada();
     const r = a.reconocer || {}, ec = a.ecologia || {};
-    galeriaActual = a.fotos || [];
+    // cada foto dice qué muestra (campo «papel»): hoja, tronco, árbol entero…
+    const PAPEL = { hoja: "Hoja", tronco: "Tronco", porte: "Árbol entero", fruto: "Fruto", flor: "Flor" };
+    galeriaActual = (a.fotos || []).map((f) => ({ ...f, pie: f.pie || PAPEL[f.papel] || "" }));
     const setas = (a.setas || []).map((x) => BYID[x.id]).filter(Boolean);
     app.innerHTML = `<p class="no-print"><a href="#/arboles">← Árboles</a></p>
       <div class="ficha-cab"><div><div class="tax">${esc(a.familia)}</div><h1>${esc(cap(a.nombres.es[0]))}</h1><div class="nombres">ca: ${esc(a.nombres.ca.join(", "))} · es: ${esc(a.nombres.es.join(", "))}</div><div class="sci"><i>${esc(a.nombre)}</i> <span class="small muted">${esc(a.autor || "")}</span></div></div>${a.autoctono === false ? `<span class="chip">No autóctono</span>` : ""}</div>
-      <div class="ficha-grid"><div>${galeriaActual.length ? `<div class="galeria-f">${galeriaActual.map((p, i) => `<button data-foto="${i}" style="background-image:url('${i ? p.t : p.g}')"></button>`).join("")}</div><div class="creditos">Fotos: ${galeriaActual.map((p) => `${esc(p.autor)} (${esc(p.licencia)})`).join("; ")}</div>` : ""}</div>
+      <div class="ficha-grid"><div>${galeriaActual.length ? `<div class="galeria-f">${galeriaActual.map((p, i) => `<button data-foto="${i}" style="background-image:url('${i ? p.t : p.g}')" aria-label="Ampliar foto${p.pie ? ": " + esc(p.pie) : ""}">${p.pie ? `<span class="pie-f">${esc(p.pie)}</span>` : ""}</button>`).join("")}</div><div class="creditos">Fotos: ${galeriaActual.map((p) => `${esc(p.autor)} (${esc(p.licencia)})`).join("; ")}</div>` : ""}</div>
       <div>${seccion("Cómo reconocerlo", dl([["De lejos", esc(r.distancia)], ["Corteza", esc(r.corteza)], ["Hojas", esc(r.hojas)], ["Frutos", esc(r.frutos)], ["Parecidos", esc(r.parecidos)], ["Cuándo", esc(r.epoca)], ["En otoño", esc(r.otono)]]))}
       ${seccion("Dónde crece", dl([["Clima", esc(ec.clima)], ["Suelo", esc(ec.suelo)], ["Altitud", esc(ec.altitud)], ["En Cataluña", esc(ec.distribucion)], ["Bosques", esc(ec.bosques)]]))}</div></div>
       ${seccion("Setas asociadas", `<p>${esc(a.setas_nota || "")}</p><p class="small muted">«Micorriza»: asociación establecida; «habitual/ocasional»: aparece con frecuencia sin relación demostrada de forma específica.</p><div class="tarjetas">${setas.map(tarjeta).join("")}</div>`)}`;
@@ -614,8 +616,9 @@
   // ---------------- Vista: libros en PDF, con páginas de muestra para hojearlos antes de descargar ----------------
   // Las muestras son imágenes sacadas de los PDF: libros/<libro>/pNNN.jpg (grande) y tNNN.jpg (miniatura)
   const MUESTRAS = {
-    bolsillo: { total: 104, pags: [[1, "Portada"], [2, "Sumario"], [3, "Las 12 reglas"], [4, "Cómo mirar una seta"], [6, "Índice visual: las comestibles"], [8, "Índice visual: las de alerta"], [9, "Calendario"], [11, "Árboles y sus setas"],
-      [14, "Ficha del rovelló"], [21, "Ficha del cep"], [36, "Ficha del ou de reig"], [62, "Ficha de la farinera borda (mortal)"], [93, "Si alguien se encuentra mal"], [95, "Mis hallazgos"], [104, "Contraportada: qué hacer ante una intoxicación"]] },
+    bolsillo: { total: 108, pags: [[1, "Portada"], [2, "Sumario"], [3, "Las 12 reglas"], [4, "Cómo mirar una seta"], [6, "Índice visual: las comestibles"], [8, "Índice visual: las de alerta"], [9, "Calendario"],
+      [11, "Árboles y sus setas, con la hoja y el tronco"], [14, "Árboles y sus setas (continuación)"], [16, "Ficha del rovelló"], [23, "Ficha del cep"], [38, "Ficha del ou de reig"], [64, "Ficha de la farinera borda (mortal)"],
+      [95, "Si alguien se encuentra mal"], [97, "Mis hallazgos"], [108, "Contraportada: qué hacer ante una intoxicación"]] },
     esencial: { total: 336, pags: [[1, "Portada"], [3, "Índice"], [6, "Antes de salir: seguridad"], [11, "Partes de una seta"], [14, "Cómo buscar setas"], [24, "Ficha de árbol: pino carrasco"],
       [176, "Ficha del rovelló (1 de 4)"], [177, "Rovelló: cómo no confundirlo (2 de 4)"], [178, "Rovelló: cuándo y dónde (3 de 4)"], [179, "Rovelló: descripción (4 de 4)"],
       [246, "Ficha de la farinera borda, mortal (1 de 2)"], [247, "Farinera borda: síntomas y confusiones (2 de 2)"], [304, "Calendario de fructificación"], [335, "Cuaderno de campo para anotar las salidas"]] },
@@ -624,8 +627,8 @@
       [517, "Calendario de fructificación"], [524, "Qué hacer ante una intoxicación"]] },
   };
   const LIBROS = [
-    { g: "bolsillo", corto: "Cuaderno de bolsillo", tit: "Setas esenciales · cuaderno de bolsillo", formato: "104 páginas A6 (10,5 × 14,8 cm)",
-      txt: "Las 79 setas que hay que conocer, una por página: fotos, cómo reconocerla, dónde sale y con qué no confundirla. Con calendario, árboles, índice visual y qué hacer ante una intoxicación. Cabe en el bolsillo." },
+    { g: "bolsillo", corto: "Cuaderno de bolsillo", tit: "Setas esenciales · cuaderno de bolsillo", formato: "108 páginas A6 (10,5 × 14,8 cm)",
+      txt: "Las 79 setas que hay que conocer, una por página: fotos, cómo reconocerla, dónde sale y con qué no confundirla. Con calendario, los árboles con foto de la hoja y del tronco, índice visual y qué hacer ante una intoxicación. Cabe en el bolsillo." },
     { g: "esencial", corto: "Guía esencial", tit: "Setas comestibles esenciales de Cataluña", formato: "336 páginas A5",
       txt: "La guía de campo completa: cada comestible en cuatro páginas (fotos, rasgos que hay que comprobar, cómo no confundirla, cuándo y dónde sale), las tóxicas y mortales, los árboles, el calendario y un glosario." },
     { g: "cuaderno", corto: "Cuaderno de campo", tit: "Cuaderno de campo", formato: "48 páginas A5 · se imprime en 12 hojas A4",
@@ -635,8 +638,8 @@
   ];
   // Los cuadernos de bolsillo están en la propia web (offline/), no en las «releases» de GitHub
   const BOLSILLO = [
-    { guia: "bolsillo", ed: "A6", uso: "Para leerlo en el móvil o llevarlo a la copistería: pide «cuadernillo A6 a color, a sangre», con espiral o en rústica.", mb: 28.8, pag: 104, url: "offline/setas-esenciales-bolsillo.pdf" },
-    { guia: "bolsillo", ed: "Para imprimir en casa (A4)", uso: "14 hojas A4 a doble cara: se cortan por la mitad, se doblan y se grapan en dos cuadernillos.", mb: 29.3, url: "offline/setas-esenciales-bolsillo-imprimir-A4.pdf" },
+    { guia: "bolsillo", ed: "A6", uso: "Para leerlo en el móvil o llevarlo a la copistería: pide «cuadernillo A6 a color, a sangre», con espiral o en rústica.", mb: 30.0, pag: 108, url: "offline/setas-esenciales-bolsillo.pdf" },
+    { guia: "bolsillo", ed: "Para imprimir en casa (A4)", uso: "14 hojas A4 a doble cara: se cortan por la mitad, se doblan y se grapan en dos cuadernillos.", mb: 30.5, url: "offline/setas-esenciales-bolsillo-imprimir-A4.pdf" },
     { guia: "bolsillo", ed: "En catalán · 50 setas", uso: "Quadern de butxaca, 76 páginas A6 (las muestras de arriba son de la edición en castellano).", mb: 15.4, pag: 76, url: "offline/cistella-segura-butxaca.pdf" },
     { guia: "bolsillo", ed: "En catalán, para imprimir en casa (A4)", uso: "10 hojas A4, un solo cuadernillo.", mb: 15.8, url: "offline/cistella-segura-butxaca-imprimir-A4.pdf" },
   ];
@@ -644,7 +647,7 @@
     bolsillo: `<details class="caja como-imprimir"><summary><b>Cómo imprimirlo en casa</b></summary><ol>
         <li>Descarga el PDF <b>para imprimir en casa (A4)</b>. Imprime a <b>doble cara</b>, volteando por el <b>borde largo</b>, a <b>tamaño real (100 %)</b>.</li>
         <li><b>Corta</b> las hojas por la mitad, por la línea de puntos ✂.</li>
-        <li><b>Ordena</b> las mitades por el número pequeño de abajo: un montón con las A (A 1/13, A 2/13…) y otro con las B.</li>
+        <li><b>Ordena</b> las mitades por el número pequeño de abajo: un montón con las A (A 1/14, A 2/14…) y otro con las B (B 1/13…).</li>
         <li><b>Dobla</b> cada montón por la mitad y <b>grapa</b> por el pliegue con 2 grapas.</li></ol></details>`,
     esencial: `<p class="small muted">Para imprimir: A5 a doble cara sin cambiar el orden de las páginas (cada ficha empieza en página par), papel mate de 100–115 g y espiral o encuadernación cosida para que se abra plano. Para el móvil, la edición <b>ligera</b>.</p>`,
     cuaderno: `<p class="small"><a href="#/cuaderno">Cómo imprimirlo y doblarlo, paso a paso →</a></p>`,

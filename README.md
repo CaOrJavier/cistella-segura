@@ -20,7 +20,7 @@ En la web, **Más → Usar sin internet**:
 
 Todos se descargan desde la web (**Más → Libros PDF**) o desde [Releases](https://github.com/CaOrJavier/cistella-segura/releases/tag/guia-2026.1).
 
-- **Setas esenciales · cuaderno de bolsillo A6** (104 páginas): las 79 especies esenciales, en [A6](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-bolsillo.pdf) o [A4 para imprimir en casa](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-bolsillo-imprimir-A4.pdf) ([cómo imprimirlo](butxaca/COMO-IMPRIMIR.md)).
+- **Setas esenciales · cuaderno de bolsillo A6** (108 páginas): las 79 especies esenciales y 20 árboles con foto de la hoja y del tronco, en [A6](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-bolsillo.pdf) o [A4 para imprimir en casa](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-bolsillo-imprimir-A4.pdf) ([cómo imprimirlo](butxaca/COMO-IMPRIMIR.md)).
 - **Quadern de butxaca A6** (76 páginas, en catalán, 50 setas): en [A6](https://caorjavier.github.io/cistella-segura/offline/cistella-segura-butxaca.pdf) o [A4](https://caorjavier.github.io/cistella-segura/offline/cistella-segura-butxaca-imprimir-A4.pdf).
 - **Cuaderno de campo A5** (48 páginas), ***Setas comestibles esenciales de Cataluña*** (336 páginas) y ***Catálogo micológico de Cataluña, vol. 1*** (565 páginas): en Releases.
 

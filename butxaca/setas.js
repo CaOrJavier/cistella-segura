@@ -408,10 +408,15 @@
       if (!setas.length) return null;
       const nm = e => `<span class="nm">${tituloHTML(e)}${ref(e.id, true)}</span>`;
       const ok = setas.filter(comestible), ko = setas.filter(e => !comestible(e));
-      return `<article class="bosc"><h3>${esc(cap(a.nombres.es[0]))} <small>${esc(a.nombres.ca[0] || "")}</small></h3>
+      // la hoja y el tronco, para reconocer el árbol (las fotos llevan «papel» en la base de datos)
+      const fotos = [["hoja", "Hoja"], ["tronco", "Tronco"]].map(([p, t]) => [(a.fotos || []).find(f => f.papel === p), t]).filter(([f]) => f);
+      fotos.forEach(([f]) => EXTRA.push(["Árboles", f]));
+      return `<article class="bosc${fotos.length ? " cf" : ""}">
+        ${fotos.length ? `<div class="bosc-fotos">${fotos.map(([f, t]) => `<figure><img src="${G(f.t)}" alt=""><figcaption>${t}</figcaption></figure>`).join("")}</div>` : ""}
+        <div class="bosc-txt"><h3>${esc(cap(a.nombres.es[0]))} <small>${esc(a.nombres.ca[0] || "")}</small></h3>
         <p class="curt">${esc(primera(a.reconocer?.distancia, 120))}</p>
         ${ok.length ? `<p class="ll ok"><span class="lab">Busque</span>${ok.map(nm).join(", ")}</p>` : ""}
-        ${ko.length ? `<p class="ll ko"><span class="lab">Cuidado</span>${ko.map(nm).join(", ")}</p>` : ""}
+        ${ko.length ? `<p class="ll ko"><span class="lab">Cuidado</span>${ko.map(nm).join(", ")}</p>` : ""}</div>
       </article>`;
     }).filter(Boolean);
     flow(items, more => {
@@ -419,7 +424,7 @@
       p.insertAdjacentHTML("beforeend", `
         <div class="kicker">Dónde buscar${more ? " · continuación" : ""}</div>
         <h2 class="pt">Árboles y sus setas</h2>
-        ${more ? "" : `<p class="ps">Muchas setas viven unidas a las raíces de un árbol: reconocerlo es el primer paso.</p>`}
+        ${more ? "" : `<p class="ps">Muchas setas viven unidas a las raíces de un árbol: reconocerlo por la hoja y el tronco es el primer paso.</p>`}
         <div class="flow"></div>${foot("Guía · Árboles")}`);
       return p;
     }, "árboles");
@@ -584,7 +589,7 @@
     for (const [donde, f] of EXTRA) (ex[donde] ||= []).push(f);
     for (const [donde, fs] of Object.entries(ex)) lines.push(`<p><b>${esc(donde)}</b> ${quien(fs)}</p>`);
     for (const e of ORDEN) if (PICK[e.id].length) lines.push(`<p><b>${tituloHTML(e)}</b> ${quien(PICK[e.id])}</p>`);
-    const intro = `<p class="note" style="margin-bottom:2mm">Fotos de observaciones de <b>iNaturalist</b> con licencia Creative Commons; el enlace a cada original está en la guía. Muchas son CC BY-NC: este cuaderno es para uso personal o sin ánimo de lucro. Textos y datos: guía <b>Setas de Cataluña</b> (Cistella Segura) · nombres según Catalogue of Life; registros de GBIF e iNaturalist.</p>`;
+    const intro = `<p class="note" style="margin-bottom:2mm">Fotos de observaciones de <b>iNaturalist</b> y de <b>Wikimedia Commons</b> con licencia Creative Commons o de dominio público; el enlace a cada original está en la web. Muchas son CC BY-NC: este cuaderno es para uso personal o sin ánimo de lucro. Textos y datos: guía <b>Setas de Cataluña</b> (Cistella Segura) · nombres según Catalogue of Life; registros de GBIF e iNaturalist.</p>`;
     let first = true;
     const mk = () => {
       const p = newPage("anexo");
