@@ -14,5 +14,8 @@ window.BREVE = {
     // tóxicas que se confunden con las comestibles de arriba
     "lactarius-chrysorrheus", "rubroboletus-satanas", "amanita-muscaria", "amanita-pantherina", "tricholoma-equestre",
     "tricholoma-pardinum", "clitocybe-rivulosa", "omphalotus-olearius", "entoloma-sinuatum"],
-  arboles: ["pinus-halepensis", "pinus-sylvestris", "pinus-nigra", "pinus-pinea", "quercus-ilex", "quercus-pubescens", "fagus-sylvatica", "castanea-sativa"],
+  // 10 árboles, en el orden del cuaderno: llenan justo las dos páginas de «Árboles y sus setas» (5 en cada una;
+  // el abeto y el alcornoque, con menos setas, van con los tres de fichas largas)
+  arboles: ["pinus-halepensis", "pinus-pinea", "pinus-nigra", "pinus-sylvestris", "quercus-ilex",
+    "abies-alba", "quercus-suber", "quercus-pubescens", "fagus-sylvatica", "castanea-sativa"],
 };

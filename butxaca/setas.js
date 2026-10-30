@@ -320,8 +320,9 @@
   //  lado a lado y páginas de créditos se quitaron para que el cuaderno sea corto y barato de imprimir;
   //  están en el historial de git si hicieran falta.)
 
+  // En el orden de BREVE.arboles: así se reparten justo en dos páginas (las fichas largas no van todas juntas)
   function arbolesPages() {
-    const items = DB.arboles.filter(a => BREVE.arboles.includes(a.id)).map(a => {
+    const items = BREVE.arboles.map(id => ARB[id]).filter(Boolean).map(a => {
       const setas = (a.setas || []).filter(s => BY[s.id] && s.rel !== "ocasional").map(s => BY[s.id]);
       if (!setas.length) return null;
       const nm = e => `<span class="nm">${tituloHTML(e)}${ref(e.id, true)}</span>`;
@@ -343,7 +344,7 @@
         <div class="kicker">Dónde buscar${more ? " · continuación" : ""}</div>
         <h2 class="pt">Árboles y sus setas</h2>
         ${more ? "" : `<p class="ps">Muchas setas viven unidas a las raíces de un árbol: reconocerlo por la hoja y el tronco es el primer paso.</p>`}
-        <div class="flow"></div>${foot("Guía · Árboles")}`);
+        <div class="flow reparte"></div>${foot("Guía · Árboles")}`);
       return p;
     }, "árboles");
   }
