@@ -459,28 +459,69 @@
       <div class="tarjetas">${galeriaActual.map((p, i) => `<article class="tarjeta"><button data-foto="${i}" style="border:0;padding:0;background:none" aria-label="Ampliar"><img class="img" loading="lazy" src="${p.t}" alt=""></button><div class="cuerpo small"><a href="#/especie/${p._e.id}"><b>${esc(titulo(p._e))}</b></a> <i>${esc(p._e.nombre)}</i><br>${esc(p.pie || "")}<br><span class="muted">© ${esc(p.autor || "")} · ${esc(p.licencia || "")}</span></div></article>`).join("")}</div>`;
     $$("[data-foto]").forEach((b) => (b.onclick = () => abrirVisor(+b.dataset.foto)));
   }
+  // ---------------- Vista: inventario ----------------
+  // Todas las especies con registros en Cataluña (DB.registro) más las que tienen ficha (ESP).
+  // En pantalla ancha, una tabla con la cabecera fija al bajar; en el móvil, cada especie en una tarjeta.
+  // Presencia: [clase, etiqueta, explicación]; «pliego» (inventario) y «confirmada» (fichas) son lo mismo: hay muestras de herbario.
+  const PRESENCIA = {
+    pliego: ["pliego", "Pliego de herbario", "Hay muestras guardadas en herbarios"],
+    confirmada: ["pliego", "Pliego de herbario", "Hay muestras guardadas en herbarios"],
+    observaciones: ["obs", "Solo observaciones", "Fotos revisadas por la comunidad, sin muestra de herbario"],
+    escasa: ["escasa", "Escasa", "Solo uno o dos registros"],
+    bibliografia: ["bib", "Solo bibliografía", "Citada en libros, sin registro digital"],
+  };
   function vistaInventario() {
-    let q = "", ev = "", lim = 300;
-    const todas = DB.registro.map((r) => ({ n: r.n, a: r.a, o: r.o, f: r.f, t: r.t, p: r.p, i: r.i, e: r.e, s: r.s, ficha: null }))
-      .concat(ESP.map((e) => ({ n: e.nombre, a: e.autor, o: e.orden, f: e.familia, t: (e.registros || {}).n || 0, p: (e.registros || {}).pliegos || 0, i: null, e: (e.registros || {}).evidencia, s: e.sinonimos || [], ficha: e.id })))
+    let q = "", filtro = "", orden = "az", lim = 200, reloj = 0;
+    const nf = (n) => (n || 0).toLocaleString("es");
+    const todas = DB.registro.map((r) => ({ n: r.n, a: r.a, o: r.o, f: r.f, t: r.t || 0, p: r.p || 0, i: r.i || 0, e: r.e, s: r.s || [], ficha: null }))
+      .concat(ESP.map((e) => { const g = e.registros || {}; return { n: e.nombre, a: e.autor, o: e.orden, f: e.familia, t: g.n || 0, p: g.pliegos || 0, i: g.observaciones || 0, e: g.evidencia, s: e.sinonimos || [], ficha: e }; }))
       .sort((a, b) => a.n.localeCompare(b.n));
-    todas.forEach((x) => (x._q = norm([x.n, x.f, x.o, ...(x.s || [])].join(" "))));
+    // se busca también por los nombres comunes de las que tienen ficha
+    todas.forEach((x) => (x._q = norm([x.n, x.f, x.o, ...x.s, ...(x.ficha ? [...nombres(x.ficha, "ca"), ...nombres(x.ficha, "es")] : [])].join(" "))));
+    const grupos = (x) => [(PRESENCIA[x.e] || [""])[0], ...(x.ficha ? ["ficha"] : [])];
+    const FILTROS = [["", "Todas"], ["ficha", "Con ficha"], ["pliego", "Con pliego de herbario"], ["obs", "Solo observaciones"], ["escasa", "Escasas"]];
+    const cuenta = (k) => todas.filter((x) => !k || grupos(x).includes(k)).length;
     app.innerHTML = `<h1>Inventario de especies con registros en Cataluña</h1>
-      <p class="muted">${todas.length.toLocaleString("es")} especies (GBIF + iNaturalist, nombres según Catalogue of Life, consulta ${esc(DB.meta.inventario.fecha_consulta || "")}). Las que no tienen ficha no se evalúan: <b>no las consuma</b>.</p>
-      <p><input class="q" type="search" placeholder="Buscar especie, familia u orden…" id="iq"></p>
-      <p>Evidencia: <select id="iev"><option value="">Todas</option><option value="pliego">Con pliego de herbario</option><option value="confirmada">Con ficha y pliego</option><option value="observaciones">Solo observaciones</option><option value="escasa">Escasa (1–2 registros)</option></select> <span id="icuenta" class="muted"></span></p>
-      <div class="tabla-scroll"><table class="tabla"><thead><tr><th>Especie</th><th>Orden · familia</th><th>GBIF</th><th>Pliegos</th><th>iNat</th><th>Evidencia</th></tr></thead><tbody id="itb"></tbody></table></div>
-      <p><button class="btn" id="imas">Mostrar más</button></p>`;
+      <p class="ap-intro">Todas las setas y hongos encontrados en Cataluña: <b>${nf(todas.length)} especies</b>, ${ESP.length} de ellas con ficha en esta web. Datos de GBIF (herbarios y observaciones) e iNaturalist; nombres según Catalogue of Life (consulta del ${fechaTxt(DB.meta.inventario.fecha_consulta)}).</p>
+      <div class="caja inv-aviso"><b>Las que no tienen ficha no están evaluadas: no las coma.</b> Que una especie esté en la lista solo dice que se ha encontrado en Cataluña.</div>
+      <div class="inv-busca">
+        <input class="q" type="search" id="iq" placeholder="Buscar por nombre científico o común, familia u orden…" autocomplete="off" spellcheck="false">
+        <label class="inv-orden">Ordenar <select id="iord"><option value="az">De la A a la Z</option><option value="mas">Más registros primero</option></select></label>
+      </div>
+      <div class="inv-filtros" role="group" aria-label="Filtrar por presencia">${FILTROS.map(([k, t]) => `<button class="tog" data-f="${k}" aria-pressed="${k === ""}">${t} <span class="inv-cn">${nf(cuenta(k))}</span></button>`).join("")}</div>
+      <p class="small muted inv-ley"><b>GBIF</b>: registros en total · <b>Pliegos</b>: muestras de herbario · <b>iNat</b>: fotos verificadas por la comunidad</p>
+      <p id="icuenta" class="small inv-cuenta" aria-live="polite"></p>
+      <div class="inv-lista" role="table" aria-label="Especies con registros en Cataluña">
+        <div class="inv-fila inv-cab" role="row"><span role="columnheader">Especie</span><span role="columnheader">Orden · familia</span><span class="inv-nums"><span role="columnheader">GBIF</span><span role="columnheader">Pliegos</span><span role="columnheader">iNat</span></span><span role="columnheader">Presencia</span></div>
+        <div id="itb" role="rowgroup"></div>
+      </div>
+      <p class="inv-mas"><button class="btn" id="imas">Mostrar más</button></p>`;
+    // la cabecera de la tabla se queda pegada justo debajo de la barra de arriba
+    app.style.setProperty("--alto-barra", ($(".top") ? $(".top").offsetHeight : 56) + "px");
+    const fila = (x) => {
+      const e = x.ficha, pr = PRESENCIA[x.e] || ["bib", x.e || "—", ""];
+      return `<div class="inv-fila${e ? " con-ficha" : ""}" role="row">
+        <span class="inv-n" role="cell">${e ? `<a href="#/especie/${e.id}"><b>${esc(titulo(e))}</b> <i>${esc(x.n)}</i></a> ${badge(catOf(e))}` : `<i>${esc(x.n)}</i>`} <span class="inv-a">${esc(x.a || "")}</span>${x.s.length && !e ? `<span class="inv-s">También registrada como <i>${esc(x.s.join("; "))}</i></span>` : ""}</span>
+        <span class="inv-tax" role="cell">${esc(x.o || "")} · ${esc(x.f || "")}</span>
+        <span class="inv-nums"><span role="cell" title="GBIF">${nf(x.t)}</span><span role="cell" title="Pliegos">${nf(x.p)}</span><span role="cell" title="iNat">${nf(x.i)}</span></span>
+        <span class="inv-pr" role="cell"><span class="prb pr-${pr[0]}" title="${esc(pr[2])}">${esc(pr[1])}</span></span></div>`;
+    };
     const pintar = () => {
       const t = norm(q).split(/\s+/).filter(Boolean);
-      const r = todas.filter((x) => (!ev || x.e === ev) && t.every((w) => x._q.includes(w)));
-      $("#icuenta").textContent = `${r.length.toLocaleString("es")} resultados`;
-      $("#itb").innerHTML = r.slice(0, lim).map((x) => `<tr><td>${x.ficha ? `<a href="#/especie/${x.ficha}"><b><i>${esc(x.n)}</i></b></a>` : `<i>${esc(x.n)}</i>`} <span class="muted small">${esc(x.a || "")}</span>${x.s && x.s.length && !x.ficha ? `<div class="small muted">Registrada también como: <i>${esc(x.s.join("; "))}</i></div>` : ""}</td><td class="small">${esc(x.o)} · ${esc(x.f)}</td><td>${x.t}</td><td>${x.p}</td><td>${x.i ?? "—"}</td><td class="small">${esc(x.e || "")}</td></tr>`).join("");
+      let r = todas.filter((x) => (!filtro || grupos(x).includes(filtro)) && t.every((w) => x._q.includes(w)));
+      if (orden === "mas") r = [...r].sort((a, b) => b.t - a.t || a.n.localeCompare(b.n));
+      $("#icuenta").textContent = !r.length ? "" : r.length > lim ? `Se muestran ${nf(lim)} de ${nf(r.length)} especies` : r.length === 1 ? "1 especie" : `${nf(r.length)} especies`;
+      $("#itb").innerHTML = r.length ? r.slice(0, lim).map(fila).join("") : `<p class="muted inv-nada">Ninguna especie coincide con la búsqueda.</p>`;
       $("#imas").hidden = r.length <= lim;
     };
-    $("#iq").oninput = (e) => { q = e.target.value; lim = 300; pintar(); };
-    $("#iev").onchange = (e) => { ev = e.target.value; lim = 300; pintar(); };
-    $("#imas").onclick = () => { lim += 500; pintar(); };
+    $("#iq").oninput = (ev) => { q = ev.target.value; lim = 200; clearTimeout(reloj); reloj = setTimeout(pintar, 120); };
+    $("#iord").onchange = (ev) => { orden = ev.target.value; lim = 200; pintar(); };
+    $$("[data-f]").forEach((b) => (b.onclick = () => {
+      filtro = b.dataset.f; lim = 200;
+      $$("[data-f]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      pintar();
+    }));
+    $("#imas").onclick = () => { lim += 400; pintar(); };
     pintar();
   }
   // ---------------- Vista: Aprende ----------------

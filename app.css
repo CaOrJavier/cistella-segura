@@ -237,6 +237,47 @@ table.conf tr.p-comestible td:first-child { border-left-color: var(--ok); }
 .tabla th, .tabla td { border-bottom: 1px solid var(--line); padding: .45rem .6rem; text-align: left; vertical-align: top; }
 .tabla th { background: var(--soft); position: sticky; top: 3.8rem; }
 .tabla-scroll { overflow-x: auto; border-radius: var(--r-sm); border: 1px solid var(--line); }
+/* Inventario: tabla con la cabecera fija en pantalla ancha; tarjetas en el móvil */
+.inv-aviso { margin: .2rem 0 1.1rem; }
+.inv-busca { display: flex; flex-wrap: wrap; gap: .6rem 1rem; align-items: center; margin-bottom: .7rem; }
+.inv-busca .q { flex: 1 1 20rem; margin: 0; }
+.inv-orden { display: flex; align-items: center; gap: .45rem; font-size: .9rem; color: var(--muted); }
+.inv-orden select { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: .4rem .8rem; }
+.inv-filtros { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .55rem; }
+.inv-cn { font-variant-numeric: tabular-nums; opacity: .7; margin-left: .15rem; }
+.inv-ley { margin: .2rem 0 .3rem; }
+.inv-cuenta { font-weight: 700; margin: .6rem 0 .5rem; }
+.inv-lista { border: 1px solid var(--line); border-radius: var(--r); background: var(--panel); box-shadow: var(--shadow); }
+.inv-fila { display: grid; grid-template-columns: minmax(0, 2.3fr) minmax(0, 1.3fr) 12.5rem 10rem; gap: .25rem 1rem; align-items: center; padding: .6rem 1rem; border-top: 1px solid var(--line); }
+.inv-fila.inv-cab { position: sticky; top: var(--alto-barra, 3.4rem); z-index: 3; border-top: 0; border-radius: var(--r) var(--r) 0 0; background: var(--soft); font-size: .8rem; font-weight: 800; letter-spacing: .03em; color: var(--muted); padding-top: .55rem; padding-bottom: .55rem; }
+.inv-nums { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; text-align: right; font-variant-numeric: tabular-nums; }
+.inv-n { min-width: 0; line-height: 1.35; }
+.inv-n a { text-decoration: none; }
+.inv-n a b { color: var(--accent); }
+.inv-n a i { color: var(--ink-2, var(--ink)); }
+.inv-n .badge { margin-left: .3rem; vertical-align: .05rem; font-size: .7rem; }
+.inv-a { color: var(--muted); font-size: .82rem; }
+.inv-s { display: block; color: var(--muted); font-size: .8rem; }
+.inv-tax { font-size: .88rem; color: var(--muted); min-width: 0; overflow-wrap: anywhere; }
+.inv-fila.con-ficha { background: color-mix(in srgb, var(--accent-soft) 55%, transparent); }
+.prb { display: inline-block; padding: .14rem .6rem; border-radius: 999px; font-size: .76rem; font-weight: 700; white-space: nowrap; cursor: help; }
+.pr-pliego { background: var(--ok-bg); color: var(--ok); }
+.pr-obs { background: var(--desc-bg); color: var(--desc); }
+.pr-escasa { background: var(--cond-bg); color: var(--cond); }
+.pr-bib { background: var(--nulo-bg); color: var(--nulo); }
+.inv-nada { padding: 1.2rem 1rem; margin: 0; }
+.inv-mas { text-align: center; margin-top: 1rem; }
+@media (max-width: 760px) {
+  .inv-fila.inv-cab { display: none; }
+  .inv-fila { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "n pr" "tax tax" "nums nums"; gap: .3rem .6rem; padding: .75rem .85rem; }
+  .inv-fila:first-child { border-top: 0; }
+  .inv-n { grid-area: n; }
+  .inv-pr { grid-area: pr; align-self: start; }
+  .inv-tax { grid-area: tax; font-size: .82rem; }
+  .inv-nums { grid-area: nums; display: flex; gap: 1.1rem; text-align: left; font-size: .84rem; }
+  .inv-nums span::before { content: attr(title) " "; color: var(--muted); font-weight: 700; font-size: .76rem; }
+  .inv-orden { width: 100%; }
+}
 td.m { width: 1.6rem; padding: 0 !important; }
 td.m.h { background: var(--accent); }
 td.m.x { background: var(--line); }
