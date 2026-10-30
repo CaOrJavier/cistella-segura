@@ -51,8 +51,9 @@
   const SEC = {
     guia: { t: "Guía", c: "var(--guide)", y: 9 },
     comestibles: { t: "Comestibles", c: "var(--ok)", y: 29 },
-    mortales: { t: "Mortales", c: "var(--deadly)", y: 49 },
-    toxicas: { t: "Tóxicas", c: "var(--warn)", y: 69 },
+    // pestañas del margen en el orden del libro: comestibles, tóxicas, mortales
+    toxicas: { t: "Tóxicas", c: "var(--warn)", y: 49 },
+    mortales: { t: "Mortales", c: "var(--deadly)", y: 69 },
     anexo: { t: "Anexo", c: "var(--annex)", y: 109 },
     sos: { t: "SOS", c: "var(--ink)", y: 126 }
   };
@@ -75,7 +76,7 @@
     mortales: ESENCIAL.filter(e => e.comestibilidad.cat === "mortal"),
     toxicas: ESENCIAL.filter(e => ["toxica", "no_comestible"].includes(e.comestibilidad.cat))
   };
-  const ORDEN = [...GROUPS.comestibles, ...GROUPS.mortales, ...GROUPS.toxicas];
+  const ORDEN = [...GROUPS.comestibles, ...GROUPS.toxicas, ...GROUPS.mortales];
 
   // ---------- nombres ----------
   const titulo = e => cap(e.nombres.ca[0] || e.nombres.es[0]) || e.nombre;
@@ -294,8 +295,8 @@
           : `Las ${ESENCIAL.length} setas que hay que conocer en Cataluña: cómo reconocerlas, dónde y cuándo salen, y con qué no confundirlas.`}</p>
         <div class="cv-stats">
           <span class="st-comestible"><i class="d"></i>${n("comestibles")} comestibles</span>
-          <span class="st-mortal"><i class="d"></i>${n("mortales")} mortales</span>
           <span class="st-toxic"><i class="d"></i>${n("toxicas")} tóxicas</span>
+          <span class="st-mortal"><i class="d"></i>${n("mortales")} mortales</span>
         </div>
         <div class="cv-sos"><b>Ante la duda, no la recolecte.</b><span>Emergencias <strong>112</strong><br>Toxicología 24 h <strong>91 562 04 20</strong></span></div>
       </div>`;
@@ -429,13 +430,14 @@
         ${ko.length ? `<p class="ll ko"><span class="lab">Cuidado</span>${ko.map(nm).join(", ")}</p>` : ""}</div>
       </article>`;
     }).filter(Boolean);
+    // los árboles van al final, en el anexo
     const mk = more => {
-      const p = newPage("guia");
+      const p = newPage("anexo");
       p.insertAdjacentHTML("beforeend", `
         <div class="kicker">Dónde buscar${more ? " · continuación" : ""}</div>
         <h2 class="pt">Árboles y sus setas</h2>
-        ${more ? "" : `<p class="ps">Muchas setas viven unidas a las raíces de un árbol: reconocerlo por la hoja y el tronco es el primer paso.</p>`}
-        <div class="flow reparte"></div>${foot("Guía · Árboles")}`);
+        ${more ? "" : `<p class="ps">Muchas setas viven unidas a las raíces de un árbol: reconocerlo por la hoja y el tronco ayuda a saber qué buscar.</p>`}
+        <div class="flow reparte"></div>${foot("Anexo · Árboles")}`);
       return p;
     };
     // en la guía, 5 árboles por página; los de listas largas y cortas se mezclan para que todas las páginas
@@ -801,15 +803,16 @@
 
     // Cuaderno breve: sin sumario, sin «tres comprobaciones», sin confusiones aparte (van en cada ficha)
     // y con los créditos de las fotos en una línea de la contraportada (cada foto, con su autor, en la web)
+    // Orden: comestibles, tóxicas y mortales; los árboles, al final (en el anexo), porque son lo menos importante
     portada();
     reglasPage();
     mirarPage();
-    arbolesPages();
     if (GUIA) {
       // guía: cada sección con sus setas (las del cuaderno, página entera; las demás, media página)
       seccionGuia(GROUPS.comestibles, "comestibles");
-      seccionGuia(GROUPS.mortales, "mortales");
       seccionGuia(GROUPS.toxicas, "toxicas");
+      seccionGuia(GROUPS.mortales, "mortales");
+      arbolesPages();
       calendarioPages();
       sindromesPages();
       glosarioPages();
@@ -818,7 +821,8 @@
     } else {
       // las parejas casi iguales (rovelló y pinetell) van juntas en la página de la primera
       GROUPS.comestibles.forEach(e => { const pj = EN_PAREJA.get(e.id); if (!pj) fichaPage(e); else if (pj[1] === 0) parejaPage(pj[0]); });
-      [...GROUPS.mortales, ...GROUPS.toxicas].forEach(fichaPage);
+      [...GROUPS.toxicas, ...GROUPS.mortales].forEach(fichaPage);
+      arbolesPages();
       sindromesPages();
     }
     const antesDeSOS = book.lastElementChild;
