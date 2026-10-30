@@ -99,6 +99,16 @@
 .sos-page .wi { color: var(--deadly); }
 .sos-page .wi i { border-bottom-color: var(--line); }
 
+/* cuaderno breve: «Cuidado: se confunde con» con una foto pequeña de cada una */
+.conf li.cf-foto { display: grid; grid-template-columns: 9.5mm 1fr; gap: 0 1.6mm; align-items: start; padding-left: 0; margin: .7mm 0; }
+.conf li.cf-foto::before { content: none !important; }
+.conf .cf-im { width: 9.5mm; height: 9.5mm; object-fit: cover; border-radius: .9mm; display: block; }
+/* altitud en la barra de meses */
+.fct.alt { gap: .5mm; white-space: nowrap; }
+.fct.alt svg { fill: var(--muted); }
+/* créditos de las fotos en una línea de la contraportada */
+.cred-linea { margin-top: 1.6mm; font-size: 4.8pt; line-height: 1.25; color: var(--muted); }
+.cred-linea b { color: var(--ink-2); }
 /* créditos: tres columnas de letra pequeña */
 .cred { column-count: 3; column-gap: 2.2mm; font-size: 4.5pt; line-height: 1.22; }
 .cred p { margin: 0 0 .3mm; }

@@ -49,7 +49,11 @@
   const dias = (n) => n + (n === 1 ? " día" : " días");
   const cuando = (n) => (n === 0 ? "hoy" : n === 1 ? "ayer" : "hace " + dias(n));
   const esISO = (v) => typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v) && !isNaN(Date.parse(v));
-  const fechaLarga = (iso) => { const [y, m, d] = iso.split("-").map(Number); return `${d} de ${CS.MES_LARGO[m - 1]} de ${y}`; };
+  const fechaLarga = (iso) => {
+    const [y, m, d] = iso.split("-").map(Number), mes = CS.MES_LARGO[m - 1];
+    const de = window.IDIOMA === "ca" && /^[aeiou]/.test(mes) ? "d'" : "de ";   // en catalán: «d'octubre»
+    return `${d} ${de}${mes} de ${y}`;
+  };
 
   // Meses de temporada: los habituales de la ficha de la guía (los mismos que muestra la ficha); si faltan, los de la web antigua
   function meses(id) {
@@ -64,7 +68,7 @@
     const cierra = () => { if (a !== null) out.push(a === b ? CS.MES_CORTO[a - 1] : CS.MES_CORTO[a - 1] + "–" + CS.MES_CORTO[b - 1]); a = null; };
     for (let k = 0; k < 12; k++) { const x = ((ini - 1 + k) % 12) + 1; if (s.has(x)) { if (a === null) a = x; b = x; } else cierra(); }
     cierra();
-    return out.length > 1 ? out.slice(0, -1).join(", ") + " y " + out[out.length - 1] : out[0];
+    return out.length > 1 ? out.slice(0, -1).join(", ") + (CS.Y || " y ") + out[out.length - 1] : out[0];
   }
   // Fecha guardada de la última lluvia fuerte ("" si no hay)
   function fecha(G) { const v = G.store.get(K_FECHA, ""); return esISO(v) ? v : ""; }

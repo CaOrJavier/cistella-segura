@@ -16,8 +16,27 @@
   const EDICION = "Otoño 2026";
   const PORTADA = { id: "cantharellus-cibarius", papel: "recolectado" };
 
-  const ESENCIAL = DB.especies.filter(e => (e.guias || []).includes("esencial"));
+  // Cuaderno breve: solo las setas y árboles imprescindibles; las casi iguales (pinetell d'avet, cep rogenc,
+  // llenega blanca…) fuera. Las que se confunden con cada una salen dentro de su ficha, con foto pequeña.
+  const BREVE = {
+    especies: [
+      // comestibles que de verdad se recogen en Cataluña
+      "lactarius-sanguifluus", "lactarius-deliciosus", "boletus-edulis", "suillus-granulatus", "chroogomphus-rutilus",
+      "cantharellus-cibarius", "craterellus-cornucopioides", "craterellus-lutescens", "hydnum-repandum", "russula-cyanoxantha",
+      "amanita-caesarea", "macrolepiota-procera", "coprinus-comatus", "agaricus-campestris", "tricholoma-terreum", "lepista-nuda",
+      "calocybe-gambosa", "hygrophorus-latitabundus", "hygrophorus-russula", "marasmius-oreades", "pleurotus-eryngii",
+      "cyclocybe-cylindracea", "morchella-esculenta",
+      // todas las mortales
+      "paxillus-involutus", "amanita-phalloides", "amanita-verna", "amanita-virosa", "lepiota-brunneoincarnata",
+      "galerina-marginata", "inosperma-erubescens", "cortinarius-orellanus", "gyromitra-esculenta",
+      // tóxicas que se confunden con las comestibles de arriba
+      "lactarius-chrysorrheus", "rubroboletus-satanas", "amanita-muscaria", "amanita-pantherina", "tricholoma-equestre",
+      "tricholoma-pardinum", "clitocybe-rivulosa", "omphalotus-olearius", "entoloma-sinuatum"],
+    arboles: ["pinus-halepensis", "pinus-sylvestris", "pinus-nigra", "pinus-pinea", "quercus-ilex", "quercus-pubescens", "fagus-sylvatica", "castanea-sativa"],
+  };
+  const ESENCIAL = DB.especies.filter(e => BREVE.especies.includes(e.id));
   const BY = Object.fromEntries(ESENCIAL.map(e => [e.id, e]));
+  const TODAS = Object.fromEntries(DB.especies.map(e => [e.id, e]));   // para la foto de las que se confunden
 
   const SEC = {
     guia: { t: "Guía", c: "var(--guide)", y: 9 },
@@ -65,7 +84,8 @@
     porus: svg('<path d="M.6 5.2C1.5 2.3 3.6.9 6 .9s4.5 1.4 5.4 4.3z"/><rect x="1.4" y="5.8" width="9.2" height="3.6" rx=".8"/><g fill="#fff"><circle cx="3" cy="7.6" r=".55"/><circle cx="4.7" cy="7.6" r=".55"/><circle cx="6.4" cy="7.6" r=".55"/><circle cx="8.1" cy="7.6" r=".55"/><circle cx="9.5" cy="7.6" r=".45"/></g>'),
     plecs: svg('<path d="M.6 5.2C1.5 2.3 3.6.9 6 .9s4.5 1.4 5.4 4.3z"/><path d="M2.6 5.6c.4 1.2-.2 2.4.3 3.8M4.6 5.6c.4 1.4-.3 2.8.2 4.4M6.6 5.6c.4 1.4-.3 2.8.2 4.4M8.6 5.6c.4 1.2-.2 2.4.3 3.8" stroke="currentColor" stroke-width=".75" fill="none"/>'),
     agullons: svg('<path d="M.6 5.2C1.5 2.3 3.6.9 6 .9s4.5 1.4 5.4 4.3z"/><path d="M1.8 5.6l.5 2.4.5-2.4zM3.6 5.6l.5 3 .5-3zM5.5 5.6l.5 3.3.5-3.3zM7.4 5.6l.5 3 .5-3zM9.2 5.6l.5 2.4.5-2.4z"/>'),
-    altres: svg('<circle cx="6" cy="6.3" r="4.6"/><circle cx="4.4" cy="4.6" r=".7" fill="#fff" fill-opacity=".6"/><circle cx="7" cy="5.2" r=".5" fill="#fff" fill-opacity=".6"/>')
+    altres: svg('<circle cx="6" cy="6.3" r="4.6"/><circle cx="4.4" cy="4.6" r=".7" fill="#fff" fill-opacity=".6"/><circle cx="7" cy="5.2" r=".5" fill="#fff" fill-opacity=".6"/>'),
+    monte: svg('<path d="M.4 10.9 4.3 3.6l2.1 3.6 1.5-2.3 3.7 6z"/><path d="m3.3 5.5 1-1.9 1 1.7-.6-.4-.4.5z" fill="#fff" fill-opacity=".7"/>')
   };
 
   // ---------- utilidades ----------
@@ -223,30 +243,6 @@
   }
 
   // =========================================================
-  // SUMARIO
-  // =========================================================
-  let tocPage;
-  function fillToc(entries) {
-    tocPage.insertAdjacentHTML("beforeend", `
-      <div class="kicker">Cómo usar este cuaderno</div>
-      <h2 class="pt">Sumario</h2>
-      <ul class="toc" style="margin-top:2mm">${entries.map(e => `
-        <li><span class="sw" style="background:${e.c}"></span><span class="tn">${esc(e.t)}</span><span class="td">${esc(e.d)}</span><span class="tp">${e.n}</span></li>`).join("")}
-      </ul>
-      <div class="h3">Cómo leer una ficha</div>
-      <div class="legend">
-        <span class="k"><span class="st-comestible pill">Comestible</span><span class="st-precaucio pill">Condicionada</span></span><span>Condicionada: solo bien cocinada o con reservas.</span>
-        <span class="k st-comestible">${dots(1)}<b style="font-size:5.4pt">FÁCIL</b></span><span>Dificultad de identificación: fácil, media o difícil.</span>
-        <span class="k st-comestible">${meses([9, 10, 11], [12])}</span><span>Meses en que sale; en claro, solo algunos años.</span>
-        <span class="k st-comestible"><span class="fct">${ICON.pineda}${ICON.fulla}${ICON.prat}${ICON.fusta}</span></span><span>Coníferas, frondosas, prados o madera.</span>
-        <span class="k"><span class="ref">→ p. 23</span></span><span>Página de la especie con que se confunde.</span>
-      </div>
-      <p class="disclaimer" style="margin-top:auto"><b>Aviso.</b> Ninguna guía, foto ni aplicación certifica que una seta sea comestible. Ante la duda, consulte a un micólogo con el ejemplar entero.</p>
-      ${foot("Sumario")}`);
-    fit(tocPage, ["dense"], "sumario");
-  }
-
-  // =========================================================
   // GUÍA
   // =========================================================
   function reglasPage() {
@@ -334,38 +330,13 @@
     fit(p, [".edat-t", "dense", ".edat-box"], "mirar");
   }
 
-  function tresPage() {
-    const d = html(DB.textos["alertas-intro"]);
-    const items = [...d.querySelectorAll("li")].map(li => li.textContent.trim());
-    const tres = items.length ? items : [
-      "Base del pie: desentierre siempre la base. Una volva en saco o un bulbo con reborde indica una amanita.",
-      "Láminas blancas + anillo + volva = descarte inmediato, sea cual sea el color del sombrero.",
-      "Setas pequeñas de láminas pardas o de color herrumbre, lepiotas pequeñas y setas pequeñas sobre madera: no se recolectan para comer."
-    ];
-    const seg = html(DB.textos.seguridad);
-    const pruebas = listaTras(seg, /reglas/i).map(partes).filter(([t]) => /prueba|aplicaci/i.test(t));
-    const p = newPage("guia");
-    p.insertAdjacentHTML("beforeend", `
-      <div class="kicker">Lo que evita las intoxicaciones graves</div>
-      <h2 class="pt">Tres comprobaciones</h2>
-      <p class="ps">Hágalas con cada ejemplar, también con las setas que cree conocer.</p>
-      <ol class="tres spread">${tres.map((t, i) => {
-        // la idea principal en negrita: hasta los dos puntos, o hasta la primera coma
-        let j = t.indexOf(":");
-        if (j < 0 || j > 150) j = t.indexOf(",");
-        const [b, r] = j > 0 && j < 150 ? [t.slice(0, j), t.slice(j + 1).trim()] : [t, ""];
-        return `<li><span class="tn">${i + 1}</span><div><b>${esc(b)}</b>${r ? `<span>${esc(cap(r))}</span>` : ""}</div></li>`;
-      }).join("")}</ol>
-      ${pruebas.length ? `<div class="h3">No se fíe de</div><ul class="list2">${pruebas.map(([b, r]) => `<li><b>${esc(b)}.</b> <span>${esc(hasta(r, 260))}</span></li>`).join("")}</ul>` : ""}
-      ${foot("Guía · Comprobaciones")}`);
-    fit(p, [".ps", "dense", p2 => p2.querySelectorAll(".list2 span").forEach(s => (s.textContent = primera(s.textContent, 150)))], "tres");
-  }
 
-  // (Índice visual, calendario, «En casa», «Mis hallazgos», glosario e índice alfabético se quitaron
-  //  para que el cuaderno sea más corto de imprimir; están en el historial de git si hicieran falta.)
+  // (Sumario, índices, calendario, «Tres comprobaciones», «En casa», «Mis hallazgos», glosario, confusiones
+  //  lado a lado y páginas de créditos se quitaron para que el cuaderno sea corto y barato de imprimir;
+  //  están en el historial de git si hicieran falta.)
 
   function arbolesPages() {
-    const items = DB.arboles.map(a => {
+    const items = DB.arboles.filter(a => BREVE.arboles.includes(a.id)).map(a => {
       const setas = (a.setas || []).filter(s => BY[s.id] && s.rel !== "ocasional").map(s => BY[s.id]);
       if (!setas.length) return null;
       const nm = e => `<span class="nm">${tituloHTML(e)}${ref(e.id, true)}</span>`;
@@ -392,41 +363,23 @@
     }, "árboles");
   }
 
-  // =========================================================
-  // CONFUSIONES MORTALES, LADO A LADO (lo que tenía el cuaderno de campo A5)
-  // Cada comestible con la mortal con la que se confunde: las dos fotos juntas y la diferencia.
-  // =========================================================
-  function confusionesPages() {
-    const pares = [];
-    for (const m of GROUPS.mortales) {
-      for (const a of GROUPS.comestibles) {
-        const c = (a.confusiones || []).find(x => x.id === m.id);
-        if (c) pares.push([a, m, c]);
-      }
-    }
-    const items = pares.map(([a, m, c]) => {
-      const foto = (e, cls, txt) => `<figure class="${cls}"><img src="${thumb(e.id)}" alt=""><figcaption>${txt}</figcaption></figure>`;
-      return `<article class="lal">
-        <div class="lal-fotos">${foto(a, "ok", EST[a.comestibilidad.cat].pill)}${foto(m, "ko", "Mortal")}</div>
-        <div class="lal-txt"><h3><span class="nm ok">${tituloHTML(a)}${ref(a.id, true)}</span> <span class="vs">o</span> <span class="nm ko">${tituloHTML(m)}${ref(m.id, true)}</span></h3>
-          <p class="lal-dif">${esc(hasta(c.diferencia, 170))}</p>
-          ${c.donde ? `<p class="lal-donde"><b>Mírelo:</b> ${esc(primera(c.donde, 90))}</p>` : ""}</div>
-      </article>`;
-    });
-    flow(items, more => {
-      const p = newPage("mortales");
-      p.insertAdjacentHTML("beforeend", `
-        <div class="kicker">Lado a lado${more ? " · continuación" : ""}</div>
-        <h2 class="pt">Las confusiones mortales</h2>
-        ${more ? "" : `<p class="ps">A la izquierda, la comestible; a la derecha, la mortal con la que se confunde. Apréndase la diferencia antes de salir.</p>`}
-        <div class="flow"></div>${foot("Mortales · Confusiones")}`);
-      return p;
-    }, "confusiones");
-  }
 
   // =========================================================
   // FICHA
   // =========================================================
+  // Altitud a la que sale en Cataluña (orientativa): «⛰ 0–1400 m»
+  function altitud(e) {
+    const a = e.distribucion?.altitud;
+    if (!a || a.max == null) return "";
+    return `<span class="fct alt">${ICON.monte}${a.min ?? 0}–${a.max} m</span>`;
+  }
+  // Foto pequeña de una seta con la que se confunde (si está en la base de datos con foto)
+  function fotoConf(c) {
+    const x = c.id && TODAS[c.id];
+    if (!x) return "";
+    const f = (PICK[x.id] || [])[0] || (x.fotos || []).find(f => f.papel === "adulto") || (x.fotos || [])[0];
+    return f ? G(f.t || f.g) : "";
+  }
   function fichaPage(e) {
     const est = EST[e.comestibilidad.cat];
     const ok = comestible(e);
@@ -441,7 +394,7 @@
       ${him ? `<span class="fct">${ICON[HIM_ICON[him] || "altres"]}${esc((V.himenoforo[him] || him).split(/[ (]/)[0])}</span>` : ""}
       <span class="fct${car.anillo ? "" : " no"}">${car.anillo ? "Con anillo" : "Sin anillo"}</span>
       <span class="fct${car.volva ? " alarm" : " no"}">${car.volva ? "Con volva" : "Sin volva"}</span>
-      <span class="fct hab">${habitatIcons(e).map(([ic]) => ICON[ic]).join("")}</span></div>`;
+      <span class="fct hab">${habitatIcons(e).map(([ic]) => ICON[ic]).join("")}</span>${altitud(e)}</div>`;
     const claves = (e.identificacion?.claves || []);
     const clavesHTML = claves.length ? `<div class="checks${ok ? "" : " alarm"}"><h3>${ok ? "Cómo reconocerla" : "Rasgos de alarma"}</h3><ul>${claves.map(c => `<li>${esc(c)}</li>`).join("")}</ul></div>` : "";
     const arb = arboles(e);
@@ -452,8 +405,11 @@
     const confs = [...(e.confusiones || [])]
       .sort((a, b) => (ok ? SEV[a.peligro] - SEV[b.peligro] : SEV[b.peligro] - SEV[a.peligro]))
       .slice(0, 3);
-    const confHTML = confs.length ? `<div class="conf"><h3>${ok ? "No la confunda con" : "Se confunde con"}</h3><ul>${confs.map(c =>
-      `<li class="cf"><b>${nombreConf(c)}</b> <span class="cf-tag cf-${c.peligro}">${PEL[c.peligro] || c.peligro}</span> ${esc(primera(c.diferencia, 170))} ${c.id && c.id !== e.id ? ref(c.id) : ""}</li>`).join("")}</ul></div>` : "";
+    // cada seta con la que se confunde: foto pequeña + en qué se diferencia (y su página, si tiene ficha)
+    const confHTML = confs.length ? `<div class="conf"><h3>${ok ? "Cuidado: se confunde con" : "Se confunde con"}</h3><ul>${confs.map(c => {
+      const im = fotoConf(c);
+      return `<li class="cf${im ? " cf-foto" : ""}">${im ? `<img class="cf-im" src="${im}" alt="">` : ""}<span><b>${nombreConf(c)}</b> <span class="cf-tag cf-${c.peligro}">${PEL[c.peligro] || c.peligro}</span> ${esc(primera(c.diferencia, 170))} ${c.id && c.id !== e.id ? ref(c.id) : ""}</span></li>`;
+    }).join("")}</ul></div>` : "";
     const clave = confs.find(c => c.donde)?.donde;
     const truc = clave ? `<p class="truc"><span class="lab">Compruebe</span>${esc(primera(clave, 160))}</p>` : "";
     const label = ok ? "Comestibles" : est.sec === "mortales" ? "Mortales" : "Tóxicas";
@@ -511,33 +467,6 @@
     return p;
   }
 
-  function creditosPages() {
-    // agrupados por autor y licencia (cada autor una vez, con lo que fotografió): caben en una página
-    const porAutor = new Map();
-    const anota = (f, donde) => {
-      const k = `${f.autor || "Propia"}${f.licencia ? ` (${f.licencia})` : ""}`;
-      if (!porAutor.has(k)) porAutor.set(k, []);
-      if (!porAutor.get(k).includes(donde)) porAutor.get(k).push(donde);
-    };
-    for (const [donde, f] of EXTRA) anota(f, donde);
-    for (const e of ORDEN) for (const f of PICK[e.id]) anota(f, sinNombre(e) ? e.nombre : titulo(e));
-    const lines = [...porAutor].sort((a, b) => a[0].localeCompare(b[0], "es", { sensitivity: "base" }))
-      .map(([k, ds]) => `<p><b>${esc(k)}</b> ${esc(ds.join(", "))}</p>`);
-    const intro = `<p class="note" style="margin-bottom:1.5mm">Fotos de <b>iNaturalist</b> y <b>Wikimedia Commons</b> con licencia Creative Commons o de dominio público; el enlace a cada original está en la web. Muchas son CC BY-NC: cuaderno para uso personal o sin ánimo de lucro. Datos: Cistella Segura · Catalogue of Life, GBIF e iNaturalist.</p>`;
-    let first = true;
-    const mk = () => {
-      const p = newPage("anexo");
-      p.insertAdjacentHTML("beforeend", `${first ? `<div class="kicker">Créditos</div><h2 class="pt" style="font-size:13pt">Fotos y fuentes</h2>${intro}` : ""}<div class="cred"></div>${foot("Créditos")}`);
-      first = false;
-      return p;
-    };
-    let p = mk();
-    let box = p.querySelector(".cred");
-    for (const l of lines) {
-      box.insertAdjacentHTML("beforeend", l);
-      if (overflows(p)) { box.lastElementChild.remove(); p = mk(); box = p.querySelector(".cred"); box.insertAdjacentHTML("beforeend", l); }
-    }
-  }
 
   function sosPage() {
     const d = html(DB.textos.intoxicacion);
@@ -564,6 +493,7 @@
       ${alarma ? `<p class="sos-alarma">${esc(hasta(alarma, 230))}</p>` : ""}
       <div class="h3" style="margin-top:auto">Anótelo antes de salir</div>
       ${["Alojamiento", "Centro de salud", "Sociedad micológica", "Dónde aparqué"].map(t => `<div class="wi"><span>${t}</span><i></i></div>`).join("")}
+      <p class="cred-linea">Fotos de iNaturalist y Wikimedia Commons con licencia Creative Commons o de dominio público; el autor y la licencia de cada una, en su ficha de <b>caorjavier.github.io/cistella-segura</b>. Uso personal o sin ánimo de lucro.</p>
       ${foot("SOS")}`);
     fit(p, ["dense", ".sos-alarma", p2 => p2.querySelectorAll(".sos-f li").forEach(li => { const b = li.querySelector("b"); li.innerHTML = b ? b.outerHTML : li.innerHTML; })], "sos");
   }
@@ -588,24 +518,22 @@
     root.setProperty("--grad-cap", gradPNG("rgba(0,0,0,0)", "rgba(0,0,0,0.74)"));
     root.setProperty("--grad-paper", gradPNG("rgba(255,255,255,0)", "rgba(255,255,255,1)"));   // papel blanco (ahorro de tinta)
 
+    // Cuaderno breve: sin sumario, sin «tres comprobaciones», sin confusiones aparte (van en cada ficha)
+    // y con los créditos de las fotos en una línea de la contraportada (cada foto, con su autor, en la web)
     portada();
-    tocPage = newPage("guia", "toc-page");
     reglasPage();
     mirarPage();
-    tresPage();
     arbolesPages();
     GROUPS.comestibles.forEach(fichaPage);
-    confusionesPages();
     [...GROUPS.mortales, ...GROUPS.toxicas].forEach(fichaPage);
     sindromesPages();
-    const antesDeCreditos = book.lastElementChild;
-    creditosPages();
+    const antesDeSOS = book.lastElementChild;
     sosPage();
 
-    // si hace falta, páginas de notas para que el total sea múltiplo de 4 (antes de los créditos)
+    // si hace falta, páginas de notas para que el total sea múltiplo de 4 (antes de la contraportada)
     const extra = (4 - (book.children.length % 4)) % 4;
     REPORT.notas = extra;
-    for (let i = 0; i < extra; i++) book.insertBefore(notasPage(), antesDeCreditos.nextElementSibling);
+    for (let i = 0; i < extra; i++) book.insertBefore(notasPage(), antesDeSOS.nextElementSibling);
 
     const pages = [...book.children];
     pages.forEach((p, i) => {
@@ -615,20 +543,6 @@
       const pn = p.querySelector(".pn");
       if (pn) pn.textContent = n;
     });
-
-    const first = sel => { const p = pages.find(sel); return p ? p.dataset.n : ""; };
-    const secFirst = s => first(p => p.dataset.sec === s && !p.classList.contains("toc-page"));
-    fillToc([
-      { t: "Guía", d: "reglas, cómo mirar, árboles", c: SEC.guia.c, n: secFirst("guia") },
-      { t: "Comestibles", d: `${GROUPS.comestibles.length} especies`, c: SEC.comestibles.c, n: secFirst("comestibles") },
-      { t: "Confusiones", d: "las mortales, lado a lado", c: SEC.mortales.c, n: first(p => p.querySelector(".lal")) },
-      { t: "Mortales", d: `${GROUPS.mortales.length} especies`, c: SEC.mortales.c, n: first(p => p.dataset.sec === "mortales" && !p.querySelector(".lal")) },
-      { t: "Tóxicas", d: `${GROUPS.toxicas.length} especies`, c: SEC.toxicas.c, n: secFirst("toxicas") },
-      { t: "Síndromes", d: "según cuándo aparecen los síntomas", c: SEC.anexo.c, n: secFirst("anexo") },
-      { t: "SOS", d: "si alguien se encuentra mal", c: "var(--deadly)", n: secFirst("sos") }
-    ]);
-    const tpn = tocPage.querySelector(".pn");
-    if (tpn) tpn.textContent = tocPage.dataset.n;
 
     document.querySelectorAll(".ref[data-ref]").forEach(r => {
       const t = PAGE_OF[r.dataset.ref];

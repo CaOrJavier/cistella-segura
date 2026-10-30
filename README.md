@@ -2,6 +2,10 @@
 
 Web para **identificar** las setas de Cataluña: 163 fichas en castellano (con los nombres en catalán y científicos), búsqueda por rasgos, seguridad, un quiz con fotos, dos libros en PDF (uno de bolsillo para el bosque y una guía para estudiar) y modo sin internet.
 
+## Idiomas
+
+En **castellano y catalán**: botón **ES · CA** en el menú (se recuerda la elección; si no se elige, se usa el idioma del navegador). Las traducciones están en `datos/ca.js` y las aplica `i18n.js`: los textos de las fichas se cambian antes de pintar la web y los de la interfaz al mostrarse. El quiz está solo en catalán.
+
 ## Qué hay en la web
 
 - **Especies:** buscador con filtros y las 163 fichas: rasgos decisivos, confusiones peligrosas, morfología, hábitat, árboles, calendario, registros en Cataluña y fuentes.
@@ -22,7 +26,7 @@ En la web, botón **⬇ Usar sin internet** (arriba):
 
 Dos libros con las mismas 79 setas, cada uno para una cosa. Se hojean y se descargan en la web (**Libros**).
 
-- **Para llevar al bosque · Setas esenciales, cuaderno de bolsillo A6** (96 páginas, fondo blanco para gastar poca tinta): una página por seta, las 22 confusiones mortales lado a lado y 20 árboles con foto de la hoja y del tronco. En A4 son 12 hojas (24 caras). También en A5, con letra más grande: [A5](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-A5.pdf) o [A4 apaisado para doblar en casa](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-A5-imprimir-A4.pdf) (24 hojas). En [A6](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-bolsillo.pdf) o [A4 para imprimir en casa](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-bolsillo-imprimir-A4.pdf) ([cómo imprimirlo](butxaca/COMO-IMPRIMIR.md)). También en catalán (50 setas): [A6](https://caorjavier.github.io/cistella-segura/offline/cistella-segura-butxaca.pdf) o [A4](https://caorjavier.github.io/cistella-segura/offline/cistella-segura-butxaca-imprimir-A4.pdf).
+- **Para llevar al bosque · Setas esenciales, cuaderno de bolsillo A6** (48 páginas, fondo blanco para gastar poca tinta): las 41 setas imprescindibles (23 comestibles, 9 mortales y 9 tóxicas), una por página, con la altitud a la que salen y, con una foto pequeña, las setas con que se confunden; 8 árboles con foto de la hoja y del tronco, síndromes y SOS. En A4 son 6 hojas (12 caras), un solo cuadernillo. También en A5, con letra más grande: [A5](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-A5.pdf) o [A4 apaisado para doblar en casa](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-A5-imprimir-A4.pdf) (12 hojas). En [A6](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-bolsillo.pdf) o [A4 para imprimir en casa](https://caorjavier.github.io/cistella-segura/offline/setas-esenciales-bolsillo-imprimir-A4.pdf) ([cómo imprimirlo](butxaca/COMO-IMPRIMIR.md)). También en catalán (50 setas): [A6](https://caorjavier.github.io/cistella-segura/offline/cistella-segura-butxaca.pdf) o [A4](https://caorjavier.github.io/cistella-segura/offline/cistella-segura-butxaca-imprimir-A4.pdf).
 - **Para estudiar en casa · *Setas comestibles esenciales de Cataluña*** (A5, 336 páginas): las mismas setas a fondo, cuatro páginas por comestible. En [Releases](https://github.com/CaOrJavier/cistella-segura/releases/tag/guia-2026.1).
 
 El *Cuaderno de campo A5* y el *Catálogo micológico de Cataluña* ya no se ofrecen en la web porque repetían contenido (el cuaderno A5 está entero en el de bolsillo; el catálogo, en las 163 fichas de la web). Sus PDF siguen en [Releases](https://github.com/CaOrJavier/cistella-segura/releases/tag/guia-2026.1).
@@ -31,6 +35,7 @@ El *Cuaderno de campo A5* y el *Catálogo micológico de Cataluña* ya no se ofr
 
 ```
 index.html, app.js, app.css   la web
+i18n.js, datos/ca.js          castellano / catalán (botón ES · CA)
 sw.js, manifest.webmanifest   modo sin internet y app instalable (icono-*.png)
 libros/            páginas de muestra de los libros (para hojearlos antes de descargar)
 datos/db.js        las 163 especies, árboles, textos y vocabulario

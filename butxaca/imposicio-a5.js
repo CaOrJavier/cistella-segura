@@ -20,11 +20,14 @@
     const parts = Math.ceil(N / MAX);
     const mida = Math.ceil(N / parts / 4) * 4;
 
-    // instrucciones resumidas en la página 2 (sumario), si caben
-    const p2 = pages[1];
-    if (p2) {
-      p2.querySelector(".pf")?.insertAdjacentHTML("beforebegin", `<div class="howto-mini"><b>Para montarlo:</b> imprime a doble cara volteando por el <b>borde corto</b>, a tamaño real; ordena las hojas por su número pequeño${parts > 1 ? " (un montón con las A y otro con las B)" : ""}, dobla ${parts > 1 ? "cada montón" : "el montón"} por la mitad y grapa por el pliegue.</div>`);
-      if (p2.scrollHeight > p2.clientHeight + 1) p2.querySelector(".howto-mini").remove();
+    // instrucciones resumidas en la primera página donde quepan: la 2, o si no, desde el final
+    const html = `<div class="howto-mini"><b>Para montarlo:</b> imprime a doble cara volteando por el <b>borde corto</b>, a tamaño real; ordena las hojas por su número pequeño${parts > 1 ? " (un montón con las A y otro con las B)" : ""}, dobla ${parts > 1 ? "cada montón" : "el montón"} por la mitad y grapa por el pliegue.</div>`;
+    for (const p of [pages[1], ...pages.slice(2, -1).reverse()].filter(Boolean)) {
+      const pf = p.querySelector(".pf");
+      if (!pf) continue;
+      pf.insertAdjacentHTML("beforebegin", html);
+      if (p.scrollHeight <= p.clientHeight + 1) break;
+      p.querySelector(".howto-mini").remove();
     }
 
     const out = el("main");

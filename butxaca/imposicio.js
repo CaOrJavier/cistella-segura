@@ -70,10 +70,16 @@
     // Si cap quadernet deixa mitja fulla lliure, les instruccions no hi caben: van, resumides, a la pàgina 2 (sumari)
     const sobra = [];
     for (let s = 0; s < N; s += mida) sobra.push((Math.min(mida, N - s) / 4) % 2 === 1);
-    if (!sobra.some(Boolean) && pages[1]) {
-      const p = pages[1];
-      p.querySelector(".pf")?.insertAdjacentHTML("beforebegin", `<div class="howto-mini"><b>Para montarlo:</b> imprime a doble cara (borde largo, tamaño real), corta las hojas por ✂, ordena las mitades por su número pequeño${parts > 1 ? " (un montón con las A y otro con las B)" : ""}, dobla ${parts > 1 ? "cada montón" : "el montón"} por la mitad y grapa por el pliegue.</div>`);
-      if (p.scrollHeight > p.clientHeight + 1) p.querySelector(".howto-mini").remove();
+    if (!sobra.some(Boolean)) {
+      // en la primera página donde quepan: la 2, o si no, empezando por el final (sin portada ni contraportada)
+      const html = `<div class="howto-mini"><b>Para montarlo:</b> imprime a doble cara (borde largo, tamaño real), corta las hojas por ✂, ordena las mitades por su número pequeño${parts > 1 ? " (un montón con las A y otro con las B)" : ""}, dobla ${parts > 1 ? "cada montón" : "el montón"} por la mitad y grapa por el pliegue.</div>`;
+      for (const p of [pages[1], ...pages.slice(2, -1).reverse()].filter(Boolean)) {
+        const pf = p.querySelector(".pf");
+        if (!pf) continue;
+        pf.insertAdjacentHTML("beforebegin", html);
+        if (p.scrollHeight <= p.clientHeight + 1) break;
+        p.querySelector(".howto-mini").remove();
+      }
     }
 
     const out = el("main");

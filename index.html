@@ -7,6 +7,20 @@
 <title>Cistella Segura · Setas de Cataluña</title>
 <meta name="description" content="Cistella Segura: identifica las setas de Cataluña. 163 fichas con fotos, búsqueda por rasgos, confusiones peligrosas, calendario y seguridad.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M3 16C3 9 9 4 16 4s13 5 13 12c0 1-1 2-2 2H5c-1 0-2-1-2-2z' fill='%23b5501a'/%3E%3Cpath d='M12 18h8l-1 8a3 3 0 0 1-6 0z' fill='%23efe3c8'/%3E%3C/svg%3E">
+<script>
+  // Idioma: el elegido con el botón ES · CA o, si no, el del navegador. En catalán se cargan antes las traducciones.
+  (function () {
+    var l = null;
+    try { l = JSON.parse(localStorage.getItem("setas:idioma")); } catch (e) {}
+    // enlace directo a un idioma: ?lang=ca o ?lang=es (y se recuerda)
+    var q = (location.search.match(/[?&]lang=(es|ca)\b/) || [])[1];
+    if (q) { l = q; try { localStorage.setItem("setas:idioma", JSON.stringify(q)); } catch (e) {} }
+    if (l !== "es" && l !== "ca") l = /^ca\b/i.test(navigator.language || "") ? "ca" : "es";
+    window.IDIOMA = l;
+    document.documentElement.lang = l;
+    if (l === "ca") document.write('<script src="datos/ca.js"><\/script>');
+  })();
+</script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icono-180.png">
 <meta name="apple-mobile-web-app-title" content="Cistella Segura">
@@ -38,6 +52,7 @@
         <a href="#/fuentes">Fuentes</a>
       </div>
     </details>
+    <div class="idioma" role="group" aria-label="Idioma · Llengua"><button type="button" data-idioma="es" lang="es" title="Castellano">ES</button><button type="button" data-idioma="ca" lang="ca" title="Català">CA</button></div>
   </nav>
   <a class="sin-btn" href="#/sin-internet" title="Guarda la web en este dispositivo para usarla sin cobertura"><span aria-hidden="true">⬇</span> <span class="largo">Usar sin internet</span><span class="corto">Guardar</span></a>
 </header>
@@ -55,6 +70,7 @@
 <div id="aviso-red" class="aviso-red" role="status" aria-live="polite" hidden></div>
 <script src="datos/db.js"></script>
 <script src="datos/cistella.js"></script>
+<script src="i18n.js"></script>
 <script src="extra/comun.js"></script>
 <script src="extra/lluvia.js"></script>
 <script src="extra/hallazgos.js"></script>

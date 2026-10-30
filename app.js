@@ -36,7 +36,11 @@
   const nombres = (e, l) => ((e.nombres || {})[l] || []);
   const titulo = (e) => cap(nombres(e, "ca")[0] || nombres(e, "es")[0] || e.nombre);
   const lab = (grupo, k) => { const x = (V[grupo] || {})[k]; return x ? (typeof x === "object" ? x.nombre || x.etiqueta || k : x) : String(k).replace(/_/g, " "); };
-  const arbolNombre = (id) => (ARB[id] ? cap(ARB[id].nombres.es[0]) : id);
+  // Idioma (i18n.js): en catalán, árboles y plantas se nombran primero en catalán
+  const EN_CA = !!(window.I18N && I18N.IDIOMA === "ca");
+  const nomComun = (n) => (EN_CA ? (n.ca && n.ca[0]) || n.es[0] : n.es[0] || (n.ca && n.ca[0])) || "";
+  const otroNombre = (n) => (EN_CA ? `es: ${n.es[0] || ""}` : `ca: ${(n.ca && n.ca[0]) || ""}`);
+  const arbolNombre = (id) => (ARB[id] ? cap(nomComun(ARB[id].nombres)) : id);
   const peligrosa = (e) => (e.confusiones || []).some((c) => ["mortal", "toxica"].includes(c.peligro));
 
   // Texto de búsqueda precalculado
@@ -403,9 +407,9 @@
     for (const f of fs) { if (out.length >= 3) break; if (!out.includes(f)) out.push(f); }
     return out.slice(0, 3);
   }
-  const tarjetaArbol = (a) => `<article class="tarjeta arbol-t"><a class="cubre" href="#/arbol/${a.id}" aria-label="${esc(cap(a.nombres.es[0]))}: ver sus fotos y sus setas"></a>
+  const tarjetaArbol = (a) => `<article class="tarjeta arbol-t"><a class="cubre" href="#/arbol/${a.id}" aria-label="${esc(cap(nomComun(a.nombres)))}"></a>
     <div class="arbol-fotos">${tresFotosArbol(a).map((f) => `<figure><img loading="lazy" src="${f.t}" alt=""><figcaption>${PAPEL_ARBOL[f.papel] || ""}</figcaption></figure>`).join("")}</div>
-    <div class="cuerpo"><h3>${esc(cap(a.nombres.es[0]))}</h3><div class="es">ca: ${esc(a.nombres.ca[0])} · <i>${esc(a.nombre)}</i></div>
+    <div class="cuerpo"><h3>${esc(cap(nomComun(a.nombres)))}</h3><div class="es">${esc(otroNombre(a.nombres))} · <i>${esc(a.nombre)}</i></div>
       ${a.reconocer && a.reconocer.distancia ? `<p class="arbol-lejos">${esc((a.reconocer.distancia.match(/^.*?\.(\s|$)/) || [a.reconocer.distancia])[0].trim())}</p>` : ""}
       <div class="small muted arbol-pie">${(a.setas || []).length} setas asociadas <span aria-hidden="true">→</span></div></div></article>`;
 
@@ -418,7 +422,7 @@
       }).join("")}
       <details class="caja plegable"><summary><b>Los bosques de Cataluña y sus setas</b></summary><div class="texto">${DB.textos.arboles || ""}</div></details>
       <h2>Plantas indicadoras</h2><p class="muted">Informan del suelo, la humedad o el hábitat; no predicen la aparición de ninguna seta.</p>
-      <div class="tabla-scroll"><table class="tabla"><tr><th>Planta</th><th>Indica</th><th>Reconocerla y relación con las setas</th></tr>${DB.plantas.map((p) => `<tr><td><b>${esc(cap(p.nombres.es[0]))}</b> · ${esc(p.nombres.ca[0])}<br><i>${esc(p.nombre)}</i></td><td>${esc((p.indica || []).join(", ").replace(/_/g, " "))}</td><td>${esc(p.reconocer)} ${esc(p.setas)}</td></tr>`).join("")}</table></div>`;
+      <div class="tabla-scroll"><table class="tabla"><tr><th>Planta</th><th>Indica</th><th>Reconocerla y relación con las setas</th></tr>${DB.plantas.map((p) => `<tr><td><b>${esc(cap(nomComun(p.nombres)))}</b> · ${esc(EN_CA ? p.nombres.es[0] : p.nombres.ca[0])}<br><i>${esc(p.nombre)}</i></td><td>${esc((p.indica || []).join(", ").replace(/_/g, " "))}</td><td>${esc(p.reconocer)} ${esc(p.setas)}</td></tr>`).join("")}</table></div>`;
   }
   function vistaArbol(id) {
     const a = ARB[id]; if (!a) return vistaNoEncontrada();
@@ -428,7 +432,7 @@
     galeriaActual = fotosArbol(a).map((f) => ({ ...f, pie: f.pie || PAPEL[f.papel] || "" }));
     const setas = (a.setas || []).map((x) => BYID[x.id]).filter(Boolean);
     app.innerHTML = `<p class="no-print"><a href="#/arboles">← Árboles</a></p>
-      <div class="ficha-cab"><div><div class="tax">${esc(a.familia)}</div><h1>${esc(cap(a.nombres.es[0]))}</h1><div class="nombres">ca: ${esc(a.nombres.ca.join(", "))} · es: ${esc(a.nombres.es.join(", "))}</div><div class="sci"><i>${esc(a.nombre)}</i> <span class="small muted">${esc(a.autor || "")}</span></div></div>${a.autoctono === false ? `<span class="chip">No autóctono</span>` : ""}</div>
+      <div class="ficha-cab"><div><div class="tax">${esc(a.familia)}</div><h1>${esc(cap(nomComun(a.nombres)))}</h1><div class="nombres">ca: ${esc(a.nombres.ca.join(", "))} · es: ${esc(a.nombres.es.join(", "))}</div><div class="sci"><i>${esc(a.nombre)}</i> <span class="small muted">${esc(a.autor || "")}</span></div></div>${a.autoctono === false ? `<span class="chip">No autóctono</span>` : ""}</div>
       <div class="ficha-grid"><div>${galeriaActual.length ? `<div class="galeria-f">${galeriaActual.map((p, i) => `<button data-foto="${i}" style="background-image:url('${i ? p.t : p.g}')" aria-label="Ampliar foto${p.pie ? ": " + esc(p.pie) : ""}">${p.pie ? `<span class="pie-f">${esc(p.pie)}</span>` : ""}</button>`).join("")}</div><div class="creditos">Fotos: ${galeriaActual.map((p) => `${esc(p.autor)} (${esc(p.licencia)})`).join("; ")}</div>` : ""}</div>
       <div>${seccion("Cómo reconocerlo", dl([["De lejos", esc(r.distancia)], ["Corteza", esc(r.corteza)], ["Hojas", esc(r.hojas)], ["Frutos", esc(r.frutos)], ["Parecidos", esc(r.parecidos)], ["Cuándo", esc(r.epoca)], ["En otoño", esc(r.otono)]]))}
       ${seccion("Dónde crece", dl([["Clima", esc(ec.clima)], ["Suelo", esc(ec.suelo)], ["Altitud", esc(ec.altitud)], ["En Cataluña", esc(ec.distribucion)], ["Bosques", esc(ec.bosques)]]))}</div></div>
@@ -611,25 +615,25 @@
   // El cuaderno de campo A5 y el catálogo se retiraron por repetir contenido; sus PDF siguen en las «releases» de GitHub.
   // Las muestras son imágenes sacadas de los PDF: libros/<libro>/pNNN.jpg (grande) y tNNN.jpg (miniatura)
   const MUESTRAS = {
-    bolsillo: { total: 96, pags: [[1, "Portada"], [2, "Sumario"], [3, "Las 12 reglas"], [4, "Cómo mirar una seta"], [5, "Tres comprobaciones"],
-      [6, "Árboles y sus setas, con la hoja y el tronco"], [9, "Árboles y sus setas (continuación)"], [11, "Ficha del rovelló"], [18, "Ficha del cep"], [33, "Ficha del ou de reig"],
-      [58, "Las confusiones mortales, lado a lado"], [62, "Ficha de la farinera borda (mortal)"], [93, "Si alguien se encuentra mal"], [96, "Contraportada: qué hacer ante una intoxicación"]] },
+    bolsillo: { total: 48, pags: [[1, "Portada"], [2, "Las 12 reglas"], [3, "Cómo mirar una seta"], [4, "Árboles y sus setas, con la hoja y el tronco"],
+      [6, "Ficha del rovelló: con qué se confunde, con foto"], [9, "Ficha del cep"], [16, "Ficha del ou de reig"], [30, "Ficha de la farinera borda (mortal)"],
+      [40, "Ficha del pixacà (tóxica)"], [47, "Síndromes: según cuándo aparecen los síntomas"], [48, "Contraportada: qué hacer ante una intoxicación"]] },
     esencial: { total: 336, pags: [[1, "Portada"], [3, "Índice"], [6, "Antes de salir: seguridad"], [11, "Partes de una seta"], [14, "Cómo buscar setas"], [24, "Ficha de árbol: pino carrasco"],
       [176, "Ficha del rovelló (1 de 4)"], [177, "Rovelló: cómo no confundirlo (2 de 4)"], [178, "Rovelló: cuándo y dónde (3 de 4)"], [179, "Rovelló: descripción (4 de 4)"],
       [246, "Ficha de la farinera borda, mortal (1 de 2)"], [247, "Farinera borda: síntomas y confusiones (2 de 2)"], [304, "Calendario de fructificación"], [335, "Cuaderno de campo para anotar las salidas"]] },
   };
   const LIBROS = [
-    { g: "bolsillo", corto: "Cuaderno de bolsillo", uso: "Para llevar al bosque", tit: "Setas esenciales · cuaderno de bolsillo", formato: "96 páginas · A6 (10,5 × 14,8 cm) o A5 (14,8 × 21 cm) · fondo blanco, gasta poca tinta",
-      txt: "Las 79 setas que hay que conocer, una por página: fotos, cómo reconocerla, dónde sale y con qué no confundirla. Con las confusiones mortales lado a lado, los árboles con foto de la hoja y del tronco y qué hacer ante una intoxicación. Cabe en el bolsillo." },
+    { g: "bolsillo", corto: "Cuaderno de bolsillo", uso: "Para llevar al bosque", tit: "Setas esenciales · cuaderno de bolsillo", formato: "48 páginas · A6 (10,5 × 14,8 cm) o A5 (14,8 × 21 cm) · fondo blanco, gasta poca tinta",
+      txt: "Las 41 setas imprescindibles (23 comestibles, 9 mortales y 9 tóxicas), una por página: fotos, cómo reconocerla, en qué meses y a qué altura sale y, con una foto pequeña, con qué se confunde. Con los árboles principales y qué hacer ante una intoxicación. Cabe en el bolsillo." },
     { g: "esencial", corto: "Guía esencial", uso: "Para estudiar en casa", tit: "Setas comestibles esenciales de Cataluña", formato: "336 páginas A5",
-      txt: "Las mismas 79 setas, a fondo: cada comestible en cuatro páginas (fotos, rasgos que hay que comprobar, cómo no confundirla, cuándo y dónde sale), las tóxicas y mortales, los árboles, el calendario y un glosario." },
+      txt: "79 setas a fondo: cada comestible en cuatro páginas (fotos, rasgos que hay que comprobar, cómo no confundirla, cuándo y dónde sale), las tóxicas y mortales, los árboles, el calendario y un glosario." },
   ];
   // Los cuadernos de bolsillo están en la propia web (offline/), no en las «releases» de GitHub
   const BOLSILLO = [
-    { guia: "bolsillo", ed: "A6", uso: "Para leerlo en el móvil o llevarlo a la copistería: pide «cuadernillo A6 a color, a sangre», con espiral o en rústica.", mb: 28.3, pag: 96, url: "offline/setas-esenciales-bolsillo.pdf" },
-    { guia: "bolsillo", ed: "Para imprimir en casa (A4)", uso: "12 hojas A4 a doble cara (24 caras): se cortan por la mitad, se doblan y se grapan en dos cuadernillos.", mb: 28.7, url: "offline/setas-esenciales-bolsillo-imprimir-A4.pdf" },
-    { guia: "bolsillo", ed: "A5 · letra más grande", uso: "El mismo cuaderno en tamaño cuartilla (14,8 × 21 cm): letra y fotos un 40 % más grandes. Para leer en la tableta o llevar a la copistería.", mb: 28.8, pag: 96, url: "offline/setas-esenciales-A5.pdf" },
-    { guia: "bolsillo", ed: "A5 para imprimir en casa (A4)", uso: "24 hojas A4 apaisadas a doble cara (borde corto). No hay que cortar: se doblan por la mitad en dos cuadernillos y se grapan. Gasta el doble de papel que el A6.", mb: 28.8, url: "offline/setas-esenciales-A5-imprimir-A4.pdf" },
+    { guia: "bolsillo", ed: "A6", uso: "Para leerlo en el móvil o llevarlo a la copistería: pide «cuadernillo A6 a color, a sangre», con espiral o grapado.", mb: 15.2, pag: 48, url: "offline/setas-esenciales-bolsillo.pdf" },
+    { guia: "bolsillo", ed: "Para imprimir en casa (A4)", uso: "Solo 6 hojas A4 a doble cara (12 caras): se cortan por la mitad, se doblan juntas y se grapan.", mb: 15.4, url: "offline/setas-esenciales-bolsillo-imprimir-A4.pdf" },
+    { guia: "bolsillo", ed: "A5 · letra más grande", uso: "El mismo cuaderno en tamaño cuartilla (14,8 × 21 cm): letra y fotos un 40 % más grandes. Para leer en la tableta o llevar a la copistería.", mb: 15.5, pag: 48, url: "offline/setas-esenciales-A5.pdf" },
+    { guia: "bolsillo", ed: "A5 para imprimir en casa (A4)", uso: "12 hojas A4 apaisadas a doble cara (borde corto). No hay que cortar: se doblan juntas por la mitad y se grapan. Gasta el doble de papel que el A6.", mb: 15.5, url: "offline/setas-esenciales-A5-imprimir-A4.pdf" },
     { guia: "bolsillo", ed: "En catalán · 50 setas", uso: "Quadern de butxaca, 76 páginas A6 (las muestras de arriba son de la edición en castellano).", mb: 15.4, pag: 76, url: "offline/cistella-segura-butxaca.pdf" },
     { guia: "bolsillo", ed: "En catalán, para imprimir en casa (A4)", uso: "10 hojas A4, un solo cuadernillo.", mb: 15.8, url: "offline/cistella-segura-butxaca-imprimir-A4.pdf" },
   ];
@@ -637,9 +641,9 @@
     bolsillo: `<details class="caja como-imprimir"><summary><b>Cómo imprimirlo en casa</b></summary><ol>
         <li>Descarga el PDF <b>para imprimir en casa (A4)</b>. Imprime a <b>doble cara</b>, volteando por el <b>borde largo</b>, a <b>tamaño real (100 %)</b>.</li>
         <li><b>Corta</b> las hojas por la mitad, por la línea de puntos ✂.</li>
-        <li><b>Ordena</b> las mitades por el número pequeño de abajo: un montón con las A (A 1/12, A 2/12…) y otro con las B (B 1/12…).</li>
-        <li><b>Dobla</b> cada montón por la mitad y <b>grapa</b> por el pliegue con 2 grapas.</li></ol>
-        <p class="small"><b>Versión A5:</b> imprime a doble cara volteando por el <b>borde corto</b>. No se corta nada: ordena las hojas por su número (A y B), dobla cada montón por la mitad y grapa.</p></details>`,
+        <li><b>Ordena</b> las mitades por el número pequeño de abajo (1/12, 2/12…), la 1 encima.</li>
+        <li><b>Dobla</b> el montón por la mitad y <b>grapa</b> por el pliegue con 2 grapas.</li></ol>
+        <p class="small"><b>Versión A5:</b> imprime a doble cara volteando por el <b>borde corto</b>. No se corta nada: ordena las hojas por su número, dóblalas juntas por la mitad y grapa.</p></details>`,
     esencial: `<p class="small muted">Para imprimir: A5 a doble cara sin cambiar el orden de las páginas (cada ficha empieza en página par), papel mate de 100–115 g y espiral o encuadernación cosida para que se abra plano. Para el móvil, la edición <b>ligera</b>.</p>`,
   };
   function paginasLibro(g) {
@@ -670,7 +674,7 @@
     };
     const hay = LIBROS.filter((b) => L.some((l) => l.guia === b.g));
     app.innerHTML = `<h1>Libros en PDF</h1>
-      <p class="ap-intro">Dos libros con las mismas 79 setas: uno pequeño para llevar al bosque y otro grande para estudiar en casa. Hojéalos antes de descargarlos: toca la portada o cualquier página para verla en grande.</p>
+      <p class="ap-intro">Dos libros: uno pequeño para llevar al bosque, con las 41 setas imprescindibles, y otro grande para estudiar en casa, con 79. Hojéalos antes de descargarlos: toca la portada o cualquier página para verla en grande.</p>
       ${hay.length > 2 ? `<div class="libro-saltos">${hay.map((b) => `<button class="btn" data-ir="libro-${b.g}">${esc(b.corto)}</button>`).join("")}</div>` : ""}
       ${hay.length ? hay.map(libro).join("") : `<p class="muted">Los PDF no están disponibles en esta copia de la web.</p>`}
       <p class="small muted">Todos salen de la misma base de datos que esta web. Muchas fotografías tienen licencia CC BY-NC: los PDF son para uso personal o sin ánimo de lucro.</p>`;
@@ -692,7 +696,7 @@
   // Qué se guarda. Siempre: la web, los datos, las fuentes y las miniaturas. Con «todas»: también las fotos y páginas en grande.
   function archivosSinInternet(arbol, todas) {
     return arbol.filter((x) => x.type === "blob").filter(({ path: p }) =>
-      /^(index\.html|app\.js|app\.css|manifest\.webmanifest|icono-\d+\.png)$/.test(p) || /^(datos|extra|fonts)\//.test(p) ||
+      /^(index\.html|app\.js|app\.css|i18n\.js|manifest\.webmanifest|icono-\d+\.png)$/.test(p) || /^(datos|extra|fonts)\//.test(p) ||
       /^fotos\/(t|montnegre\/t)\/[^/]+$/.test(p) || /^libros\/[^/]+\/t\d+\.jpg$/.test(p) ||
       (todas && /^(fotos|libros)\/.+\.(jpe?g|png|webp)$/i.test(p)));
   }

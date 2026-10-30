@@ -48,8 +48,10 @@
     comestible: (id) => ["comestible", "condicionada"].includes(window.CS.estado(id)),
     // rutas de las fotos de la antigua web (fotos/…): la web ya está en la raíz, se usan tal cual
     ruta: (p) => p,
-    MES_CORTO: ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"],
-    MES_LARGO: ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"],
+    // meses según el idioma de la web (i18n.js): castellano o catalán
+    MES_CORTO: window.IDIOMA === "ca" ? ["gen", "febr", "març", "abr", "maig", "juny", "jul", "ag", "set", "oct", "nov", "des"] : ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"],
+    MES_LARGO: window.IDIOMA === "ca" ? ["gener", "febrer", "març", "abril", "maig", "juny", "juliol", "agost", "setembre", "octubre", "novembre", "desembre"] : ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"],
+    Y: window.IDIOMA === "ca" ? " i " : " y ",
     // colores por estado: las mismas variables CSS que los distintivos de la guía (con modo oscuro)
     COLOR: { comestible: "var(--ok)", condicionada: "var(--cond)", toxica: "var(--tox)", mortal: "var(--mortal)", no_comestible: "var(--nulo)", desconocida: "var(--desc)" },
     FONDO: { comestible: "var(--ok-bg)", condicionada: "var(--cond-bg)", toxica: "var(--tox-bg)", mortal: "var(--mortal-bg)", no_comestible: "var(--nulo-bg)", desconocida: "var(--desc-bg)" },

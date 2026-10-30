@@ -61,6 +61,12 @@ img { max-width: 100%; }
   .nav a, .nav .mas summary { font-size: 1.02rem; padding: .6rem .8rem; }
   .nav .mas-menu { position: static; box-shadow: none; border: 0; padding: 0 0 0 .8rem; min-width: 0; background: none; }
 }
+/* Botón de idioma ES · CA */
+.idioma { display: inline-flex; flex: none; margin-left: .3rem; padding: 2px; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); }
+.idioma button { border: 0; background: none; padding: .25rem .6rem; border-radius: 999px; font-size: .8rem; font-weight: 800; letter-spacing: .05em; color: var(--muted); transition: background .15s, color .15s; }
+.idioma button:hover { color: var(--ink); }
+.idioma button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+@media (max-width: 860px) { .idioma { align-self: flex-start; margin: .5rem .8rem .2rem; } .idioma button { padding: .4rem .9rem; font-size: .9rem; } }
 /* Quiz destacado en el menú */
 .nav a.nav-quiz { color: var(--accent-2); }
 .nav a.nav-quiz:hover { background: var(--tox-bg); color: var(--accent-2); }
