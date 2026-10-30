@@ -1,0 +1,436 @@
+/* Cistella Segura · Quadern de butxaca (A6) */
+:root {
+  --paper: #fbf8f1;
+  --paper-2: #f1ece0;
+  --paper-3: #e6dfcd;
+  --ink: #1f2722;
+  --ink-2: #39423b;
+  --muted: #5f685f;
+  --faint: #8d938a;
+  --line: #dcd4c2;
+  --accent: #b5501a;
+  --guide: #7b5b3a;
+  --annex: #3d4a43;
+  --ok: #2f6b3a;
+  --ok-bg: #e2ecdc;
+  --warn: #9c6209;
+  --warn-bg: #f5e7c9;
+  --deadly: #a3201a;
+  --deadly-bg: #f7dcd8;
+  --care: #545a8f;
+  --care-bg: #e4e5f2;
+  --truc: #f4ebd1;
+  --display: "Alegreya", "Palatino Linotype", Georgia, serif;
+  --body: "Alegreya Sans", "Segoe UI", system-ui, sans-serif;
+  --hand: "Caveat", "Segoe Print", cursive;
+}
+
+* { box-sizing: border-box; }
+@page { size: 105mm 148mm; margin: 0; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body {
+  margin: 0;
+  font-family: var(--body);
+  font-size: 7.1pt;
+  line-height: 1.3;
+  color: var(--ink);
+  background: #c6cabe;
+  font-kerning: normal;
+  font-variant-numeric: lining-nums;
+  hyphens: manual;
+}
+#book { display: flex; flex-wrap: wrap; gap: 6mm; padding: 6mm; justify-content: center; }
+
+.page {
+  width: 105mm;
+  height: 148mm;
+  position: relative;
+  overflow: hidden;
+  background: var(--paper);
+  padding: 6.5mm 7mm 5mm;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 3px rgb(0 0 0 / .25), 0 6px 18px rgb(0 0 0 / .08);
+}
+@media print {
+  body { background: none; }
+  #book { display: block; padding: 0; }
+  .page { box-shadow: none; break-after: page; }
+  .page:last-child { break-after: auto; }
+}
+
+p { margin: 0; }
+h1, h2, h3 { margin: 0; font-weight: inherit; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+
+/* ---------- estats ---------- */
+.st-comestible { --st: var(--ok); --st-bg: var(--ok-bg); }
+.st-mortal { --st: var(--deadly); --st-bg: var(--deadly-bg); }
+.st-toxic { --st: var(--warn); --st-bg: var(--warn-bg); }
+.st-precaucio { --st: var(--care); --st-bg: var(--care-bg); }
+
+/* ---------- pestanyes del marge ---------- */
+.tab {
+  position: absolute;
+  top: var(--tab-y);
+  height: 19mm;
+  width: 3.3mm;
+  background: var(--tab-c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+.recto .tab { right: 0; border-radius: 1mm 0 0 1mm; }
+.verso .tab { left: 0; border-radius: 0 1mm 1mm 0; }
+.tab span {
+  writing-mode: vertical-rl;
+  font-size: 4.3pt;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #fff;
+  white-space: nowrap;
+}
+.verso .tab span { transform: rotate(180deg); }
+
+/* ---------- peu de pagina ---------- */
+.pf {
+  margin-top: auto;
+  padding-top: 1.6mm;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 4.9pt;
+  font-weight: 700;
+  color: var(--faint);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.pf .pn { font-family: var(--display); font-style: italic; font-weight: 500; font-size: 7pt; letter-spacing: 0; text-transform: none; color: var(--muted); }
+.verso .pf { flex-direction: row-reverse; }
+
+/* llistes que s'estiren per omplir la pagina */
+.spread { flex: 1 1 auto; display: flex; flex-direction: column; }
+.spread > li { flex: 1 1 auto; align-content: center; }
+
+/* ---------- elements comuns ---------- */
+.kicker { font-size: 5.1pt; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; color: var(--accent); margin-bottom: .9mm; }
+.pt { font-family: var(--display); font-weight: 800; font-size: 16pt; line-height: 1; letter-spacing: -.01em; }
+.ps { font-family: var(--display); font-style: italic; font-size: 7pt; color: var(--muted); margin: 1mm 0 2.6mm; line-height: 1.25; }
+.h3 { font-size: 5.3pt; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin: 2.4mm 0 1.1mm; display: flex; align-items: center; gap: 1.4mm; }
+.h3::after { content: ""; flex: 1; height: .2mm; background: var(--line); }
+.lab { font-size: 5.1pt; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--st, var(--accent)); margin-right: .9mm; }
+.ref { font-weight: 800; color: var(--accent); white-space: nowrap; font-size: 5.6pt; }
+.d { display: inline-block; width: 1.7mm; height: 1.7mm; border-radius: 50%; background: var(--st); vertical-align: .05mm; }
+.pill { display: inline-block; background: var(--st); color: #fff; border-radius: .8mm; padding: .35mm 1.3mm .25mm; letter-spacing: .1em; font-size: 5.1pt; font-weight: 800; text-transform: uppercase; line-height: 1.3; }
+.redbar { background: var(--deadly); color: #fff; border-radius: 1.2mm; padding: 1.4mm 2mm; font-weight: 800; text-align: center; font-size: 7pt; letter-spacing: .01em; }
+.note { font-size: 5.8pt; color: var(--muted); line-height: 1.3; }
+svg { display: block; }
+
+/* =========================================================
+   FITXA DE BOLET
+   ========================================================= */
+.sp-head { position: relative; }
+.kick { display: flex; align-items: center; gap: 1.6mm; font-size: 5.1pt; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.lvl { display: inline-flex; gap: .5mm; align-items: center; }
+.lvl i { width: 1.45mm; height: 1.45mm; border-radius: 50%; border: .25mm solid var(--st); }
+.lvl i.on { background: var(--st); }
+.lvl b { margin-left: .6mm; font-weight: 700; }
+.q { margin-left: auto; font-family: var(--display); font-style: italic; font-weight: 700; text-transform: none; letter-spacing: 0; font-size: 7pt; color: var(--st); }
+h1.name { font-family: var(--display); font-weight: 800; font-size: 19pt; line-height: .98; margin: 1.5mm 0 .5mm; letter-spacing: -.012em; }
+.lat { font-family: var(--display); font-size: 6.8pt; color: var(--muted); line-height: 1.2; }
+.lat i { font-weight: 500; }
+.lede { font-family: var(--display); font-style: italic; font-size: 7.1pt; line-height: 1.27; margin-top: 1.3mm; color: var(--ink-2); }
+
+/* capçalera vermella per als mortals */
+.st-mortal .sp-head { background: var(--deadly); color: #fff; margin: -6.5mm -7mm 0; padding: 6mm 7mm 2.8mm; }
+.st-mortal .sp-head .pill { background: #fff; color: var(--deadly); }
+.st-mortal .kick, .st-mortal .lat, .st-mortal .lede { color: rgb(255 255 255 / .86); }
+.st-mortal .q { color: #fff; }
+
+/* fotos */
+.ph {
+  flex: 1 1 0;
+  min-height: 36mm;
+  max-height: 76mm;
+  display: grid;
+  grid-template-columns: 1.62fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 1mm;
+  margin: 2.3mm 0 2mm;
+}
+.ph.one { grid-template-columns: 1fr; grid-template-rows: 1fr; }
+.ph.two { grid-template-rows: 1fr; }
+.ph-main { grid-row: 1 / span 2; }
+.ph.two .ph-main { grid-row: auto; }
+figure { margin: 0; position: relative; overflow: hidden; border-radius: 1.3mm; background: var(--paper-3); min-height: 0; min-width: 0; }
+figure img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+figcaption {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 3.6mm 1.5mm .95mm;
+  font-size: 5.2pt; line-height: 1.17; color: #fff;
+  /* Degradat com a imatge PNG (--grad-cap, generat a butxaca.js): els degradats CSS amb
+     transparencia surten de color rosa en alguns visors de PDF. */
+  background: var(--grad-cap) 0 0 / 100% 100% no-repeat;
+}
+
+/* fitxa rapida */
+.facts {
+  display: flex; flex-wrap: wrap; align-items: center; column-gap: 2.2mm; row-gap: .8mm;
+  padding: 1.1mm 0; border-top: .2mm solid var(--line); border-bottom: .2mm solid var(--line);
+  font-size: 5.7pt; font-weight: 500; color: var(--ink-2); margin-bottom: 1.9mm;
+}
+.mes { display: inline-flex; gap: .22mm; }
+.mes span { width: 2.4mm; height: 3.1mm; display: grid; place-items: center; font-size: 4.1pt; font-weight: 800; background: var(--paper-2); color: var(--faint); border-radius: .4mm; line-height: 1; }
+.mes span.on { background: var(--st, var(--ok)); color: #fff; }
+.fct { display: inline-flex; align-items: center; gap: .7mm; white-space: nowrap; }
+.fct svg { width: 2.7mm; height: 2.7mm; fill: var(--st); }
+
+/* textos */
+.txt p { margin-bottom: .75mm; }
+.txt .desc p { text-wrap: pretty; }
+.checks { margin: 1.1mm 0 .4mm; }
+.checks h3, .conf h3 { font-size: 5.1pt; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .5mm; }
+.checks h3 { color: var(--ok); }
+.checks li, .conf li { position: relative; padding-left: 2.6mm; margin: .3mm 0; }
+.checks li::before { content: "✓"; position: absolute; left: 0; color: var(--ok); font-weight: 800; }
+.conf { margin-top: 1.3mm; padding: 1.3mm 1.8mm 1.3mm; border-radius: 1.2mm; background: var(--deadly-bg); border-left: .8mm solid var(--deadly); }
+.conf h3 { color: var(--deadly); }
+.conf li::before { content: "✕"; position: absolute; left: 0; top: .1mm; color: var(--deadly); font-weight: 800; font-size: 5.6pt; }
+.conf b { font-weight: 800; }
+.sp:not(.st-comestible) .conf { background: var(--paper-2); border-left-color: var(--ok); }
+.sp:not(.st-comestible) .conf h3 { color: var(--ok); }
+.sp:not(.st-comestible) .conf li::before { content: "≈"; color: var(--ok); font-size: 7.4pt; top: -.55mm; }
+.perill { margin-top: 1.2mm; padding: 1.2mm 1.8mm; border: .3mm solid var(--st); border-radius: 1.2mm; background: #fff8; }
+.truc { margin-top: 1.3mm; padding: 1.2mm 1.8mm; background: var(--truc); border-radius: 1.2mm; }
+.truc .lab { color: var(--warn); }
+.st-mortal .truc { background: var(--deadly); color: #fff; font-weight: 700; }
+.st-mortal .truc .lab { color: #ffd9d4; }
+.nota { font-size: 5.9pt; color: var(--muted); margin-top: 1.2mm; line-height: 1.28; }
+
+/* ajustos quan no hi cap */
+.tight .ph { min-height: 30mm; margin: 1.8mm 0 1.6mm; }
+.tight .facts { margin-bottom: 1.4mm; }
+.dense .txt { font-size: 6.7pt; line-height: 1.26; }
+.denser .txt { font-size: 6.3pt; line-height: 1.22; }
+.denser .ph { min-height: 26mm; }
+
+/* =========================================================
+   PORTADA
+   ========================================================= */
+.cover { padding: 0; }
+.cv-img { position: relative; height: 101mm; flex: none; }
+.cv-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cv-img::after { content: ""; position: absolute; inset: auto 0 0 0; height: 14mm; background: var(--grad-paper) 0 0 / 100% 100% no-repeat; }
+.cv-ed { position: absolute; top: 5.5mm; left: 7mm; right: 7mm; display: flex; justify-content: space-between; font-size: 5pt; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: #fff; text-shadow: 0 0 2mm rgb(0 0 0 / .6); z-index: 1; }
+.cv-body { padding: 0 7.5mm 6mm; margin-top: -6mm; position: relative; display: flex; flex-direction: column; flex: 1; }
+.cv-t { font-family: var(--display); font-weight: 800; font-size: 31pt; line-height: .9; letter-spacing: -.02em; }
+.cv-t em { font-style: italic; font-weight: 700; color: var(--accent); }
+.cv-s { font-size: 7.4pt; line-height: 1.32; color: var(--ink-2); margin-top: 2.2mm; }
+.cv-stats { display: flex; flex-wrap: wrap; gap: 1mm 3mm; margin-top: 2.6mm; font-size: 5.6pt; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.cv-stats span { display: inline-flex; align-items: center; gap: 1mm; }
+.cv-sos { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 2mm; border-top: .25mm solid var(--deadly); padding-top: 1.8mm; }
+.cv-sos b { font-family: var(--display); font-size: 9pt; font-weight: 800; color: var(--deadly); }
+.cv-sos span { font-size: 5.6pt; color: var(--muted); text-align: right; line-height: 1.25; }
+.cv-sos span strong { color: var(--ink); font-size: 6.6pt; }
+
+/* =========================================================
+   SUMARI I LLEGENDA
+   ========================================================= */
+.toc li { display: flex; align-items: center; gap: 1.6mm; padding: 1.15mm 0; border-bottom: .2mm dotted var(--line); }
+.toc .sw { width: 2.4mm; height: 3.6mm; border-radius: .5mm; flex: none; }
+.toc .tn { font-weight: 800; font-size: 7.8pt; }
+.toc .td { color: var(--muted); font-size: 6.2pt; }
+.toc .tp { margin-left: auto; font-family: var(--display); font-style: italic; font-weight: 700; font-size: 8pt; color: var(--accent); }
+.legend { display: grid; grid-template-columns: auto 1fr; gap: 1.7mm 2.4mm; align-items: center; font-size: 6.4pt; }
+.legend .k { display: flex; gap: .8mm; align-items: center; }
+.disclaimer { margin-top: 2.4mm; padding: 1.4mm 1.8mm; border-radius: 1.2mm; background: var(--paper-2); font-size: 6pt; color: var(--ink-2); }
+
+/* =========================================================
+   NORMES
+   ========================================================= */
+.normes li { display: grid; grid-template-columns: 4.6mm 1fr; gap: 0 1.4mm; padding: .9mm 0; border-bottom: .2mm solid var(--paper-3); }
+.normes li:last-child { border-bottom: 0; }
+.normes .nn { font-family: var(--display); font-weight: 800; font-size: 11pt; line-height: .9; color: var(--accent); text-align: right; }
+.normes b { font-weight: 800; display: block; font-size: 7.6pt; line-height: 1.2; }
+.normes span { color: var(--muted); font-size: 6.7pt; line-height: 1.25; }
+.normes li:last-child b { color: var(--deadly); }
+.motxilla { margin-top: auto; padding: 1.5mm 2mm; background: var(--paper-2); border-radius: 1.2mm; font-size: 6.1pt; line-height: 1.35; }
+.motxilla .hand { font-family: var(--hand); font-size: 10pt; font-weight: 700; color: var(--accent); line-height: 1; margin-right: 1mm; }
+
+/* =========================================================
+   COM MIRAR UN BOLET
+   ========================================================= */
+.anat { width: 100%; height: auto; margin: -1mm 0 0; }
+.anat text { font-family: var(--body); font-size: 6px; font-weight: 700; fill: var(--ink); }
+.anat .n { fill: var(--accent); font-weight: 800; }
+.anat .r { fill: var(--deadly); }
+.anat .hint { font-weight: 500; fill: var(--muted); font-size: 4.8px; }
+.mirar { display: grid; grid-template-columns: 1fr 1fr; gap: .9mm 3mm; }
+.mirar li { display: grid; grid-template-columns: 3mm 1fr; font-size: 6.1pt; line-height: 1.25; }
+.mirar .nn { font-family: var(--display); font-weight: 800; color: var(--accent); font-size: 8pt; line-height: 1; }
+.mirar b { font-weight: 800; }
+.formes { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.2mm; text-align: center; }
+.formes svg { width: 100%; height: 8mm; fill: var(--guide); stroke: var(--guide); }
+.formes b { display: block; font-size: 5.8pt; font-weight: 800; margin-top: .6mm; line-height: 1.1; }
+.formes span { display: block; font-size: 5.2pt; color: var(--muted); line-height: 1.15; }
+.edat { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1mm; }
+.edat figure { height: 14mm; border-radius: 1mm; }
+.edat figcaption { padding: 2.6mm 1.1mm .7mm; font-size: 5.3pt; font-weight: 700; }
+.edat figcaption b { color: #9fe0a6; }
+.edat figcaption b.no { color: #ff9b8f; }
+.edat-t { font-family: var(--display); font-style: italic; font-size: 6.4pt; color: var(--muted); margin: -.4mm 0 1mm; }
+
+/* =========================================================
+   DESCARTS
+   ========================================================= */
+.desc-list li { display: grid; grid-template-columns: 7.5mm 1fr auto; gap: 1.6mm; align-items: center; padding: .65mm 0; border-bottom: .2mm solid var(--paper-3); }
+.desc-list li:last-child { border-bottom: 0; }
+.desc-list .th { width: 7.5mm; height: 7.5mm; border-radius: 50%; overflow: hidden; position: relative; background: var(--paper-3); }
+.desc-list .th img { width: 100%; height: 100%; object-fit: cover; }
+.desc-list .th.x { display: grid; place-items: center; color: var(--deadly); font-weight: 800; font-size: 9pt; background: var(--deadly-bg); }
+.desc-list b { display: block; font-weight: 800; font-size: 6.8pt; line-height: 1.15; }
+.desc-list b::before { content: "✕ "; color: var(--deadly); }
+.desc-list span { font-size: 6pt; color: var(--muted); line-height: 1.2; display: block; }
+
+/* =========================================================
+   INDEX VISUAL
+   ========================================================= */
+.ix-grid { display: grid; grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(5, 1fr); gap: 1.6mm 1.3mm; flex: 1 1 auto; min-height: 0; }
+.ix { display: flex; flex-direction: column; min-height: 0; }
+.ix .ix-im { position: relative; flex: 1 1 auto; min-height: 10mm; border-radius: 1mm; overflow: hidden; background: var(--paper-3); }
+.ix .ix-im img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.ix .ix-im::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: .7mm; background: var(--st); }
+.ix-n { display: flex; justify-content: space-between; gap: .6mm; margin-top: .6mm; font-size: 5.2pt; line-height: 1.12; font-weight: 700; }
+.ix-n .ref { font-family: var(--display); font-style: italic; font-size: 6pt; font-weight: 700; }
+.ix-legend { display: flex; gap: 3mm; font-size: 5.5pt; color: var(--muted); font-weight: 700; margin: -1mm 0 2mm; text-transform: uppercase; letter-spacing: .06em; }
+.ix-legend span { display: inline-flex; align-items: center; gap: .8mm; }
+
+/* =========================================================
+   CALENDARI
+   ========================================================= */
+.cal { display: grid; grid-template-columns: 1fr auto 17mm; column-gap: 2mm; align-items: center; }
+.cal .hd { font-size: 4.8pt; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding-bottom: .6mm; border-bottom: .25mm solid var(--ink-2); }
+.cal .row { display: contents; }
+.cal .cn, .cal .mes, .cal .pl { border-bottom: .2mm solid var(--paper-3); padding: .4mm 0; }
+.cal .cn { font-size: 6.1pt; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; justify-content: space-between; gap: 1mm; }
+.cal .cn .ref { font-family: var(--display); font-style: italic; font-size: 5.8pt; }
+.cal .mes span { width: 2.6mm; height: 2.7mm; }
+.cal .grp { grid-column: 1 / -1; font-size: 4.9pt; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--ok); padding: 1.3mm 0 .3mm; }
+.pl { position: relative; height: 3.8mm; }
+.pl .axis { position: absolute; left: 0; right: 0; top: 50%; height: .2mm; background: var(--line); }
+.pl i { position: absolute; top: calc(50% - .75mm); height: 1.5mm; border-radius: .75mm; background: #7fa6c9; }
+.pl b { position: absolute; top: calc(50% - 1.05mm); width: 2.1mm; height: 2.1mm; margin-left: -1.05mm; border-radius: 50%; background: #2f5f8a; border: .3mm solid #fff; }
+.pl-scale { position: relative; height: 2.4mm; display: block; }
+.pl-scale span { position: absolute; transform: translateX(-50%); font-size: 4.6pt; font-weight: 700; color: var(--muted); white-space: nowrap; bottom: 0; }
+.cal-note { margin-top: 2mm; font-size: 5.8pt; color: var(--muted); display: flex; gap: 2.5mm; align-items: center; flex-wrap: wrap; }
+.cal-note .pl { display: inline-block; width: 12mm; height: 2.4mm; vertical-align: middle; }
+
+/* =========================================================
+   BOSCOS
+   ========================================================= */
+.bosc { padding: 1.3mm 0 1.4mm; border-bottom: .2mm solid var(--paper-3); }
+.bosc:last-child { border-bottom: 0; }
+.bosc h3 { font-family: var(--display); font-weight: 800; font-size: 8.6pt; line-height: 1.05; display: flex; justify-content: space-between; gap: 2mm; align-items: baseline; }
+.bosc h3 small { font-family: var(--body); font-size: 5.3pt; font-weight: 700; color: var(--muted); letter-spacing: .06em; white-space: nowrap; }
+.bosc .curt { font-family: var(--display); font-style: italic; font-size: 6.5pt; color: var(--ink-2); margin: .3mm 0 .6mm; line-height: 1.2; }
+.bosc .ll { font-size: 6.1pt; line-height: 1.3; }
+.bosc .ll + .ll { margin-top: .2mm; }
+.bosc .ll .lab { font-size: 4.9pt; }
+.bosc .ok { --st: var(--ok); }
+.bosc .ko { --st: var(--deadly); }
+.bosc .nm { white-space: nowrap; }
+.bosc .nm .ref { font-family: var(--display); font-style: italic; font-size: 5.6pt; font-weight: 700; margin-left: .3mm; }
+
+/* =========================================================
+   CARA A CARA
+   ========================================================= */
+.cc { padding: 1.2mm 0 1.7mm; border-bottom: .3mm solid var(--line); }
+.cc:last-child { border-bottom: 0; }
+.cc h3 { font-family: var(--display); font-weight: 800; font-size: 9pt; line-height: 1.08; }
+.cc .dif { display: inline-flex; align-items: center; gap: .5mm; font-family: var(--body); font-size: 4.9pt; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-left: 1mm; vertical-align: .4mm; }
+.cc .dif i { width: 1.3mm; height: 1.3mm; border-radius: 50%; border: .25mm solid var(--accent); }
+.cc .dif i.on { background: var(--accent); }
+.cc .clau { margin: .6mm 0 1.1mm; font-size: 6.4pt; line-height: 1.25; padding-left: 2mm; border-left: .6mm solid var(--accent); }
+.cc .clau b { color: var(--accent); }
+.cc table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 5.9pt; line-height: 1.2; }
+.cc th, .cc td { text-align: left; vertical-align: top; padding: .6mm .8mm; }
+.cc thead th { padding-bottom: .9mm; }
+.cc tbody th { font-size: 4.9pt; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); width: 15mm; padding-left: 0; }
+.cc tbody tr + tr th, .cc tbody tr + tr td { border-top: .2mm solid var(--paper-3); }
+.cc tbody td { font-weight: 500; }
+.cc-h { display: flex; flex-direction: column; gap: .6mm; }
+.cc-h .im { position: relative; height: 10mm; border-radius: .9mm; overflow: hidden; background: var(--paper-3); }
+.cc-h .im img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cc-h .im::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: .7mm; background: var(--st); }
+.cc-h b { font-size: 6.2pt; font-weight: 800; line-height: 1.1; color: var(--st); }
+.cc-h .ref { font-size: 5.2pt; }
+
+/* =========================================================
+   ANNEX: A CASA, MITES, SOS
+   ========================================================= */
+.chk li { display: grid; grid-template-columns: 3.6mm 1fr; gap: 1.4mm; padding: .7mm 0; align-items: center; font-size: 7.3pt; line-height: 1.25; }
+.chk .bx { width: 3.1mm; height: 3.1mm; border: .3mm solid var(--ink-2); border-radius: .6mm; }
+.chk b { font-weight: 800; }
+.chk span span { color: var(--muted); }
+.list2 li { padding: .7mm 0; border-bottom: .2mm solid var(--paper-3); font-size: 6.9pt; line-height: 1.27; }
+.list2 li:last-child { border-bottom: 0; }
+.list2 b { font-weight: 800; }
+.list2 span { color: var(--muted); }
+.mites li { display: grid; grid-template-columns: 7mm 1fr; gap: 1.4mm; padding: .8mm 0; border-bottom: .2mm solid var(--paper-3); font-size: 6.9pt; line-height: 1.25; }
+.mites li:last-child { border-bottom: 0; }
+.mites .fals { font-size: 4.5pt; font-weight: 800; letter-spacing: .08em; color: #fff; background: var(--deadly); border-radius: .6mm; text-align: center; padding: .4mm 0 .3mm; align-self: start; margin-top: .3mm; }
+.mites b { font-weight: 700; font-style: italic; display: block; }
+.mites span { color: var(--muted); }
+
+.sos-page { background: var(--deadly); color: #fff; }
+.sos-page .kicker { color: #ffd2cb; }
+.sos-page .pt { color: #fff; }
+.sos-nums { display: grid; gap: 1.6mm; margin: 2.4mm 0 2.6mm; }
+.sos-num { background: #fff; color: var(--ink); border-radius: 1.6mm; padding: 1.6mm 2.4mm; display: flex; align-items: center; justify-content: space-between; gap: 2mm; }
+.sos-num strong { font-family: var(--display); font-weight: 800; font-size: 20pt; color: var(--deadly); line-height: 1; letter-spacing: .01em; }
+.sos-num span { font-size: 6.2pt; line-height: 1.25; color: var(--ink-2); text-align: right; }
+.sos-num span b { display: block; color: var(--ink); font-size: 6.6pt; }
+.sos-t li { display: grid; grid-template-columns: 12mm 1fr; gap: 1.6mm; padding: 1mm 0; border-top: .2mm solid rgb(255 255 255 / .3); font-size: 6.9pt; line-height: 1.25; }
+.sos-t strong { font-family: var(--display); font-weight: 800; font-size: 9pt; line-height: 1.05; }
+.sos-page .h3 { color: #ffd2cb; }
+.sos-page .h3::after { background: rgb(255 255 255 / .35); }
+.sos-f li { position: relative; padding-left: 3mm; margin: .6mm 0; font-size: 6.9pt; line-height: 1.25; }
+.wi { display: flex; align-items: flex-end; gap: 2mm; height: 6.2mm; font-size: 5.6pt; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #ffd2cb; }
+.wi i { flex: 1; border-bottom: .25mm solid rgb(255 255 255 / .55); }
+.sos-f li::before { content: "→"; position: absolute; left: 0; font-weight: 800; }
+.sos-page .pf { color: rgb(255 255 255 / .7); }
+.sos-page .pf .pn { color: #fff; }
+
+/* =========================================================
+   LES MEVES TROBALLES
+   ========================================================= */
+.log { display: grid; grid-template-columns: 12mm 1fr 1fr; flex: 1; }
+.log .lh { font-size: 4.9pt; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); border-bottom: .3mm solid var(--ink-2); padding-bottom: .6mm; align-self: end; }
+.log .lc { border-bottom: .2mm solid var(--line); }
+.log .lc + .lc { border-left: .2mm dotted var(--line); }
+.log-hint { font-family: var(--hand); font-size: 10pt; color: var(--accent); line-height: 1; margin: -1mm 0 1.6mm; }
+
+/* =========================================================
+   CREDITS
+   ========================================================= */
+.glossa { column-count: 2; column-gap: 3.6mm; font-size: 7.3pt; line-height: 1.27; }
+.glossa p { break-inside: avoid; margin-bottom: 1.5mm; }
+.glossa b { font-family: var(--display); font-weight: 800; font-size: 8.4pt; color: var(--guide); margin-right: .7mm; }
+.g-small .glossa { font-size: 6.7pt; }
+.g-small .glossa b { font-size: 7.8pt; }
+.g-smaller .glossa { font-size: 6.2pt; }
+
+.alfa { column-count: 3; column-gap: 3mm; font-size: 6pt; line-height: 1.32; }
+.alfa p { display: flex; align-items: baseline; gap: .8mm; break-inside: avoid; padding: .18mm 0; }
+.alfa p.alt { color: var(--muted); font-style: italic; }
+.alfa p:not(.alt) { font-weight: 700; }
+.alfa .d { width: 1.3mm; height: 1.3mm; flex: none; align-self: center; }
+.alfa p.alt .d { background: none; }
+.alfa .ref { margin-left: auto; font-family: var(--display); font-style: italic; font-size: 6pt; font-weight: 700; }
+.alfa .lt { font-family: var(--display); font-weight: 800; font-size: 8pt; color: var(--accent); padding-top: .8mm; }
+
+.cred { column-count: 2; column-gap: 3.4mm; font-size: 4.6pt; line-height: 1.28; color: var(--ink-2); }
+.cred p { break-inside: avoid; margin-bottom: .55mm; }
+.cred b { font-weight: 800; color: var(--ink); }

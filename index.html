@@ -2909,7 +2909,12 @@ const SECCIO = {
   sos: { t: "Si algú es troba malament", d: "Telèfons i què fer en cas d'intoxicació.", sos: true },
   bolet: { t: "Fitxa" }
 };
-const TILES = ["avui", "bolets", "mapa", "explora", "pluja", "cara-a-cara", "aprendre", "seguretat", "troballes", "test", "sos"];
+// Parts del projecte que són fora d'aquesta pàgina (carpetes quiz/ i guia/)
+const EXTERN = {
+  guia: { t: "Guia completa", d: "163 fitxes en castellà, calendari, arbres, quadern de camp i llibres en PDF.", f: ["rossinyol", 0], href: "guia/" },
+  quiz: { t: "Quiz de bolets", d: "66 bolets i més de mil fotos: endevina'ls i aprèn a distingir-los.", f: ["muscaria", 1], href: "quiz/" }
+};
+const TILES = ["avui", "bolets", "guia", "mapa", "explora", "pluja", "cara-a-cara", "aprendre", "seguretat", "troballes", "test", "quiz", "sos"];
 function miniMap(ids) {
   if (!MAPA.w) return "";
   const dots = ids.flatMap((id, c) => { const p = MAPA.pts[id] || [], o = []; for (let i = 0; i < p.length; i += 2) o.push(`<circle cx="${p[i]}" cy="${p[i + 1]}" r="2.6" style="fill:${IM_COL[c]}"/>`); return o; });
@@ -2921,15 +2926,15 @@ function renderHome() {
     return `<a class="classic-card" href="#/bolet/${b.id}">${f ? `<img src="${P(f.th)}" alt="" loading="${LOAD}">` : ""}<b>${esc(b.nom)}</b><small>${esc(b.qualitat || "")}</small></a>`;
   }).join("");
   $("#tiles").innerHTML = TILES.map(k => {
-    const t = SECCIO[k], f = t.f && fotos(t.f[0])[t.f[1]];
+    const t = SECCIO[k] || EXTERN[k], f = t.f && fotos(t.f[0])[t.f[1]];
     const media = t.map ? `<span class="tile-map">${miniMap(["rovello", "cep"])}</span>` : t.sos ? `<span class="tile-sos">112</span>`
       : t.avui ? `<span class="tile-avui"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 15a4 4 0 0 1-.6-8A5.5 5.5 0 0 1 17 8a3.5 3.5 0 0 1 .5 7z" fill="currentColor" opacity=".85"/><path d="M8 18l-1 3M12 18l-1 3M16 18l-1 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>`
       : f ? `<img src="${P(f.th)}" alt="" loading="${LOAD}">` : "";
-    return `<a class="tile${t.sos ? " sos" : ""}" href="#/${k}">${media}<span class="tx"><b>${esc(t.t)}</b><small>${esc(t.d)}</small></span></a>`;
+    return `<a class="tile${t.sos ? " sos" : ""}" href="${t.href || "#/" + k}">${media}<span class="tx"><b>${esc(t.t)}</b><small>${esc(t.d)}</small></span></a>`;
   }).join("");
 }
 function renderMenu() {
-  $("#menu-list").innerHTML = `<li><a href="#/">Inici</a></li>` + TILES.map(k => `<li><a href="#/${k}" data-nav="${k}">${esc(SECCIO[k].t)}</a></li>`).join("")
+  $("#menu-list").innerHTML = `<li><a href="#/">Inici</a></li>` + TILES.map(k => EXTERN[k] ? `<li><a href="${EXTERN[k].href}">${esc(EXTERN[k].t)}</a></li>` : `<li><a href="#/${k}" data-nav="${k}">${esc(SECCIO[k].t)}</a></li>`).join("")
     + `<li><button type="button" data-open-book="">Obre el llibre</button></li><li><a href="#offline" data-offline-link hidden>Descarrega-la per al bosc</a></li>`;
   const btn = $("#menu-btn"), menu = $("#menu");
   const set = open => { menu.hidden = !open; btn.setAttribute("aria-expanded", String(open)); };

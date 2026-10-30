@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2f5d3a">
+<title>Setas de Cataluña</title>
+<meta name="description" content="Guía y catálogo de las setas de Cataluña: buscador, filtros, fichas, comparador, árboles y calendario.">
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="top">
+  <a class="marca" href="#/">Setas de Cataluña</a>
+  <button class="menu-btn" aria-label="Menú" aria-expanded="false">☰</button>
+  <nav class="nav" aria-label="Secciones">
+    <a href="#/">Especies</a>
+    <a href="#/cuaderno">Cuaderno</a>
+    <a href="#/rasgos">Por rasgos</a>
+    <a href="#/comparar">Comparar</a>
+    <a href="#/calendario">Calendario</a>
+    <a href="#/arboles">Árboles</a>
+    <a href="#/habitats">Hábitats</a>
+    <a href="#/taxonomia">Familias</a>
+    <a href="#/galeria">Galería</a>
+    <a href="#/inventario">Inventario</a>
+    <a href="#/guia/seguridad">Guía</a>
+    <a href="#/fuentes">Fuentes</a>
+    <a href="#/libros">Libros PDF</a>
+    <a href="../">Cistella Segura</a>
+  </nav>
+</header>
+<div class="aviso-global" role="note">
+  <b>Ninguna web, guía, foto ni aplicación certifica que una seta sea comestible.</b> Ante la duda, no la recolecte para comer.
+  Intoxicación: <b>112</b> · Información Toxicológica 24 h: <b>91 562 04 20</b>.
+  <a href="#/guia/intoxicacion">Qué hacer</a>
+</div>
+<main id="app" tabindex="-1"></main>
+<footer class="pie">
+  <div id="pie-meta"></div>
+  <div>Nombres según Catalogue of Life (Species Fungorum); registros de GBIF e iNaturalist; fotografías con licencia Creative Commons, con su autoría en cada ficha. <a href="#/fuentes">Fuentes</a> · <a href="#/calidad">Datos inciertos</a></div>
+</footer>
+<div id="visor" class="visor" hidden></div>
+<script src="datos/db.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

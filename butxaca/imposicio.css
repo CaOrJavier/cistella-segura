@@ -1,0 +1,37 @@
+/* Versio per imprimir a casa: fulls A4 amb 4 pagines A6 per cara */
+@page { size: 210mm 297mm; margin: 0; }
+
+body { background: #8f948a; }
+#sheets { display: flex; flex-direction: column; align-items: center; gap: 8mm; padding: 8mm; }
+.a4 { width: 210mm; height: 297mm; position: relative; overflow: hidden; background: #fff; box-shadow: 0 2px 10px rgb(0 0 0 / .3); flex: none; }
+.a5 { position: absolute; left: 0; width: 210mm; height: 148.5mm; }
+.a5.top { top: 0; }
+.a5.bot { top: 148.5mm; }
+.cell { position: absolute; top: 0; width: 105mm; height: 148.5mm; display: flex; align-items: center; justify-content: center; }
+.cell.l { left: 0; }
+.cell.r { left: 105mm; }
+.cell > .page { flex: none; transform: scale(var(--s)); box-shadow: none; break-after: auto; }
+
+/* linia de doblec (cau dins el plec) i numero de full */
+.fold { position: absolute; left: calc(105mm - .1mm); top: 4mm; bottom: 4mm; border-left: .2mm dotted #c9c9c9; }
+.num { position: absolute; left: 0; right: 0; bottom: 1.3mm; text-align: center; font: 700 5pt/1 var(--body); color: #9a9a9a; letter-spacing: .05em; }
+
+/* linia de tall al mig de l'A4 */
+.cut { position: absolute; left: 5mm; right: 5mm; top: calc(148.5mm - .1mm); border-top: .2mm dashed #b5b5b5; }
+.cut span { position: absolute; left: 0; top: -2.2mm; font-size: 8pt; line-height: 1; color: #9a9a9a; background: #fff; padding-right: 1mm; }
+
+/* mitja fulla sobrant: instruccions */
+.cell-howto { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.howto { width: 150mm; font-family: var(--body); font-size: 10pt; line-height: 1.4; color: var(--ink); border: .3mm solid var(--line); border-radius: 3mm; padding: 7mm 9mm; }
+.howto h2 { font-family: var(--display); font-weight: 800; font-size: 17pt; margin-bottom: 3mm; }
+.howto ol { list-style: decimal; padding-left: 6mm; }
+.howto li { margin: 1.4mm 0; padding-left: 1mm; }
+.howto p { margin-top: 3mm; color: var(--muted); font-size: 9pt; }
+
+@media print {
+  body { background: none; }
+  #sheets { display: block; padding: 0; }
+  .a4 { box-shadow: none; break-after: page; }
+  .a4:last-child { break-after: auto; }
+  .cell > .page { break-after: auto; }
+}
