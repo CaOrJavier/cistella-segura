@@ -329,9 +329,19 @@
 
   function mirarPage() {
     const p = newPage("guia");
-    const HIM = [["laminas", "lamines"], ["poros", "porus"], ["pliegues", "plecs"], ["aguijones", "agullons"], ["gleba", "altres"]];
-    const DESC = { laminas: "Hojas finas", poros: "Una esponja", pliegues: "Venas gruesas", aguijones: "Púas blandas", gleba: "Bola sin sombrero" };
-    const formas = HIM.map(([k, ic]) => `<div>${ICON[ic].replace("<svg", '<svg style="color:var(--paper)"')}<b>${esc((V.himenoforo[k] || k).split(/[ (]/)[0])}</b><span>${DESC[k]}</span></div>`).join("");
+    // qué hay bajo el sombrero: una foto real de cada tipo (se ve mucho mejor que un dibujo pequeño)
+    const BAJO = [
+      ["laminas", "lepista-nuda", "fotos/g/adf851a161e6.jpg", "Hojas finas, como un libro"],
+      ["poros", "suillus-granulatus", "fotos/g/a7bf89ca63ac.jpg", "Una esponja de agujeritos"],
+      ["pliegues", "cantharellus-cibarius", "fotos/g/871c64b88bab.jpg", "Venas gruesas, no hojas"],
+      ["aguijones", "hydnum-repandum", "fotos/g/101f803f5c15.jpg", "Púas blandas"],
+      ["gleba", "bovistella-utriformis", "fotos/g/48a31c066840.jpg", "Una bola: córtela"]
+    ];
+    const formas = BAJO.map(([k, id, g, d]) => {
+      const f = ((TODAS[id] || {}).fotos || []).find(x => x.g === g);
+      if (f) EXTRA.push(["Cómo mirar · bajo el sombrero", f]);
+      return `<figure><div class="im">${f ? `<img src="${G(f.t || f.g)}" alt="">` : ""}</div><figcaption><b>${esc((V.himenoforo[k] || k).split(/[ (]/)[0])}</b><span>${d}</span></figcaption></figure>`;
+    }).join("");
     const ETAPAS = [["joven", "Joven", true], ["adulto", "En su punto", true], ["viejo", "Viejo", false], ["descompuesto", "Pasado", false]];
     // una comestible con foto de las cuatro edades (si no hay, la que tenga más)
     const cuenta = e => ETAPAS.filter(([papel]) => (e.fotos || []).some(f => f.papel === papel)).length;
@@ -380,7 +390,7 @@
       </svg>
       <ol class="mirar">${MIRAR.map(([t, d], i) => `<li><span class="nn">${i + 1}</span><span><b>${esc(t)}.</b> ${esc(d)}</span></li>`).join("")}</ol>
       <div class="h3">Qué hay bajo el sombrero</div>
-      <div class="formes">${formas}</div>
+      <div class="bajo">${formas}</div>
       <div class="edat-box"><div class="h3">La edad cuenta</div>
         <p class="edat-t">Una comestible vieja o pasada también intoxica. Cójala joven y firme.${serie ? ` (${esc(titulo(serie))})` : ""}</p>
         <div class="edat">${edad}</div></div>
