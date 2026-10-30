@@ -38,3 +38,6 @@ Print-Pdf (Join-Path $root 'butxaca\imprimir-a4.html') (Join-Path $root 'offline
 # Setas esenciales (castellano), a partir de los datos de la guía
 Print-Pdf (Join-Path $root 'butxaca\setas.html') (Join-Path $root 'offline\setas-esenciales-bolsillo.pdf')
 Print-Pdf (Join-Path $root 'butxaca\setas-imprimir-a4.html') (Join-Path $root 'offline\setas-esenciales-bolsillo-imprimir-A4.pdf')
+# El mismo cuaderno en A5 (letra más grande) y en A4 apaisado para doblar en casa
+Print-Pdf (Join-Path $root 'butxaca\setas-a5.html') (Join-Path $root 'offline\setas-esenciales-A5.pdf')
+Print-Pdf (Join-Path $root 'butxaca\setas-a5-imprimir-a4.html') (Join-Path $root 'offline\setas-esenciales-A5-imprimir-A4.pdf')

@@ -9,6 +9,8 @@ Hay dos cuadernos, cada uno en dos versiones, en `offline/`:
 
 Las páginas A6 miden 10,5 × 14,8 cm: la mitad de un A5, un cuarto de un A4.
 
+*Setas esenciales* también está en **A5** (14,8 × 21 cm, letra y fotos un 40 % más grandes): `setas-esenciales-A5.pdf`, y para imprimir en casa `setas-esenciales-A5-imprimir-A4.pdf` · 24 hojas A4 apaisadas, 2 cuadernillos. Se imprime a doble cara **volteando por el borde corto**; no se corta nada: se ordenan las hojas por su número (A y B), se dobla cada montón por la mitad y se grapa. Gasta el doble de papel que el A6.
+
 ## En casa (archivos `...-imprimir-A4.pdf`)
 
 Necesitas: las hojas A4 de la tabla (mejor de 90–100 g si tienes), tijeras o cúter con regla, y grapadora.

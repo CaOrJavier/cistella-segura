@@ -1,0 +1,13 @@
+/* Setas esenciales en A5: el mismo cuaderno, cada página A6 ampliada ×1,41 (letra y fotos más grandes) */
+@page { size: 148mm 210mm; margin: 0; }
+#a5 { display: flex; flex-wrap: wrap; gap: 6mm; padding: 6mm; justify-content: center; }
+.a5p { width: 148mm; height: 210mm; position: relative; overflow: hidden; background: #fff; flex: none; box-shadow: 0 1px 3px rgb(0 0 0 / .25); }
+/* 105 × 1,40952 = 148 mm de ancho; 148 × 1,40952 = 208,6 mm de alto: sobra 1,4 mm, repartido arriba y abajo */
+.a5p > .page { position: absolute; left: 0; top: .7mm; transform-origin: 0 0; transform: scale(1.40952); box-shadow: none; }
+@media print {
+  body { background: none; }
+  #a5 { display: block; padding: 0; }
+  .a5p { box-shadow: none; break-after: page; }
+  .a5p:last-child { break-after: auto; }
+  .a5p > .page { break-after: auto; }
+}

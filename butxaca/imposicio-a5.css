@@ -1,0 +1,24 @@
+/* Setas esenciales en A5 para imprimir en casa: hojas A4 apaisadas con 2 páginas A5 por cara.
+   Se imprime a doble cara (borde corto), se dobla cada montón por la mitad y se grapa. */
+@page { size: 297mm 210mm; margin: 0; }
+body { background: #8f948a; }
+#hojas { display: flex; flex-direction: column; align-items: center; gap: 8mm; padding: 8mm; }
+.a4h { width: 297mm; height: 210mm; position: relative; overflow: hidden; background: #fff; box-shadow: 0 2px 10px rgb(0 0 0 / .3); flex: none; }
+.celda { position: absolute; top: 0; width: 148.5mm; height: 210mm; }
+.celda.l { left: 0; }
+.celda.r { left: 148.5mm; }
+/* la página A6 (105 × 148) centrada en su mitad y ampliada a A5, con margen para impresoras de casa */
+.celda > .page { position: absolute; left: calc(50% - 52.5mm); top: calc(50% - 74mm); transform: scale(var(--s)); box-shadow: none; break-after: auto; }
+/* pliegue y número de hoja */
+.pliegue { position: absolute; left: calc(148.5mm - .1mm); top: 0; height: 5mm; border-left: .2mm dotted #bdbdbd; }
+.pliegue::after { content: ""; position: absolute; left: -.1mm; top: 200mm; height: 5mm; border-left: .2mm dotted #bdbdbd; }
+.num { position: absolute; left: calc(148.5mm - 12mm); width: 24mm; bottom: 1.4mm; text-align: center; font: 700 5pt/1 var(--body); color: #9a9a9a; letter-spacing: .05em; }
+/* instrucciones resumidas en el sumario */
+.howto-mini { margin-top: 2mm; padding: 1.4mm 2mm; border: .25mm dashed var(--line); border-radius: 1.2mm; font-size: 5.8pt; line-height: 1.3; color: var(--ink-2); }
+.howto-mini b { color: var(--accent); }
+@media print {
+  body { background: none; }
+  #hojas { display: block; padding: 0; }
+  .a4h { box-shadow: none; break-after: page; }
+  .a4h:last-child { break-after: auto; }
+}

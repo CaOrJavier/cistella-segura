@@ -138,11 +138,15 @@
   function vistaBuscador() {
     const grupos = [...new Set(FAC.map((f) => f.g))];
     const hf = fotoPortada();
+    // esporas que flotan en la portada (posiciones fijas, pseudoaleatorias, para que no cambien en cada visita)
+    const al = (i, n) => (Math.sin(i * 97.3 + n * 13.1) + 1) / 2;
+    const esporas = Array.from({ length: 14 }, (_, i) => `<span class="espora" style="--x:${(al(i, 1) * 100).toFixed(1)}%;--s:${(3 + al(i, 2) * 5).toFixed(1)}px;--t:${(10 + al(i, 3) * 10).toFixed(1)}s;--d:-${(al(i, 4) * 16).toFixed(1)}s;--dx:${((al(i, 5) - 0.5) * 90).toFixed(0)}px"></span>`).join("");
     app.innerHTML = `
       <section class="hero" ${hf ? `style="--hero:url('${hf.g}')"` : ""}>
+        <span class="hero-luz" aria-hidden="true"></span><span class="hero-esporas" aria-hidden="true">${esporas}</span>
         <div class="hero-in">
           <p class="hero-kicker">Setas de Cataluña</p>
-          <h1>Identifica las setas con seguridad</h1>
+          <h1>Identifica las setas <span class="grad">con seguridad</span></h1>
           <p class="hero-sub">${ESP.length} fichas con fotos, los rasgos que hay que comprobar y las setas peligrosas con las que se confunden.</p>
           <label class="hero-buscar"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
             <input class="q" type="search" placeholder="Busca un nombre: rovelló, níscalo, Boletus…" value="${esc(state.q)}" aria-label="Buscar por nombre"></label>
@@ -385,9 +389,34 @@
   }
 
   // ---------------- Vistas: árboles y calendario ----------------
+  // Fotos de árbol ordenadas por lo que más ayuda a reconocerlo: hoja, tronco, árbol entero, fruto, flor
+  const PAPEL_ARBOL = { hoja: "Hoja", tronco: "Tronco", porte: "Árbol", fruto: "Fruto", flor: "Flor" };
+  const ORDEN_PAPEL = ["hoja", "tronco", "porte", "fruto", "flor"];
+  const fotosArbol = (a) => (a.fotos || []).map((f, i) => [f, i]).sort((x, y) => {
+    const r = (f) => { const k = ORDEN_PAPEL.indexOf(f.papel); return k < 0 ? 9 : k; };
+    return r(x[0]) - r(y[0]) || x[1] - y[1];
+  }).map(([f]) => f);
+  // Tres miniaturas para reconocerlo de un vistazo: hoja, tronco y árbol (si falta alguna, otra foto)
+  function tresFotosArbol(a) {
+    const fs = fotosArbol(a), out = [];
+    for (const p of ["hoja", "tronco", "porte"]) { const f = fs.find((x) => x.papel === p); if (f) out.push(f); }
+    for (const f of fs) { if (out.length >= 3) break; if (!out.includes(f)) out.push(f); }
+    return out.slice(0, 3);
+  }
+  const tarjetaArbol = (a) => `<article class="tarjeta arbol-t"><a class="cubre" href="#/arbol/${a.id}" aria-label="${esc(cap(a.nombres.es[0]))}: ver sus fotos y sus setas"></a>
+    <div class="arbol-fotos">${tresFotosArbol(a).map((f) => `<figure><img loading="lazy" src="${f.t}" alt=""><figcaption>${PAPEL_ARBOL[f.papel] || ""}</figcaption></figure>`).join("")}</div>
+    <div class="cuerpo"><h3>${esc(cap(a.nombres.es[0]))}</h3><div class="es">ca: ${esc(a.nombres.ca[0])} · <i>${esc(a.nombre)}</i></div>
+      ${a.reconocer && a.reconocer.distancia ? `<p class="arbol-lejos">${esc((a.reconocer.distancia.match(/^.*?\.(\s|$)/) || [a.reconocer.distancia])[0].trim())}</p>` : ""}
+      <div class="small muted arbol-pie">${(a.setas || []).length} setas asociadas <span aria-hidden="true">→</span></div></div></article>`;
+
   function vistaArboles() {
-    app.innerHTML = `<h1>Árboles y vegetación</h1><div class="texto">${DB.textos.arboles || ""}</div>
-      <h2>Árboles</h2><div class="arbol-lista">${DB.arboles.map((a) => `<article class="tarjeta"><a class="cubre" href="#/arbol/${a.id}" aria-label="${esc(a.nombres.es[0])}"></a><div class="img" ${a.fotos && a.fotos[0] ? `style="background-image:url('${a.fotos[0].t}')"` : ""}></div><div class="cuerpo"><h3>${esc(cap(a.nombres.es[0]))}</h3><div class="es">ca: ${esc(a.nombres.ca[0])} · <i>${esc(a.nombre)}</i></div><div class="small muted">${(a.setas || []).length} setas con ficha asociadas</div></div></article>`).join("")}</div>
+    app.innerHTML = `<h1>Árboles</h1>
+      <p class="ap-intro">Muchas setas solo salen junto a su árbol. Reconócelo por la hoja, el tronco y la forma; toca uno para ver todas sus fotos y las setas que lo acompañan.</p>
+      ${[["conifera", "Coníferas", "Hojas en aguja o escama; casi todas, verdes todo el año."], ["frondosa", "Árboles de hoja ancha", "Encinas, robles, hayas, castaños, chopos…"]].map(([g, t, s]) => {
+        const lista = DB.arboles.filter((a) => (a.grupo || "frondosa") === g);
+        return lista.length ? `<h2>${t}</h2><p class="muted small">${s}</p><div class="arbol-lista">${lista.map(tarjetaArbol).join("")}</div>` : "";
+      }).join("")}
+      <details class="caja plegable"><summary><b>Los bosques de Cataluña y sus setas</b></summary><div class="texto">${DB.textos.arboles || ""}</div></details>
       <h2>Plantas indicadoras</h2><p class="muted">Informan del suelo, la humedad o el hábitat; no predicen la aparición de ninguna seta.</p>
       <div class="tabla-scroll"><table class="tabla"><tr><th>Planta</th><th>Indica</th><th>Reconocerla y relación con las setas</th></tr>${DB.plantas.map((p) => `<tr><td><b>${esc(cap(p.nombres.es[0]))}</b> · ${esc(p.nombres.ca[0])}<br><i>${esc(p.nombre)}</i></td><td>${esc((p.indica || []).join(", ").replace(/_/g, " "))}</td><td>${esc(p.reconocer)} ${esc(p.setas)}</td></tr>`).join("")}</table></div>`;
   }
@@ -395,8 +424,8 @@
     const a = ARB[id]; if (!a) return vistaNoEncontrada();
     const r = a.reconocer || {}, ec = a.ecologia || {};
     // cada foto dice qué muestra (campo «papel»): hoja, tronco, árbol entero…
-    const PAPEL = { hoja: "Hoja", tronco: "Tronco", porte: "Árbol entero", fruto: "Fruto", flor: "Flor" };
-    galeriaActual = (a.fotos || []).map((f) => ({ ...f, pie: f.pie || PAPEL[f.papel] || "" }));
+    const PAPEL = { ...PAPEL_ARBOL, porte: "Árbol entero" };
+    galeriaActual = fotosArbol(a).map((f) => ({ ...f, pie: f.pie || PAPEL[f.papel] || "" }));
     const setas = (a.setas || []).map((x) => BYID[x.id]).filter(Boolean);
     app.innerHTML = `<p class="no-print"><a href="#/arboles">← Árboles</a></p>
       <div class="ficha-cab"><div><div class="tax">${esc(a.familia)}</div><h1>${esc(cap(a.nombres.es[0]))}</h1><div class="nombres">ca: ${esc(a.nombres.ca.join(", "))} · es: ${esc(a.nombres.es.join(", "))}</div><div class="sci"><i>${esc(a.nombre)}</i> <span class="small muted">${esc(a.autor || "")}</span></div></div>${a.autoctono === false ? `<span class="chip">No autóctono</span>` : ""}</div>
@@ -590,7 +619,7 @@
       [246, "Ficha de la farinera borda, mortal (1 de 2)"], [247, "Farinera borda: síntomas y confusiones (2 de 2)"], [304, "Calendario de fructificación"], [335, "Cuaderno de campo para anotar las salidas"]] },
   };
   const LIBROS = [
-    { g: "bolsillo", corto: "Cuaderno de bolsillo", uso: "Para llevar al bosque", tit: "Setas esenciales · cuaderno de bolsillo", formato: "96 páginas A6 (10,5 × 14,8 cm) · fondo blanco, gasta poca tinta",
+    { g: "bolsillo", corto: "Cuaderno de bolsillo", uso: "Para llevar al bosque", tit: "Setas esenciales · cuaderno de bolsillo", formato: "96 páginas · A6 (10,5 × 14,8 cm) o A5 (14,8 × 21 cm) · fondo blanco, gasta poca tinta",
       txt: "Las 79 setas que hay que conocer, una por página: fotos, cómo reconocerla, dónde sale y con qué no confundirla. Con las confusiones mortales lado a lado, los árboles con foto de la hoja y del tronco y qué hacer ante una intoxicación. Cabe en el bolsillo." },
     { g: "esencial", corto: "Guía esencial", uso: "Para estudiar en casa", tit: "Setas comestibles esenciales de Cataluña", formato: "336 páginas A5",
       txt: "Las mismas 79 setas, a fondo: cada comestible en cuatro páginas (fotos, rasgos que hay que comprobar, cómo no confundirla, cuándo y dónde sale), las tóxicas y mortales, los árboles, el calendario y un glosario." },
@@ -599,6 +628,8 @@
   const BOLSILLO = [
     { guia: "bolsillo", ed: "A6", uso: "Para leerlo en el móvil o llevarlo a la copistería: pide «cuadernillo A6 a color, a sangre», con espiral o en rústica.", mb: 28.3, pag: 96, url: "offline/setas-esenciales-bolsillo.pdf" },
     { guia: "bolsillo", ed: "Para imprimir en casa (A4)", uso: "12 hojas A4 a doble cara (24 caras): se cortan por la mitad, se doblan y se grapan en dos cuadernillos.", mb: 28.7, url: "offline/setas-esenciales-bolsillo-imprimir-A4.pdf" },
+    { guia: "bolsillo", ed: "A5 · letra más grande", uso: "El mismo cuaderno en tamaño cuartilla (14,8 × 21 cm): letra y fotos un 40 % más grandes. Para leer en la tableta o llevar a la copistería.", mb: 28.8, pag: 96, url: "offline/setas-esenciales-A5.pdf" },
+    { guia: "bolsillo", ed: "A5 para imprimir en casa (A4)", uso: "24 hojas A4 apaisadas a doble cara (borde corto). No hay que cortar: se doblan por la mitad en dos cuadernillos y se grapan. Gasta el doble de papel que el A6.", mb: 28.8, url: "offline/setas-esenciales-A5-imprimir-A4.pdf" },
     { guia: "bolsillo", ed: "En catalán · 50 setas", uso: "Quadern de butxaca, 76 páginas A6 (las muestras de arriba son de la edición en castellano).", mb: 15.4, pag: 76, url: "offline/cistella-segura-butxaca.pdf" },
     { guia: "bolsillo", ed: "En catalán, para imprimir en casa (A4)", uso: "10 hojas A4, un solo cuadernillo.", mb: 15.8, url: "offline/cistella-segura-butxaca-imprimir-A4.pdf" },
   ];
@@ -607,7 +638,8 @@
         <li>Descarga el PDF <b>para imprimir en casa (A4)</b>. Imprime a <b>doble cara</b>, volteando por el <b>borde largo</b>, a <b>tamaño real (100 %)</b>.</li>
         <li><b>Corta</b> las hojas por la mitad, por la línea de puntos ✂.</li>
         <li><b>Ordena</b> las mitades por el número pequeño de abajo: un montón con las A (A 1/12, A 2/12…) y otro con las B (B 1/12…).</li>
-        <li><b>Dobla</b> cada montón por la mitad y <b>grapa</b> por el pliegue con 2 grapas.</li></ol></details>`,
+        <li><b>Dobla</b> cada montón por la mitad y <b>grapa</b> por el pliegue con 2 grapas.</li></ol>
+        <p class="small"><b>Versión A5:</b> imprime a doble cara volteando por el <b>borde corto</b>. No se corta nada: ordena las hojas por su número (A y B), dobla cada montón por la mitad y grapa.</p></details>`,
     esencial: `<p class="small muted">Para imprimir: A5 a doble cara sin cambiar el orden de las páginas (cada ficha empieza en página par), papel mate de 100–115 g y espiral o encuadernación cosida para que se abra plano. Para el móvil, la edición <b>ligera</b>.</p>`,
   };
   function paginasLibro(g) {
@@ -842,6 +874,8 @@
       // secciones retiradas: los enlaces antiguos llevan a «Por rasgos» o al buscador
       comparar: () => location.replace("#/rasgos"), habitats: () => location.replace("#/rasgos"), taxonomia: () => location.replace("#/"), galeria: () => vistaGaleria(a), inventario: vistaInventario, guia: () => vistaGuia(a), fuentes: vistaFuentes, calidad: vistaCalidad, libros: vistaLibros, "sin-internet": vistaSinInternet }[v] || vistaNoEncontrada)();
     window.scrollTo(0, 0);
+    // cada página entra con un fundido suave (solo opacidad: no afecta a nada fijo de dentro)
+    app.classList.remove("entra"); void app.offsetWidth; app.classList.add("entra");
   }
   // el Quiz ya está en «Más» (index.html); solo se añade si faltara
   if (DB.enlaces && DB.enlaces.quiz && !$(`.nav a[href="${DB.enlaces.quiz}"]`)) $(".nav").insertAdjacentHTML("beforeend", `<a href="${esc(DB.enlaces.quiz)}">Quiz 🍄</a>`);
@@ -863,6 +897,51 @@
     const a = ev.target.closest && ev.target.closest('a[href^="quiz/"], a[href^="offline/"]');
     if (a) { ev.preventDefault(); window.open(WEB + a.getAttribute("href"), "_blank", "noopener"); }
   });
+  // ---------------- Movimiento: aparición al hacer scroll e inclinación 3D con el ratón ----------------
+  // Todo con opacidad y transformaciones (lo barato para el navegador). Nada si se pide «reducir movimiento».
+  const MOVIMIENTO = !(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const CON_REVELA = ".tarjeta, .dest, .libro-c, .si-c, .ap-card, .paso";
+  if (MOVIMIENTO && "IntersectionObserver" in window) {
+    let ioResponde = false;
+    const io = new IntersectionObserver((ents) => { ioResponde = true; ents.forEach((e) => {
+      if (e.isIntersecting) { e.target.classList.add("visto"); io.unobserve(e.target); }
+    }); }, { rootMargin: "0px 0px -5% 0px" });
+    const preparar = () => {
+      let i = 0;
+      app.querySelectorAll(CON_REVELA).forEach((el) => {
+        if (el.classList.contains("revela")) return;
+        el.classList.add("revela");
+        el.style.setProperty("--i", i++ % 8);   // escalonado corto: como mucho 8 pasos
+        io.observe(el);
+      });
+      // seguridad: si el navegador no avisa de lo que se ve (pestaña oculta, visores raros), se muestra todo
+      if (i) setTimeout(() => { if (!ioResponde) app.querySelectorAll(".revela:not(.visto)").forEach((el) => el.classList.add("visto")); }, 1500);
+    };
+    new MutationObserver(preparar).observe(app, { childList: true, subtree: true });   // el navegador ya agrupa los cambios
+  }
+  if (MOVIMIENTO && window.matchMedia && matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    const INCLINA = ".tarjeta, .dest, .ap-card, .libro-tapa";
+    let el = null, ev = null, cuadro = 0;
+    const suelta = (x) => { if (!x) return; x.classList.remove("inclina"); ["--rx", "--ry", "--mx", "--my"].forEach((p) => x.style.removeProperty(p)); };
+    document.addEventListener("pointermove", (e) => {
+      const t = e.target.closest ? e.target.closest(INCLINA) : null;
+      if (el && el !== t) suelta(el);
+      el = t; ev = e;
+      if (!el || cuadro) return;
+      cuadro = requestAnimationFrame(() => {
+        cuadro = 0;
+        if (!el) return;
+        const r = el.getBoundingClientRect(), x = (ev.clientX - r.left) / r.width, y = (ev.clientY - r.top) / r.height;
+        el.classList.add("inclina");
+        el.style.setProperty("--rx", ((0.5 - y) * 6).toFixed(2) + "deg");
+        el.style.setProperty("--ry", ((x - 0.5) * 8).toFixed(2) + "deg");
+        el.style.setProperty("--mx", (x * 100).toFixed(1) + "%");
+        el.style.setProperty("--my", (y * 100).toFixed(1) + "%");
+      });
+    }, { passive: true });
+    document.addEventListener("pointerleave", () => { suelta(el); el = null; });
+  }
+
   window.addEventListener("hashchange", render);
   render();
 })();
