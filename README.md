@@ -9,6 +9,13 @@ Web para **identificar** las setas de Cataluña: 163 fichas en castellano (con l
 - **Calendario** y **Aprende**: seguridad, qué hacer ante una intoxicación, anatomía, cómo buscar y glosario.
 - En **Más**: cuándo salir tras la lluvia, mis hallazgos (Montnegre-Corredor, 18/10/2026), árboles, galería, cuaderno de campo, libros PDF, quiz, inventario de ≈ 4.000 especies y fuentes.
 
+## Sin internet
+
+En la web, **Más → Usar sin internet**:
+
+- **En el móvil o la tableta:** botón «Guardar en este dispositivo», con fotos pequeñas (≈ 27 MB) o con todas las fotos (≈ 174 MB). Después se puede añadir a la pantalla de inicio y se abre como una app, sin cobertura.
+- **En el ordenador:** [descarga la web en ZIP](https://github.com/CaOrJavier/cistella-segura/releases/download/web-local/cistella-segura-web.zip), descomprímela y abre `index.html`. El ZIP se rehace solo con cada cambio de la web (`.github/workflows/web-zip.yml`).
+
 ## Libros y cuadernos
 
 Todos se descargan desde la web (**Más → Libros PDF**) o desde [Releases](https://github.com/CaOrJavier/cistella-segura/releases/tag/guia-2026.1).
@@ -21,6 +28,8 @@ Todos se descargan desde la web (**Más → Libros PDF**) o desde [Releases](htt
 
 ```
 index.html, app.js, app.css   la web
+sw.js, manifest.webmanifest   modo sin internet y app instalable (icono-*.png)
+libros/            páginas de muestra de los libros (para hojearlos antes de descargar)
 datos/db.js        las 163 especies, árboles, textos y vocabulario
 datos/cistella.js  datos de «Cuándo salir» y «Mis hallazgos»
 extra/             esas dos secciones

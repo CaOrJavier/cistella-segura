@@ -1,0 +1,45 @@
+# Hace el ZIP de la web para usarla sin internet en el ordenador y lo sube a la release «web-local».
+# Enlace fijo: https://github.com/CaOrJavier/cistella-segura/releases/download/web-local/cistella-segura-web.zip
+name: ZIP de la web
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["README.md", "offline/**", "butxaca/**", "tools/**", "quiz/**", "guia/**"]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: web-zip
+  cancel-in-progress: true
+jobs:
+  zip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Hacer el ZIP
+        run: |
+          mkdir -p dist/cistella-segura
+          cp -r index.html app.js app.css manifest.webmanifest icono-*.png datos extra fonts fotos cuaderno libros dist/cistella-segura/
+          printf '%s\r\n' \
+            "CISTELLA SEGURA - SETAS DE CATALUNA - copia para usar sin internet" \
+            "" \
+            "1. Descomprime este ZIP (clic derecho > Extraer todo)." \
+            "2. Abre la carpeta cistella-segura y haz doble clic en index.html." \
+            "   Se abre en el navegador y funciona sin internet." \
+            "" \
+            "Sin internet no funcionan: Cuando salir tras la lluvia (necesita los datos" \
+            "del tiempo), el quiz y los PDF; esos enlaces abren la web." \
+            "" \
+            "Version al dia: https://caorjavier.github.io/cistella-segura/" \
+            "Ninguna web ni app certifica que una seta sea comestible. Ante la duda, no la recolectes." \
+            > dist/cistella-segura/LEEME.txt
+          cd dist && zip -qr -9 ../cistella-segura-web.zip cistella-segura
+          ls -lh ../cistella-segura-web.zip
+      - name: Subir a la release «web-local»
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view web-local >/dev/null 2>&1 || gh release create web-local --target "$GITHUB_SHA" --latest=false \
+            --title "Web para usar sin internet (ZIP)" \
+            --notes "Copia de la web para abrirla en el ordenador sin internet. Se rehace sola con cada cambio de la web. Descomprime el ZIP y abre index.html."
+          gh release upload web-local cistella-segura-web.zip --clobber

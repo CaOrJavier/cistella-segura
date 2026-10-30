@@ -688,6 +688,131 @@
   }
   function vistaNoEncontrada() { app.innerHTML = `<h1>No encontrado</h1><p><a href="#/">Volver al buscador</a></p>`; }
 
+  // ---------------- Vista: usar la web sin internet ----------------
+  // Dos formas: guardarla en el navegador (sw.js + caché; sirve en el móvil) o descargar el ZIP para el ordenador.
+  // El ZIP lo rehace .github/workflows/web-zip.yml en cada cambio y lo sube a la release «web-local».
+  const REPO = "CaOrJavier/cistella-segura", WEB = "https://caorjavier.github.io/cistella-segura/";
+  const ZIP = `https://github.com/${REPO}/releases/download/web-local/cistella-segura-web.zip`;
+  const CACHE_SI = "cistella-sin-internet";   // el mismo nombre que en sw.js
+  const EN_ARCHIVO = location.protocol === "file:";
+  const puedeGuardar = !EN_ARCHIVO && "serviceWorker" in navigator && "caches" in window;
+  const mbTxt = (b) => (b / 1048576).toLocaleString("es", { maximumFractionDigits: b < 10485760 ? 1 : 0 }) + " MB";
+  const fechaTxt = (f) => String(f || "").split("-").reverse().join("/");
+  // Qué se guarda. Siempre: la web, los datos, las fuentes y las miniaturas. Con «todas»: también las fotos y páginas en grande.
+  function archivosSinInternet(arbol, todas) {
+    return arbol.filter((x) => x.type === "blob").filter(({ path: p }) =>
+      /^(index\.html|app\.js|app\.css|manifest\.webmanifest|icono-\d+\.png)$/.test(p) || /^(datos|extra|fonts)\//.test(p) ||
+      /^fotos\/(t|montnegre\/t)\/[^/]+$/.test(p) || /^(cuaderno|libros\/[^/]+)\/t\d+\.jpg$/.test(p) ||
+      (todas && /^(fotos|cuaderno|libros)\/.+\.(jpe?g|png|webp)$/i.test(p)));
+  }
+  // La lista de archivos sale de GitHub: así siempre coincide con lo publicado
+  let arbolRepo = null;
+  async function listaRepo() {
+    if (arbolRepo) return arbolRepo;
+    const r = await fetch(`https://api.github.com/repos/${REPO}/git/trees/main?recursive=1`);
+    if (!r.ok) throw new Error("GitHub respondió " + r.status);
+    const j = await r.json();
+    if (j.truncated || !Array.isArray(j.tree)) throw new Error("lista de archivos incompleta");
+    return (arbolRepo = j.tree);
+  }
+  const pesoDe = (lista) => lista.reduce((s, x) => s + (x.size || 0), 0);
+  async function guardarSinInternet(todas, avance) {
+    const lista = archivosSinInternet(await listaRepo(), todas), total = pesoDe(lista);
+    try { if (navigator.storage && navigator.storage.persist) await navigator.storage.persist(); } catch (e) { /* opcional */ }
+    await navigator.serviceWorker.register("sw.js");
+    const cache = await caches.open(CACHE_SI), base = new URL(".", location.href);
+    const ya = new Set((await cache.keys()).map((r) => new URL(r.url).pathname)), quiere = new Set(), fallos = [];
+    // fotos y fuentes ya guardadas no se vuelven a bajar; la página, el código y los datos sí (por si han cambiado)
+    const cola = [{ path: "", size: 0 }, ...lista].map((x) => ({ ...x, url: new URL(x.path, base), fijo: /\.(jpe?g|png|webp|woff2?|ttf)$/i.test(x.path) }));
+    let hecho = 0;
+    const trabajar = async () => {
+      while (cola.length) {
+        const x = cola.shift();
+        quiere.add(x.url.pathname);
+        if (!(x.fijo && ya.has(x.url.pathname))) {
+          try {
+            const r = await fetch(x.url.href + "?_guardar=" + Date.now());   // «_guardar»: sw.js lo deja pasar directo a la red
+            if (!r.ok) throw new Error(r.status);
+            await cache.put(x.url, r);
+          } catch (e) { fallos.push(x.path); }
+        }
+        hecho += x.size || 0; avance(hecho, total);
+      }
+    };
+    await Promise.all(Array.from({ length: 6 }, trabajar));
+    // fuera lo que ya no hace falta (por ejemplo, las fotos grandes al pasar a «fotos pequeñas»)
+    for (const req of await cache.keys()) if (!quiere.has(new URL(req.url).pathname)) await cache.delete(req);
+    const info = { fecha: new Date().toISOString().slice(0, 10), todas, bytes: total, n: lista.length - fallos.length, fallos: fallos.length };
+    store.set("sinInternet", info);
+    return info;
+  }
+  async function borrarSinInternet() {
+    await caches.delete(CACHE_SI);
+    const aqui = new URL(".", location.href).href;   // solo el de esta web, no otros de github.io
+    for (const r of await navigator.serviceWorker.getRegistrations()) if (r.scope === aqui) await r.unregister();
+    store.set("sinInternet", null);
+  }
+  function vistaSinInternet() {
+    const info = store.get("sinInternet", null);
+    const estado = info
+      ? `<p class="si-ok">✓ Guardada en este dispositivo el ${fechaTxt(info.fecha)}, ${info.todas ? "con todas las fotos en grande" : "con fotos pequeñas"} (${mbTxt(info.bytes)}).</p>
+         ${info.fallos ? `<p class="small">Faltaron ${info.fallos} archivos: vuelve a guardarla con buena conexión.</p>` : ""}
+         <p class="si-acciones"><button class="btn" data-guardar="${info.todas ? "todas" : "pequenas"}">Actualizar</button> <button class="btn" id="si-borrar">Borrar del dispositivo</button></p>
+         <p class="small muted">Para cambiar entre fotos pequeñas y grandes, elige otra opción:</p>`
+      : `<p>Guárdala antes de salir, con wifi. Elige cómo:</p>`;
+    app.innerHTML = `<h1>Usar la web sin internet</h1>
+      <p class="ap-intro">En el bosque muchas veces no hay cobertura. Guarda la web y funcionará igual: fichas, fotos, búsqueda por rasgos, calendario y Aprende.</p>
+      <section class="si-c">
+        <h2>📱 En el móvil o la tableta</h2>
+        ${EN_ARCHIVO ? `<p>Estás usando la copia descargada: ya funciona sin internet.</p>`
+        : !puedeGuardar ? `<p>Este navegador no permite guardar la web. Prueba con Chrome, Safari, Edge o Firefox actualizados, o usa los <a href="#/libros">libros en PDF</a>.</p>`
+        : `${estado}
+        <div class="si-opciones">
+          <button class="si-op" data-guardar="pequenas"><b>Con fotos pequeñas</b><span data-peso="pequenas">unos 25 MB</span><small>Ocupa poco. Las fotos se ven más pequeñas.</small></button>
+          <button class="si-op" data-guardar="todas"><b>Con todas las fotos en grande</b><span data-peso="todas">unos 175 MB</span><small>Como en la web. Mejor con wifi.</small></button>
+        </div>
+        <div id="si-progreso" hidden><div class="si-barra"><span></span></div><p class="small" id="si-txt"></p></div>
+        <details class="caja si-inicio"><summary><b>Después: ponla en la pantalla de inicio</b></summary><ul>
+          <li><b>Android (Chrome):</b> menú ⋮ → <b>Instalar aplicación</b> o <b>Añadir a pantalla de inicio</b>.</li>
+          <li><b>iPhone (Safari):</b> botón Compartir → <b>Añadir a pantalla de inicio</b>.</li></ul>
+          <p class="small">Se abre como una app, también sin internet, y el móvil no borra lo guardado aunque pases semanas sin usarla.</p></details>`}
+      </section>
+      <section class="si-c">
+        <h2>💻 En el ordenador</h2>
+        <p>Descarga la web entera en un archivo ZIP. Descomprímelo y abre <b>index.html</b> con doble clic: se abre en el navegador, sin internet.</p>
+        <p><a class="btn prim" href="${ZIP}">Descargar la web (ZIP)</a> <span class="muted small" data-peso="zip">unos 175 MB</span></p>
+      </section>
+      <section class="si-c">
+        <h2>📕 En papel</h2>
+        <p>Sin depender de la batería: <a href="#/libros">libros y cuadernos en PDF</a> para leer o imprimir.</p>
+      </section>
+      <p class="small muted">Sin internet no funcionan «Cuándo salir tras la lluvia» (necesita saber cuánto ha llovido), el quiz ni la descarga de los PDF.</p>`;
+    // pesos exactos, sacados de la lista de archivos
+    listaRepo().then((arbol) => {
+      const p = { pequenas: pesoDe(archivosSinInternet(arbol, false)), todas: pesoDe(archivosSinInternet(arbol, true)) };
+      p.zip = p.todas;
+      $$("[data-peso]").forEach((el) => (el.textContent = mbTxt(p[el.dataset.peso])));
+    }).catch(() => { /* se quedan los pesos aproximados */ });
+    $$("[data-guardar]").forEach((b) => (b.onclick = async () => {
+      const prog = $("#si-progreso"), barra = $("#si-progreso .si-barra span"), txt = $("#si-txt");
+      $$("[data-guardar], #si-borrar").forEach((x) => (x.disabled = true));
+      prog.hidden = false; txt.textContent = "Preparando la lista de archivos…";
+      try {
+        const info = await guardarSinInternet(b.dataset.guardar === "todas", (h, t) => {
+          barra.style.width = (t ? (100 * h) / t : 0).toFixed(1) + "%";
+          txt.textContent = `Guardando… ${mbTxt(h)} de ${mbTxt(t)}. No cierres esta página.`;
+        });
+        if (location.hash === "#/sin-internet") vistaSinInternet();
+        const ok = $(".si-ok"); if (ok) ok.insertAdjacentHTML("beforeend", info.fallos ? "" : " <b>Ya puedes usarla sin internet.</b>");
+      } catch (e) {
+        txt.textContent = "No se ha podido guardar (" + e.message + "). Comprueba la conexión y vuelve a intentarlo.";
+        $$("[data-guardar], #si-borrar").forEach((x) => (x.disabled = false));
+      }
+    }));
+    const borrar = $("#si-borrar");
+    if (borrar) borrar.onclick = async () => { borrar.disabled = true; await borrarSinInternet(); vistaSinInternet(); };
+  }
+
   // Utilidades para las secciones que vienen de Cistella Segura (extra/*.js): se registran en window.VISTAS_EXTRA
   window.GUIA = { app, esc, cap, norm, titulo, nombres, badge, tarjeta, mesesHTML, catOf, BYID, ESP, store, MESES, MESES_L, abrirVisor: (fotos, i) => { galeriaActual = fotos; abrirVisor(i); } };
 
@@ -702,7 +827,7 @@
   function render() {
     const h = decodeURIComponent(location.hash.replace(/^#\/?/, ""));
     const [v, a] = [h.split("/")[0], h.split("/").slice(1).join("/")];
-    if (v === "test") { location.replace("quiz/"); return; }
+    if (v === "test") { location.replace((EN_ARCHIVO ? WEB : "") + "quiz/"); return; }
     const nueva = rutaAntigua(v, a);
     if (nueva !== undefined) { location.replace("#/" + nueva); return; }
     document.title = "Cistella Segura · Setas de Cataluña";
@@ -712,7 +837,7 @@
     const extra = (window.VISTAS_EXTRA || {})[v];
     ({ ...(extra ? { [v]: () => extra(a, window.GUIA) } : {}), "": vistaBuscador, especie: () => vistaFicha(a), rasgos: vistaRasgos, arboles: vistaArboles, arbol: () => vistaArbol(a), calendario: vistaCalendario,
       // secciones retiradas: los enlaces antiguos llevan a «Por rasgos» o al buscador
-      comparar: () => location.replace("#/rasgos"), habitats: () => location.replace("#/rasgos"), taxonomia: () => location.replace("#/"), galeria: () => vistaGaleria(a), inventario: vistaInventario, guia: () => vistaGuia(a), fuentes: vistaFuentes, calidad: vistaCalidad, libros: vistaLibros, cuaderno: vistaCuaderno }[v] || vistaNoEncontrada)();
+      comparar: () => location.replace("#/rasgos"), habitats: () => location.replace("#/rasgos"), taxonomia: () => location.replace("#/"), galeria: () => vistaGaleria(a), inventario: vistaInventario, guia: () => vistaGuia(a), fuentes: vistaFuentes, calidad: vistaCalidad, libros: vistaLibros, cuaderno: vistaCuaderno, "sin-internet": vistaSinInternet }[v] || vistaNoEncontrada)();
     window.scrollTo(0, 0);
   }
   // el Quiz ya está en «Más» (index.html); solo se añade si faltara
@@ -721,6 +846,13 @@
   document.addEventListener("click", (ev) => { $$(".nav details[open]").forEach((d) => { if (!d.contains(ev.target)) d.open = false; }); });
   $(".menu-btn").onclick = (ev) => { const n = $(".nav"); n.classList.toggle("abierta"); ev.currentTarget.setAttribute("aria-expanded", n.classList.contains("abierta")); };
   $("#pie-meta").textContent = `Edición ${DB.meta.version} · datos generados el ${DB.meta.generado} · ${ESP.length} fichas · ${DB.registro.length.toLocaleString("es")} especies más en el inventario.`;
+  // Sin internet: si se guardó en este dispositivo, se mantiene activo el service worker (y así se actualiza)
+  if (puedeGuardar && store.get("sinInternet", null)) navigator.serviceWorker.register("sw.js").catch(() => {});
+  // En la copia descargada (ZIP, file://) no van el quiz ni los PDF de bolsillo: esos enlaces abren la web
+  if (EN_ARCHIVO) document.addEventListener("click", (ev) => {
+    const a = ev.target.closest && ev.target.closest('a[href^="quiz/"], a[href^="offline/"]');
+    if (a) { ev.preventDefault(); window.open(WEB + a.getAttribute("href"), "_blank", "noopener"); }
+  });
   window.addEventListener("hashchange", render);
   render();
 })();
