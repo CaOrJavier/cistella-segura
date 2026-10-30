@@ -1,0 +1,2 @@
+/* Guía esencial para imprimir en casa: la página de 120 × 170,3 mm, centrada en su mitad de A4 (imposicio-a5.css) */
+.celda > .page { left: calc(50% - 60mm); top: calc(50% - 85.135mm); }

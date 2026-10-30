@@ -13,8 +13,13 @@
   const EXTRA = [];
 
   // ---------- configuración ----------
+  // Dos libros con el mismo código: el cuaderno de bolsillo (A6) y, con window.CUADERNO_MODO = "guia",
+  // la guía esencial (A5, butxaca/guia.html): todas las setas de la guía, cada una en una página como mucho
+  // (las del cuaderno, página entera; las demás, media página) y los árboles en poco espacio.
+  const GUIA = window.CUADERNO_MODO === "guia";
   const EDICION = "Otoño 2026";
-  const PORTADA = { id: "cantharellus-cibarius", papel: "recolectado" };
+  // portada: rossinyols en el cuaderno; ceps en la guía (para distinguirlos a primera vista)
+  const PORTADA = GUIA ? { id: "boletus-edulis", papel: "recolectado" } : { id: "cantharellus-cibarius", papel: "recolectado" };
 
   // Cuaderno breve: solo las setas y árboles imprescindibles (lista en ../datos/breve.js, la misma que usa el quiz).
   // Las que se confunden con cada una salen dentro de su ficha, con foto pequeña.
@@ -37,7 +42,9 @@
     compruebe: "Corte el pie y mire el color del látex en el primer momento."
   }];
   const EN_PAREJA = new Map(PAREJAS.flatMap(c => c.ids.map((id, i) => [id, [c, i]])));
-  const ESENCIAL = DB.especies.filter(e => BREVE.especies.includes(e.id));
+  const ESENCIAL = DB.especies.filter(e => BREVE.especies.includes(e.id) || (GUIA && (e.guias || []).includes("esencial")));
+  // en la guía, las que no están en el cuaderno de bolsillo van en media página (dos por página)
+  const MEDIA = e => GUIA && !BREVE.especies.includes(e.id);
   const BY = Object.fromEntries(ESENCIAL.map(e => [e.id, e]));
   const TODAS = Object.fromEntries(DB.especies.map(e => [e.id, e]));   // para la foto de las que se confunden
 
@@ -107,7 +114,8 @@
     return out.trim();
   };
   // quita las frases sobre la normativa de venta (RD 30/2009): no sirven en el monte
-  const sinNormativa = t => (String(t || "").match(/[^.!?]+[.!?]+(\s|$)/g) || [String(t || "")]).filter(f => !/RD\s?30\/2009|anexo del RD|venta/i.test(f)).join("").trim() || String(t || "");
+  // (y los trozos sin letras que quedan al cortar, como el «).» de «Inocybe sp.).»)
+  const sinNormativa = t => (String(t || "").match(/[^.!?]+[.!?]+(\s|$)/g) || [String(t || "")]).filter(f => !/RD\s?30\/2009|anexo del RD|venta/i.test(f) && /[a-záéíóúñü]{2}/i.test(f)).join("").trim() || String(t || "");
   const lista = arr =>(arr.length <= 1 ? arr.join("") : arr.slice(0, -1).join(", ") + " y " + arr[arr.length - 1]);
 
   // ---------- tóxicas: qué gravedad tiene y por qué ----------
@@ -278,11 +286,12 @@
     const n = k => GROUPS[k].length;
     p.innerHTML = `
       <div class="cv-img">${f ? `<img src="${G(f.g)}" alt="">` : ""}
-        <div class="cv-ed"><span>Cuaderno de bolsillo</span><span>${EDICION}</span></div></div>
+        <div class="cv-ed"><span>${GUIA ? "Guía para estudiar en casa" : "Cuaderno de bolsillo"}</span><span>${EDICION}</span></div></div>
       <div class="cv-body">
         <div class="kicker">Cistella Segura · Cataluña</div>
-        <h1 class="cv-t">Setas <em>esenciales</em></h1>
-        <p class="cv-s">Las ${ESENCIAL.length} setas que hay que conocer en Cataluña: cómo reconocerlas, dónde y cuándo salen, y con qué no confundirlas.</p>
+        <h1 class="cv-t">Setas ${GUIA ? "comestibles <em>esenciales</em> de Cataluña" : "<em>esenciales</em>"}</h1>
+        <p class="cv-s">${GUIA ? `Las ${ESENCIAL.length} setas que hay que conocer en Cataluña, a fondo: cómo reconocerlas, cómo son, dónde y cuándo salen, y con qué no confundirlas.`
+          : `Las ${ESENCIAL.length} setas que hay que conocer en Cataluña: cómo reconocerlas, dónde y cuándo salen, y con qué no confundirlas.`}</p>
         <div class="cv-stats">
           <span class="st-comestible"><i class="d"></i>${n("comestibles")} comestibles</span>
           <span class="st-mortal"><i class="d"></i>${n("mortales")} mortales</span>
@@ -387,7 +396,9 @@
 
   // En el orden de BREVE.arboles: así se reparten justo en dos páginas (las fichas largas no van todas juntas)
   function arbolesPages() {
-    const items = BREVE.arboles.map(id => ARB[id]).filter(Boolean).map(a => {
+    // en la guía, todos los árboles (primero los del cuaderno), en poco espacio: varios por página
+    const ids = GUIA ? [...BREVE.arboles, ...DB.arboles.map(a => a.id).filter(id => !BREVE.arboles.includes(id))] : BREVE.arboles;
+    const items = ids.map(id => ARB[id]).filter(Boolean).map(a => {
       // las parejas (rovelló y pinetell) salen una sola vez, con el nombre de su página
       const vistas = new Set();
       const setas = (a.setas || []).filter(s => BY[s.id] && s.rel !== "ocasional").map(s => BY[s.id])
@@ -408,7 +419,7 @@
         ${ko.length ? `<p class="ll ko"><span class="lab">Cuidado</span>${ko.map(nm).join(", ")}</p>` : ""}</div>
       </article>`;
     }).filter(Boolean);
-    flow(items, more => {
+    const mk = more => {
       const p = newPage("guia");
       p.insertAdjacentHTML("beforeend", `
         <div class="kicker">Dónde buscar${more ? " · continuación" : ""}</div>
@@ -416,7 +427,33 @@
         ${more ? "" : `<p class="ps">Muchas setas viven unidas a las raíces de un árbol: reconocerlo por la hoja y el tronco es el primer paso.</p>`}
         <div class="flow reparte"></div>${foot("Guía · Árboles")}`);
       return p;
-    }, "árboles");
+    };
+    // en la guía, 5 árboles por página; los de listas largas y cortas se mezclan para que todas las páginas
+    // queden igual de llenas (dentro de cada página, en el orden de siempre)
+    if (GUIA) {
+      const k = Math.ceil(items.length / 5), cap = Math.ceil(items.length / k);
+      const peso = h => (h.match(/class="nm"/g) || []).length + 4;
+      const grupos = Array.from({ length: k }, () => ({ w: 0, its: [] }));
+      items.map((h, i) => ({ h, i, w: peso(h) })).sort((a, b) => b.w - a.w).forEach(it => {
+        const g = grupos.filter(x => x.its.length < cap).sort((a, b) => a.w - b.w)[0];
+        g.its.push(it); g.w += it.w;
+      });
+      const orden = grupos.sort((a, b) => Math.min(...a.its.map(x => x.i)) - Math.min(...b.its.map(x => x.i)))
+        .flatMap(g => g.its.sort((a, b) => a.i - b.i).map(x => x.h));
+      paginasIguales(orden, k, mk, "árboles");
+    } else flow(items, mk, "árboles");
+  }
+  // Reparte los elementos en k páginas lo más igualadas posible; alFinal(p, n) ajusta cada página
+  function paginasIguales(items, k, mkPage, name, alFinal) {
+    let i = 0;
+    for (let j = 0; j < k; j++) {
+      const n = Math.ceil((items.length - i) / (k - j));
+      const p = mkPage(j > 0), box = p.querySelector(".flow");
+      box.insertAdjacentHTML("beforeend", items.slice(i, i + n).join(""));
+      i += n;
+      if (alFinal) alFinal(p, n);
+      if (overflows(p) || box.scrollWidth > box.clientWidth + 1) REPORT.overflow.push(`${name}: página ${j + 1} no cabe`);
+    }
   }
 
 
@@ -474,9 +511,147 @@
       </header>
       ${photosHTML(PICK[e.id])}
       ${facts}
-      <div class="txt">${clavesHTML}${olorSabor(e, ok)}${tox}${dondeHTML}${confsHTML(confs, ok, [e.id])}${truc}</div>
+      <div class="txt">${clavesHTML}${GUIA ? descripcionHTML(e) : ""}${olorSabor(e, ok)}${tox}${dondeHTML}${GUIA ? cuandoHTML(e) : ""}${confsHTML(GUIA ? [...(e.confusiones || [])].sort((a, b) => (ok ? SEV[a.peligro] - SEV[b.peligro] : SEV[b.peligro] - SEV[a.peligro])).slice(0, 4) : confs, ok, [e.id])}${truc}</div>
       ${foot(label)}`);
-    fit(p, ["tight", ".lede", "dense", quitaUltimo(".conf li"), ".truc", "denser", quitaUltimo(".checks li"), ".donde"], e.id);
+    // en la guía, si no cabe, primero se acorta la descripción
+    const antes = GUIA ? [".cuando", quitaUno(".desc p"), quitaUno(".conf li"), quitaUno(".desc p"), quitaUno(".desc p"), ".desc"] : [];
+    fit(p, [...antes, "tight", ".lede", "dense", quitaUltimo(".conf li"), ".truc", "denser", quitaUltimo(".checks li"), ".donde"], e.id);
+  }
+  const quitaUno = sel => p => { const l = p.querySelectorAll(sel); if (l.length) l[l.length - 1].remove(); };
+  // guía: cómo es (sombrero, debajo, pie, carne, esporada) y cuándo sale
+  function descripcionHTML(e) {
+    const m = e.morfologia || {};
+    const filas = [["Sombrero", m.sombrero], ["Debajo", m.himenoforo], ["Pie", m.pie], ["Carne", m.carne], ["Esporada", m.esporada]].filter(([, v]) => v);
+    return filas.length ? `<div class="desc"><h3>Cómo es</h3>${filas.map(([k, v]) => `<p><span class="lab">${k}</span>${esc(primera(v, 170))}</p>`).join("")}</div>` : "";
+  }
+  function cuandoHTML(e) {
+    const t = e.fenologia?.texto;
+    return t ? `<p class="cuando"><span class="lab">Cuándo</span>${esc(hasta(t, 190))}</p>` : "";
+  }
+
+  // =========================================================
+  // GUÍA: media página (dos setas por página), calendario, glosario, índice y créditos
+  // =========================================================
+  function fitEl(el, steps) {
+    const sobra = () => el.scrollHeight > el.clientHeight + 1;
+    for (const s of steps) {
+      if (!sobra()) return;
+      if (typeof s === "function") s(el);
+      else if (s.startsWith(".")) el.querySelectorAll(s).forEach(n => n.remove());
+      else el.classList.add(s);
+    }
+    if (sobra()) REPORT.overflow.push(`media ${el.dataset.id}: +${el.scrollHeight - el.clientHeight}px`);
+  }
+  function mediaFicha(e) {
+    const est = EST[e.comestibilidad.cat], ok = comestible(e);
+    const [dn, dt] = DIF[e.identificacion?.dificultad] || [2, "Media"];
+    const car = e.caracteres || {}, him = car.himenoforo;
+    const subt = [sinNombre(e) ? "" : `<i>${esc(e.nombre)}</i>`, ...(e.nombres.ca[0] ? e.nombres.es.slice(0, 1) : e.nombres.es.slice(1, 2)).map(esc)].filter(Boolean);
+    const facts = `<div class="facts">${meses(e.fenologia?.meses, e.fenologia?.excepcional)}
+      ${him ? `<span class="fct">${ICON[HIM_ICON[him] || "altres"]}${esc((V.himenoforo[him] || him).split(/[ (]/)[0])}</span>` : ""}
+      <span class="fct${car.anillo ? "" : " no"}">${car.anillo ? "Con anillo" : "Sin anillo"}</span>
+      <span class="fct${car.volva ? " alarm" : " no"}">${car.volva ? "Con volva" : "Sin volva"}</span>${altitud(e)}</div>`;
+    const claves = (e.identificacion?.claves || []).slice(0, 3);
+    const t = e.toxicidad;
+    const tox = ok ? "" : `<div class="perill">${gravedadHTML(e)}${t ? `<p><span class="lab">${esc(t.sindrome)}</span>Síntomas ${esc(t.latencia)}.</p>` : ""}</div>`;
+    const arb = arboles(e, 3), donde = primera(e.ecologia?.donde_mirar || e.ecologia?.vegetacion, 110);
+    const confs = [...(e.confusiones || [])].sort((a, b) => (ok ? SEV[a.peligro] - SEV[b.peligro] : SEV[b.peligro] - SEV[a.peligro])).slice(0, 2);
+    // la principal y, de segunda, mejor una de detalle o joven que una de vieja
+    const fs = PICK[e.id] || [], resto = (e.fotos || []).filter(f => f !== fs[0]);
+    const segunda = ["detalle", "joven", "variacion", "recolectado", "habitat", null, "viejo", "descompuesto"].map(pp => resto.find(f => (f.papel || null) === pp)).find(Boolean);
+    const fotos = [fs[0], segunda].filter(Boolean);
+    return `<article class="media sp st-${est.st}${ok ? " edible" : ""}" data-id="${e.id}">
+      <div class="m-fotos">${fotos.map(f => `<figure><img src="${G(f.g || f.t)}" alt="">${f.pie ? `<figcaption>${esc(shortCap(f.pie, 46))}</figcaption>` : ""}</figure>`).join("")}</div>
+      <div class="m-txt">
+        <header class="sp-head"><div class="kick"><span class="pill">${est.pill}</span>${dots(dn)}<b class="dif">${dt}</b></div>
+          <h1 class="name">${tituloHTML(e)}</h1><p class="lat">${subt.join(" · ")}</p></header>
+        ${facts}
+        <div class="txt">${claves.length ? `<div class="checks${ok ? "" : " alarm"}"><h3>${ok ? "Cómo reconocerla" : "Rasgos de alarma"}</h3><ul>${claves.map(c => `<li>${esc(c)}</li>`).join("")}</ul></div>` : ""}
+          ${olorSabor(e, ok)}${tox}${(arb || donde) ? `<p class="donde"><span class="lab">Dónde</span>${arb ? `Con ${esc(arb)}. ` : ""}${esc(donde)}</p>` : ""}
+          ${confsHTML(confs, ok, [e.id])}</div>
+      </div></article>`;
+  }
+  function mediasPage(lista, sec) {
+    const p = newPage(sec, "mitades");
+    const label = sec === "comestibles" ? "Comestibles" : sec === "mortales" ? "Mortales" : "Tóxicas";
+    p.insertAdjacentHTML("beforeend", `<div class="mitades-in">${lista.map(mediaFicha).join("")}</div>${foot(label)}`);
+    lista.forEach(e => (PAGE_OF[e.id] = p));
+    p.querySelectorAll(".media").forEach(m => fitEl(m, ["dense", quitaUno(".conf li"), ".donde", quitaUno(".checks li"), "denser", ".os", quitaUno(".conf li"), quitaUno(".checks li")]));
+  }
+  // una sección de la guía: cada seta del cuaderno en su página; las demás, de dos en dos (si queda una sola, página entera)
+  function seccionGuia(lista, sec) {
+    let buf = [];
+    lista.forEach(e => {
+      const pj = EN_PAREJA.get(e.id);
+      if (pj) { if (pj[1] === 0) parejaPage(pj[0]); return; }
+      if (!MEDIA(e)) { fichaPage(e); return; }
+      buf.push(e);
+      if (buf.length === 2) { mediasPage(buf, sec); buf = []; }
+    });
+    if (buf.length) fichaPage(buf[0]);
+  }
+  // listas que pasan de página: en dos columnas (cols) o en una
+  function flowCols(items, mkPage, name) {
+    let p = mkPage(false), box = p.querySelector(".flow");
+    const sobra = () => box.scrollWidth > box.clientWidth + 1 || overflows(p);
+    for (const html of items) {
+      box.insertAdjacentHTML("beforeend", html);
+      if (sobra() && box.children.length > 1) {
+        box.lastElementChild.remove();
+        p = mkPage(true); box = p.querySelector(".flow");
+        box.insertAdjacentHTML("beforeend", html);
+      }
+    }
+    if (sobra()) REPORT.overflow.push(`${name}: no cabe`);
+  }
+  const anexoPage = (kicker, titulo_, intro, pie, clase) => more => {
+    const p = newPage("anexo");
+    p.insertAdjacentHTML("beforeend", `<div class="kicker">${kicker}${more ? " · continuación" : ""}</div><h2 class="pt">${titulo_}</h2>
+      ${more || !intro ? "" : `<p class="ps">${intro}</p>`}<div class="flow ${clase}"></div>${foot(pie)}`);
+    return p;
+  };
+  function calendarioPages() {
+    const primerMes = e => Math.min(...(e.fenologia?.meses || [13]));
+    const filas = [...GROUPS.comestibles].sort((a, b) => primerMes(a) - primerMes(b) || titulo(a).localeCompare(titulo(b), "es"))
+      .map(e => `<div class="calg"><span class="calg-n">${tituloHTML(e)}${ref(e.id, true)}</span>${meses(e.fenologia?.meses, e.fenologia?.excepcional)}</div>`);
+    // filas repartidas por igual en las páginas que hagan falta (25 por página como mucho), estiradas hasta abajo
+    paginasIguales(filas, Math.ceil(filas.length / 25), anexoPage("Cuándo salen", "Calendario", "Meses en que sale cada comestible en Cataluña: oscuro, lo habitual; claro, solo algunos años. El número es su página.", "Anexo · Calendario", "calg-lista"), "calendario");
+  }
+  function glosarioPages() {
+    const d = html(DB.textos.glosario);
+    const items = [...d.querySelectorAll("li")].map(li => `<p class="glo">${li.innerHTML}</p>`);
+    flowCols(items, anexoPage("Palabras de setero", "Glosario", "", "Anexo · Glosario", "cols glo-lista"), "glosario");
+  }
+  function indicePages() {
+    const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+    const ent = [];
+    ESENCIAL.forEach(e => {
+      const vistos = new Set();
+      const pon = (t, cls) => { const k = norm(t); if (!t || vistos.has(k)) return; vistos.add(k); ent.push([k, `<p class="ixg${cls ? " " + cls : ""}"><span>${cls ? `<i>${esc(t)}</i>` : esc(cap(t))}</span>${ref(e.id, true)}</p>`]); };
+      [...e.nombres.ca, ...e.nombres.es].forEach(n => pon(n, ""));
+      pon(e.nombre, "cient");
+    });
+    ent.sort((a, b) => a[0].localeCompare(b[0], "es"));
+    // en dos columnas, repartido por igual (84 nombres por página como mucho); las filas llenan la altura
+    paginasIguales(ent.map(x => x[1]), Math.ceil(ent.length / 84), anexoPage("Todos los nombres", "Índice", "Nombres en catalán, castellano y científicos (en cursiva), con su página.", "Índice", "ixg-lista"), "índice",
+      (p, n) => (p.querySelector(".flow").style.gridTemplateRows = `repeat(${Math.ceil(n / 2)}, 1fr)`));
+  }
+  function creditosPages() {
+    // cada seta con los autores y licencias de sus fotos (el detalle de cada foto, con enlace, en su ficha de la web)
+    const porSeta = ESENCIAL.map(e => {
+      const fs = (EN_PAREJA.has(e.id) ? [] : (PICK[e.id] || []));
+      const aut = [...new Map(fs.map(f => [f.autor + "|" + f.licencia, f])).values()].map(f => `${esc(f.autor || "?")} (${esc(f.licencia || "")})`);
+      return aut.length ? `<p class="cr"><b>${tituloHTML(e)}</b> ${aut.join(", ")}</p>` : "";
+    }).filter(Boolean);
+    const otras = [...new Map(EXTRA.map(([, f]) => [f.autor + "|" + f.licencia, f])).values()].map(f => `${esc(f.autor || "?")} (${esc(f.licencia || "")})`);
+    if (otras.length) porSeta.push(`<p class="cr"><b>Árboles, parejas y otras</b> ${otras.join(", ")}</p>`);
+    const mk = anexoPage("Créditos", "Fotografías", "Fotos de iNaturalist y Wikimedia Commons con licencia Creative Commons o de dominio público. Cada una, con su autor, su licencia y el enlace al original, en la ficha de la web.", "Créditos", "cols cr-lista");
+    // primero se ve cuántas páginas hacen falta y luego se reparte por igual
+    const antes = book.children.length;
+    flowCols(porSeta, mk, "créditos");
+    const k = book.children.length - antes;
+    while (book.children.length > antes) book.lastElementChild.remove();
+    paginasIguales(porSeta, k, mk, "créditos");
   }
   // cada seta con la que se confunde: foto pequeña + en qué se diferencia (y su página, si tiene ficha)
   function confsHTML(confs, ok, propios) {
@@ -620,10 +795,22 @@
     reglasPage();
     mirarPage();
     arbolesPages();
-    // las parejas casi iguales (rovelló y pinetell) van juntas en la página de la primera
-    GROUPS.comestibles.forEach(e => { const pj = EN_PAREJA.get(e.id); if (!pj) fichaPage(e); else if (pj[1] === 0) parejaPage(pj[0]); });
-    [...GROUPS.mortales, ...GROUPS.toxicas].forEach(fichaPage);
-    sindromesPages();
+    if (GUIA) {
+      // guía: cada sección con sus setas (las del cuaderno, página entera; las demás, media página)
+      seccionGuia(GROUPS.comestibles, "comestibles");
+      seccionGuia(GROUPS.mortales, "mortales");
+      seccionGuia(GROUPS.toxicas, "toxicas");
+      calendarioPages();
+      sindromesPages();
+      glosarioPages();
+      indicePages();
+      creditosPages();
+    } else {
+      // las parejas casi iguales (rovelló y pinetell) van juntas en la página de la primera
+      GROUPS.comestibles.forEach(e => { const pj = EN_PAREJA.get(e.id); if (!pj) fichaPage(e); else if (pj[1] === 0) parejaPage(pj[0]); });
+      [...GROUPS.mortales, ...GROUPS.toxicas].forEach(fichaPage);
+      sindromesPages();
+    }
     const antesDeSOS = book.lastElementChild;
     sosPage();
 
@@ -688,10 +875,11 @@
     pages.forEach(p => {
       const n = num(p);
       if (p.classList.contains("cover")) { out.i.push([n, "Portada", 0]); return; }
-      const h = p.querySelector(".sp-head .name");
-      if (h) {
+      // una seta o, en las páginas de media, dos
+      const hs = [...p.querySelectorAll(".sp-head .name")];
+      if (hs.length) {
         if (p.dataset.sec !== sec) { sec = p.dataset.sec; out.i.push([n, SECN[sec] || sec, 0]); }
-        out.i.push([n, h.textContent.trim(), 1, "", (out.f[n] || [])[0] || ""]);
+        hs.forEach(h => { const m = h.closest(".media"); out.i.push([n, h.textContent.trim(), 1, "", m ? m.dataset.id : (out.f[n] || [])[0] || ""]); });
         return;
       }
       const pt = p.querySelector(".pt"), kick = p.querySelector(".kicker");

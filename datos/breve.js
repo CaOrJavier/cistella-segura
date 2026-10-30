@@ -15,7 +15,10 @@ window.BREVE = {
     // tóxicas y no comestibles que se confunden con las comestibles de arriba
     "lactarius-chrysorrheus", "rubroboletus-satanas", "amanita-muscaria", "amanita-pantherina", "tricholoma-equestre",
     "tricholoma-pardinum", "clitocybe-rivulosa", "omphalotus-olearius", "entoloma-sinuatum", "ramaria-formosa",
-    "russula-torulosa", "hygrophoropsis-aurantiaca"],
+    "russula-torulosa", "hygrophoropsis-aurantiaca",
+    // las tóxicas más comunes en Cataluña (las de más registros de la guía esencial)
+    "mycena-pura", "hypholoma-fasciculare", "inocybe-geophylla", "lactarius-torminosus", "lepiota-cristata",
+    "agaricus-xanthodermus", "lactarius-zonarius", "scleroderma-citrinum"],
   // 10 árboles, en el orden del cuaderno: llenan justo las dos páginas de «Árboles y sus setas» (5 en cada una;
   // el abeto y el alcornoque, con menos setas, van con los tres de fichas largas)
   arboles: ["pinus-halepensis", "pinus-pinea", "pinus-nigra", "pinus-sylvestris", "quercus-ilex",

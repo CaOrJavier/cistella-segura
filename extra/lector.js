@@ -34,14 +34,13 @@
   const MOV = !(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
   const TACTIL = window.matchMedia && matchMedia("(hover: none)").matches;
 
-  const pdfDe = (f, otro) => (((window.DB && DB.libros) || []).find((l) => l.f === f) || {}).url || otro;
   const LIBROS = {
-    bolsillo: { tit: "Setas esenciales · cuaderno de bolsillo", sub: CA ? "52 pàgines · 46 bolets" : "52 páginas · 46 setas", n: 52,
+    bolsillo: { tit: "Setas esenciales · cuaderno de bolsillo", sub: CA ? "60 pàgines · 54 bolets" : "60 páginas · 54 setas", n: 60,
       pdf: "offline/setas-esenciales-bolsillo.pdf", ed: "es", otra: "butxaca" },
     butxaca: { tit: "Cistella Segura · quadern de butxaca", sub: CA ? "76 pàgines · 50 bolets" : "76 páginas · 50 setas · en catalán", n: 76,
       pdf: "offline/cistella-segura-butxaca.pdf", ed: "ca", otra: "bolsillo" },
-    esencial: { tit: "Setas comestibles esenciales de Cataluña", sub: CA ? "336 pàgines · 79 bolets" : "336 páginas · 79 setas", n: 336,
-      pdf: pdfDe("guia-esencial-color-movil.pdf", "#/libros") },
+    esencial: { tit: "Setas comestibles esenciales de Cataluña", sub: CA ? "84 pàgines · 80 bolets" : "84 páginas · 80 setas", n: 84,
+      pdf: "offline/setas-guia-esencial-A5.pdf" },
   };
   Object.keys(LIBROS).forEach((g) => (LIBROS[g].dir = "libros/" + g));
   // dónde se quedó cada libro (setas:leer = {bolsillo: 12, …})

@@ -1,0 +1,12 @@
+/* Guía esencial en A5: cada página de 120 × 170,3 mm se amplía ×1,2333 (148 × 210 mm) */
+@page { size: 148mm 210mm; margin: 0; }
+#a5 { display: flex; flex-wrap: wrap; gap: 6mm; padding: 6mm; justify-content: center; }
+.a5p { width: 148mm; height: 210mm; position: relative; overflow: hidden; background: #fff; flex: none; box-shadow: 0 1px 3px rgb(0 0 0 / .25); }
+.a5p > .page { position: absolute; left: 0; top: 0; transform-origin: 0 0; transform: scale(1.233333); box-shadow: none; }
+@media print {
+  body { background: none; }
+  #a5 { display: block; padding: 0; }
+  .a5p { box-shadow: none; break-after: page; }
+  .a5p:last-child { break-after: auto; }
+  .a5p > .page { break-after: auto; }
+}

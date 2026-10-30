@@ -3,7 +3,8 @@
 // cuadernillos (A, B…) para que no sean demasiado gruesos.
 "use strict";
 (() => {
-  const ESCALA = 1.40952 * 0.94;   // A6 → A5, con margen blanco: las impresoras de casa no llegan al borde
+  // A6 → A5 (en la guía esencial, su página de 120 mm → A5), con margen blanco: las impresoras de casa no llegan al borde
+  const ESCALA = (window.CUADERNO_ESCALA || 1.40952) * 0.94;
   const MAX = 48;                  // páginas por cuadernillo: 12 hojas A4 dobladas aún se grapan bien
 
   const el = (tag, cls, html) => {

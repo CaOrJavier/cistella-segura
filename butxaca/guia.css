@@ -1,0 +1,44 @@
+/* Guía esencial: el mismo diseño que el cuaderno de bolsillo en una página mayor (120 × 170,3 mm) que luego
+   se amplía ×1,2333 hasta A5 (guia-a5.css) o se coloca en hojas A4 (guia-a4.css). Letra efectiva ≈ 8 pt. */
+.page { width: 120mm; height: 170.27mm; }
+.ph { max-height: 98mm; }
+
+/* página entera: cómo es (descripción) y cuándo sale */
+.desc { margin: .8mm 0 .5mm; }
+.desc h3 { font-size: 5.1pt; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--st, var(--accent)); margin-bottom: .3mm; }
+.st-comestible .desc h3, .st-precaucio.edible .desc h3 { color: var(--ok); }
+.desc p { margin: 0 0 .3mm; }
+
+/* media página: dos setas por página, fotos a la izquierda */
+.mitades-in { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+.media { flex: 1 1 0; min-height: 0; overflow: hidden; display: grid; grid-template-columns: 36mm minmax(0, 1fr); column-gap: 2.6mm; align-items: start; padding: .6mm 0 1.4mm; }
+.media + .media { border-top: .35mm solid var(--line); padding-top: 2.2mm; }
+.m-fotos { display: grid; gap: .9mm; }
+.m-fotos figure { margin: 0; position: relative; aspect-ratio: 1 / .92; overflow: hidden; border-radius: 1mm; background: var(--paper-3); }
+.m-fotos img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.m-fotos figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 2.2mm 1.2mm .6mm; font-size: 4.6pt; line-height: 1.15; color: #fff; background: linear-gradient(transparent, rgb(0 0 0 / .72)); }
+.m-txt { min-width: 0; }
+.media .sp-head .name { font-size: 13pt; line-height: 1.02; }
+.media .lat { margin-bottom: 0; }
+.media .facts { margin: .9mm 0 .6mm; flex-wrap: wrap; row-gap: .5mm; }
+.media .conf { margin-top: .8mm; }
+.media .perill { margin-top: .8mm; }
+
+/* calendario: las filas se estiran hasta llenar la página */
+.flow.calg-lista { flex: 1 1 auto; display: flex; flex-direction: column; }
+.calg { flex: 1 1 auto; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2mm; padding: .5mm 0; border-bottom: .2mm solid var(--line); font-size: 6.4pt; line-height: 1.2; }
+.calg-n .ref { margin-left: .9mm; font-family: var(--display); font-style: italic; font-weight: 700; color: var(--accent); }
+
+/* glosario, índice y créditos en dos columnas */
+.flow.cols { flex: 1 1 auto; min-height: 0; height: 0; column-count: 2; column-gap: 4.5mm; column-fill: auto; }
+.glo { font-size: 6pt; line-height: 1.3; margin: 0 0 1mm; break-inside: avoid; }
+.glo strong { font-weight: 800; }
+.cr-lista { column-fill: balance; }
+/* índice: dos columnas que se llenan de arriba abajo (filas iguales hasta el pie de la página) */
+.flow.ixg-lista { flex: 1 1 auto; min-height: 0; height: 0; display: grid; grid-auto-flow: column; grid-template-columns: 1fr 1fr; column-gap: 4.5mm; }
+.ixg-lista .ixg { align-items: flex-end; padding-bottom: .25mm; }
+.ixg { display: flex; flex-direction: row; justify-content: space-between; align-items: baseline; gap: 1.5mm; font-size: 6pt; line-height: 1.35; margin: 0; break-inside: avoid; border-bottom: .15mm dotted var(--line); }
+.ixg .ref { font-family: var(--display); font-style: italic; font-weight: 700; color: var(--accent); }
+.ixg.cient span { color: var(--ink-2); }
+.cr { font-size: 5.4pt; line-height: 1.26; margin: 0 0 .8mm; break-inside: avoid; color: var(--ink-2); }
+.cr b { color: var(--ink); font-weight: 800; }
