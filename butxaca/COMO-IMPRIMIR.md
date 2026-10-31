@@ -5,11 +5,11 @@ Hay dos cuadernos, cada uno en dos versiones, en `offline/`:
 | Cuaderno | Para leer o llevar a la copistería (A6) | Para imprimir en casa (A4) |
 |---|---|---|
 | **Cistella Segura** (catalán, 50 bolets, 76 págs.) | `cistella-segura-butxaca.pdf` | `cistella-segura-butxaca-imprimir-A4.pdf` · 10 hojas, 1 cuadernillo |
-| **Setas esenciales** (castellano, 54 setas, 52 págs., fondo blanco) | `setas-esenciales-bolsillo.pdf` | `setas-esenciales-bolsillo-imprimir-A4.pdf` · 7 hojas (la última, media), 1 cuadernillo |
+| **Setas esenciales** (castellano, 54 setas, 56 págs., fondo blanco) | `setas-esenciales-bolsillo.pdf` | `setas-esenciales-bolsillo-imprimir-A4.pdf` · 7 hojas, 1 cuadernillo |
 
 Las páginas A6 miden 10,5 × 14,8 cm: la mitad de un A5, un cuarto de un A4.
 
-*Setas esenciales* también está en **A5** (14,8 × 21 cm, letra y fotos un 40 % más grandes): `setas-esenciales-A5.pdf`, y para imprimir en casa `setas-esenciales-A5-imprimir-A4.pdf` · 13 hojas A4 apaisadas, 1 cuadernillo. Se imprime a doble cara **volteando por el borde corto**; no se corta nada: se ordenan las hojas por su número, se doblan juntas por la mitad y se grapa. Gasta el doble de papel que el A6.
+*Setas esenciales* también está en **A5** (14,8 × 21 cm, letra y fotos un 40 % más grandes): `setas-esenciales-A5.pdf`, y para imprimir en casa `setas-esenciales-A5-imprimir-A4.pdf` · 14 hojas A4 apaisadas, 1 cuadernillo. Se imprime a doble cara **volteando por el borde corto**; no se corta nada: se ordenan las hojas por su número, se doblan juntas por la mitad y se grapa. Gasta el doble de papel que el A6.
 
 ## En casa (archivos `...-imprimir-A4.pdf`)
 
@@ -27,8 +27,8 @@ Necesitas: las hojas A4 de la tabla (mejor de 90–100 g si tienes), tijeras o c
    - Si tu grapadora no llega al centro: ábrela del todo, apoya el cuaderno abierto sobre una goma de borrar o un trozo de corcho, grapa desde fuera por la línea del pliegue y dobla las patas de la grapa con el dedo.
    - Alternativa más resistente: haz 3 agujeros en el pliegue con una aguja gruesa y cóselo con hilo.
 
-Si sobra media hoja (lleva estas instrucciones), se puede tirar o usar de punto de libro. En *Setas esenciales* no sobra ninguna: las instrucciones van resumidas en la página 2.
+Si sobra media hoja (lleva estas instrucciones), se puede tirar o usar de punto de libro. En *Setas esenciales* no sobra ninguna: las instrucciones van resumidas en una de las páginas de notas del final.
 
 ## En una copistería
 
-Lleva el PDF A6 y pide **«cuadernillo A6 grapado a caballete, a color, a sangre»**. Lo imprimen sin márgenes blancos y lo cortan con guillotina; queda como un libro de tienda. Si quieres que dure más, pide **papel de 120 g** y **portada en cartulina de 250 g plastificada mate**. *Setas esenciales* (52 páginas) se grapa bien; si lo quieres más resistente, pide **espiral**.
+Lleva el PDF A6 y pide **«cuadernillo A6 grapado a caballete, a color, a sangre»**. Lo imprimen sin márgenes blancos y lo cortan con guillotina; queda como un libro de tienda. Si quieres que dure más, pide **papel de 120 g** y **portada en cartulina de 250 g plastificada mate**. *Setas esenciales* (56 páginas) se grapa bien; si lo quieres más resistente, pide **espiral**.

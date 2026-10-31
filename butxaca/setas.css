@@ -404,6 +404,14 @@ html.libro-bolsillo {
 .conf.mini .cf-tag { white-space: nowrap; }
 .conf.mini .cc-vacio { display: grid; place-items: center; background: var(--paper-2); }
 .conf.mini .cc-vacio svg { width: auto; height: 72%; opacity: .5; }
+/* las que ya tienen su página en el cuaderno: sin foto y a todo el ancho
+   (nombre, peligro y página; debajo, en qué se parecen y en qué se distinguen) */
+.conf.mini li.cft { grid-column: 1 / -1; margin: 0; min-width: 0; }
+.conf.mini .cft-n .ref { margin-left: .3mm; }
+.conf.mini .cft-t { margin-top: .15mm; }
+.conf.mini .cft-t .lab { color: var(--ink-2); margin-right: .7mm; }
+/* si solo una lleva foto, a todo el ancho también */
+.conf.mini.f1 li.cfc { grid-column: 1 / -1; }
 /* las que no tienen foto en la base de datos: un dibujo sencillo, para que las tarjetas queden alineadas */
 .conf.cards .cc-vacio { display: grid; place-items: center; background: var(--paper-2); }
 .conf.cards .cc-vacio svg { width: auto; height: 72%; opacity: .5; }

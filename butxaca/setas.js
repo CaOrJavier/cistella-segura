@@ -29,6 +29,7 @@
   // Setas casi iguales que van juntas en una sola página, con sus pequeñas diferencias
   // (fotos: [especie, foto (ruta g), pie corto]; filas: [qué, la primera, la segunda])
   // (bolsillo: solo en el cuaderno de bolsillo, para que quepan dos setas por hoja; en la guía siguen por separado)
+  // (las trompetas negra y amarilla, trompeta de la mort y camagroc, ya no van juntas: cada una en su página)
   const PAREJAS = [{
     ids: ["lactarius-sanguifluus", "lactarius-deliciosus"],
     nombre: "Níscalos", cols: ["Níscalo de sangre", "Níscalo"],
@@ -38,27 +39,16 @@
     fotos: [["lactarius-sanguifluus", "fotos/g/db970a74779d.jpg", "De sangre: naranja vinoso, con pocas zonas."],
       ["lactarius-deliciosus", "fotos/g/87b9e09821d1.jpg", "Níscalo: zonas bien marcadas."],
       ["lactarius-deliciosus", "fotos/g/8bd69c6b0fd3.jpg", "Níscalo: láminas naranja vivo."]],
+    // en el cuaderno de bolsillo, una foto de cada uno: la del níscalo, de lado, con las láminas y el pie
+    // hasta la base (la de arriba solo enseñaba sombreros); el 4.º dato es el encuadre (object-position)
+    fotosBolsillo: [["lactarius-sanguifluus", "fotos/g/db970a74779d.jpg", "De sangre: naranja vinoso, con pocas zonas."],
+      ["lactarius-deliciosus", "fotos/g/8bd69c6b0fd3.jpg", "Níscalo: láminas naranja vivo y pie hasta la base.", "50% 92%"]],
     filas: [["Látex", "Rojo vino desde el primer momento", "Naranja zanahoria; no pasa a vino"],
       ["Láminas", "Rosa vinoso o lila", "Naranja vivo"],
       ["Dónde", "Pino carrasco y piñonero, a menudo en suelo calizo; de la costa a la montaña media", "Pino silvestre y laricio: pinares más frescos y de montaña, umbrías"]],
     claves: ["Láminas que se manchan de verde al tocarlas.", "Pie corto y hueco, con hoyuelos más oscuros.",
       "Látex de color al cortar: si es blanco, descártelo.", "Siempre bajo pinos."],
     compruebe: "Corte el pie y mire el color del látex en el primer momento."
-  }, {
-    bolsillo: true,
-    ids: ["craterellus-cornucopioides", "craterellus-lutescens"],
-    nombre: "Trompetas negra y amarilla", cols: ["Trompeta de los muertos", "Angula de monte"],
-    lat: "<i>Craterellus cornucopioides</i> y <i>C. lutescens</i> · trompeta de la mort, camagroc",
-    lede: "Huecas, en embudo y sin láminas; las dos, muy apreciadas.",
-    fotos: [["craterellus-cornucopioides", "fotos/g/fed8d2eb141c.jpg", "Trompeta de los muertos: negra, en grupo."],
-      ["craterellus-lutescens", "fotos/g/0c352230905f.jpg", "Angula de monte: pie amarillo y sombrero pardo."],
-      ["craterellus-lutescens", "fotos/g/2f73c4a6b70e.jpg", "Por debajo, liso o con venas bajas."]],
-    filas: [["Color", "Negra o gris muy oscuro, toda ella", "Sombrero pardo; pie amarillo anaranjado vivo"],
-      ["Por debajo", "Gris ceniza, liso o apenas arrugado", "Rosado anaranjado o amarillo, con venas muy bajas"],
-      ["Dónde", "Hojarasca húmeda de hayedos, encinares y castañares", "Musgo húmedo de pinares y abetales, cerca del agua"]],
-    claves: ["Sin láminas: por debajo, lisas o con venas muy bajas.", "Huecas hasta abajo, en forma de embudo o trompeta.",
-      "Carne delgada y elástica.", "Salen en grupo, a menudo muchas juntas."],
-    compruebe: "Mire por debajo: si tiene láminas finas y apretadas, no es ninguna de las dos."
   }, {
     bolsillo: true,
     ids: ["hygrophorus-latitabundus", "hygrophorus-russula"],
@@ -845,7 +835,7 @@
   // etiquetas: en las parejas, el nombre de cada seta encima de su texto
   function fotosB(ph, etiquetas = []) {
     if (!ph.length) return "";
-    return `<div class="ph3 n${ph.length}">${ph.map((f, i) => { const pie = pieEs(f.pie); return `<figure><span class="ph3-im"><img src="${G(f.g || f.t)}" alt=""></span>${etiquetas[i] ? `<b class="ph3-et">${esc(etiquetas[i].nombre)}</b>${etiquetas[i].dos ? `<span class="ph3-2">${etiquetas[i].dos}</span>` : ""}` : ""}${pie ? `<figcaption class="pc-t" data-full="${esc(pie)}">${esc(capCorta(pie, 46))}</figcaption>` : ""}</figure>`; }).join("")}</div>`;
+    return `<div class="ph3 n${ph.length}">${ph.map((f, i) => { const pie = pieEs(f.pie); return `<figure><span class="ph3-im"><img src="${G(f.g || f.t)}" alt=""${f.pos ? ` style="object-position:${f.pos}"` : ""}></span>${etiquetas[i] ? `<b class="ph3-et">${esc(etiquetas[i].nombre)}</b>${etiquetas[i].dos ? `<span class="ph3-2">${etiquetas[i].dos}</span>` : ""}` : ""}${pie ? `<figcaption class="pc-t" data-full="${esc(pie)}">${esc(capCorta(pie, 46))}</figcaption>` : ""}</figure>`; }).join("")}</div>`;
   }
   // los pies de foto de la base de datos que nombran la seta en catalán, con el nombre castellano del libro
   const PIES_ES = [[/\bCeps recolectados\b/g, "Boletos recolectados"], [/\bdel molleric\b/g, "del boleto granulado"],
@@ -877,17 +867,36 @@
     const f = (PICK[x.id] || [])[0] || (x.fotos || []).find(f => f.papel === "adulto") || (x.fotos || [])[0];
     return f ? G(f.g || f.t) : "";
   }
-  // se confunde con: en dos columnas, cada una con su foto cuadrada al lado del texto (ocupa poco y la seta se ve entera)
+  // se confunde con:
+  // - las que tienen su propia página en el cuaderno: sin foto (ya está en su página), a todo el ancho:
+  //   el nombre, el peligro y la página, en qué se parecen (por qué se confunden) y en qué se distinguen
+  // - las que no están en el cuaderno: en dos columnas, cada una con su foto cuadrada al lado del texto
   function confsCards(confs, ok, propios) {
     if (!confs.length) return "";
-    return `<div class="conf mini k${confs.length}"><h3>${ok ? "Cuidado: se confunde con" : "Se confunde con"}</h3><ul>${confs.map(c => {
-      const im = fotoConfG(c), d = primera(c.diferencia, 170);
+    const enLibro = c => c.id && BY[c.id] && !propios.includes(c.id);
+    const conFotoN = confs.filter(c => !enLibro(c)).length;
+    return `<div class="conf mini k${confs.length}${conFotoN === 1 ? " f1" : ""}"><h3>${ok ? "Cuidado: se confunde con" : "Se confunde con"}</h3><ul>${confs.map(c => {
+      const d = primera(c.diferencia, 170);
       // con su nombre en catalán al lado: muchos textos de diferencias lo nombran así
       const dos = segundosConf(c);   // catalán y científico, debajo del castellano
-      return `<li class="cfc${im ? "" : " sin-foto"}">${im ? `<img class="cc-im" src="${im}" alt="">` : `<span class="cc-im cc-vacio">${DIBUJO_BAJO.laminas}</span>`}<p><b>${nombreConf(c)}</b>${dos ? `<span class="cc-2">${dos}</span>` : " "}<span class="cf-tag cf-${c.peligro}">${PEL[c.peligro] || c.peligro}</span> <span class="cc-d" data-full="${esc(d)}">${esc(cortaFrase(d, 72))}</span>${c.id && !propios.includes(c.id) ? " " + ref(c.id) : ""}</p></li>`;
+      const tag = `<span class="cf-tag cf-${c.peligro}">${PEL[c.peligro] || c.peligro}</span>`;
+      if (enLibro(c)) {
+        const par = primera(c.comparten, 140).replace(/\.$/, "");
+        return `<li class="cft"><p class="cft-n"><b>${nombreConf(c)}</b>${dos ? ` <span class="cc-2-in">${dos}</span>` : ""} ${tag} ${ref(c.id)}</p>`
+          + `<p class="cft-t">${par ? `<span class="cc-par"><span class="lab">Se parece</span>${esc(par)}. </span>` : ""}<span class="lab">Se distingue</span><span class="cc-d" data-full="${esc(d)}">${esc(cortaFrase(d, 72))}</span></p></li>`;
+      }
+      const im = fotoConfG(c);
+      return `<li class="cfc${im ? "" : " sin-foto"}">${im ? `<img class="cc-im" src="${im}" alt="">` : `<span class="cc-im cc-vacio">${DIBUJO_BAJO.laminas}</span>`}<p><b>${nombreConf(c)}</b>${dos ? `<span class="cc-2">${dos}</span>` : " "}${tag} <span class="cc-d" data-full="${esc(d)}">${esc(cortaFrase(d, 72))}</span>${c.id && !propios.includes(c.id) ? " " + ref(c.id) : ""}</p></li>`;
     }).join("")}</ul></div>`;
   }
   const acortaDif = max => p => p.querySelectorAll(".cc-d").forEach(s => (s.textContent = cortaFrase(s.dataset.full, max)));
+  // «Se parece» es lo primero que se quita de las confusiones si la página no cabe; luego vuelve si queda sitio
+  const parecidos = p => [...p.querySelectorAll(".cc-par")].map(s => [s.parentElement, s.outerHTML]);
+  const devuelveParecidos = (p, lista) => lista.forEach(([t, h]) => {
+    if (!t.isConnected || t.querySelector(".cc-par")) return;
+    t.insertAdjacentHTML("afterbegin", h);
+    if (overflows(p)) t.firstElementChild.remove();
+  });
   // cabecera en poco alto: el nombre y, a su derecha, la etiqueta y la dificultad; debajo, científico y catalán
   // (si el nombre es largo, la etiqueta va encima y el nombre ocupa todo el ancho)
   // la tira de meses va a la derecha del nombre científico (como en muchas guías de campo)
@@ -905,8 +914,9 @@
   // cuando la página no cabe se recorta por este orden; después, lo recortado vuelve si ha quedado sitio,
   // por orden de importancia: «Compruebe», los rasgos, los textos enteros, el detalle de «Dónde» y la frase de arriba
   function ajustaB(p, nombre, ...extra) {
-    const pasos = ["tight", ".lede", "dense", acortaCaps(40), "fotos-bajas", ".d-mas", acortaDif(80), quitaUltimo(".conf li"), "denser", acortaDif(62), ".r-dato", acortaCaps(24), ".os", ".pc-t", ".truc", quitaUltimo(".checks li"), ...extra];
+    const pasos = ["tight", ".lede", "dense", acortaCaps(40), "fotos-bajas", ".d-mas", acortaDif(80), ".cc-par", quitaUltimo(".conf li"), "denser", acortaDif(62), ".r-dato", acortaCaps(24), ".os", ".pc-t", ".truc", quitaUltimo(".checks li"), ...extra];
     const lede = p.querySelector(".lede")?.outerHTML, mas = p.querySelector(".d-mas")?.outerHTML, truc = p.querySelector(".truc")?.outerHTML;
+    const pars = parecidos(p);
     const pies = [...p.querySelectorAll(".ph3 figure")].map(f => f.querySelector(".pc-t")?.outerHTML || "");
     const os = p.querySelector(".os"), osHTML = os?.outerHTML, osAntes = os?.nextElementSibling;
     const claves = [...p.querySelectorAll(".checks li")].map(li => li.outerHTML);
@@ -915,6 +925,7 @@
     if (truc && !p.querySelector(".truc")) vuelve(p.querySelector(".txt"), truc);
     const ul = p.querySelector(".checks ul");
     if (ul) for (const li of claves.slice(ul.children.length)) if (!vuelve(ul, li)) break;
+    devuelveParecidos(p, pars);
     // el olor o sabor, en su sitio (detrás de los rasgos)
     if (osHTML && !p.querySelector(".os") && osAntes && osAntes.isConnected) { osAntes.insertAdjacentHTML("beforebegin", osHTML); if (overflows(p)) osAntes.previousElementSibling.remove(); }
     // los textos de las fotos, debajo de cada una (todos o ninguno)
@@ -1179,7 +1190,10 @@
     const SECL = { comestibles: "Comestibles", toxicas: "Tóxicas", mortales: "Mortales" };
     const p = newPage(est.sec, `sp st-${est.st}${ok ? " edible" : ""} pareja`);
     cfg.ids.forEach(id => (PAGE_OF[id] = p));
-    const fotos = cfg.fotos.map(([id, g, pie]) => ({ ...((BY[id].fotos || []).find(f => f.g === g) || BY[id].fotos[0]), pie }));
+    const fotosDe = lista => lista.map(([id, g, pie, pos]) => ({ ...((BY[id].fotos || []).find(f => f.g === g) || BY[id].fotos[0]), pie, pos }));
+    // cuaderno: si la pareja trae sus propias fotos de bolsillo, se usan esas
+    const listaF = !GUIA && cfg.fotosBolsillo ? cfg.fotosBolsillo : cfg.fotos;
+    const fotos = fotosDe(listaF);
     fotos.forEach(f => EXTRA.push([cfg.nombre, f]));
     const mesesU = [...new Set([...(a.fenologia?.meses || []), ...(b.fenologia?.meses || [])])];
     const alts = [a, b].map(e => e.distribucion?.altitud).filter(x => x && x.max != null);
@@ -1211,7 +1225,7 @@
     const esporada = a.morfologia?.esporada === b.morfologia?.esporada ? a.morfologia?.esporada : "";
     // cuaderno: una foto de cada seta, una al lado de la otra y con su nombre (son distintas: no se mezclan)
     const unaPorSeta = cfg.ids.map(id => {
-      const i = cfg.fotos.findIndex(([x]) => x === id);
+      const i = listaF.findIndex(([x]) => x === id);
       if (i < 0) return null;
       const pie = fotos[i].pie || "", d = pie.indexOf(":");
       return { ...fotos[i], pie: d > 0 ? cap(pie.slice(d + 1).trim()) : pie };
@@ -1234,14 +1248,16 @@
         <p class="truc"><span class="lab">Compruebe</span>${esc(cfg.compruebe)}</p></div>
       ${foot(SECL[est.sec])}`);
     // la frase de arriba explica por qué van juntas y «Compruebe» es lo práctico: se quitan lo último
+    const pars = parecidos(p);
     fit(p, GUIA ? ["tight", "dense", quitaUltimo(".conf li"), "denser", ".lede", quitaUltimo(".checks li"), ".truc"]
-      : ["tight", "dense", acortaCaps(46), "fotos-bajas", acortaDif(110), quitaUltimo(".conf li"), "denser", acortaDif(80), ".r-dato", ".lede", quitaUltimo(".checks li"), ".truc", acortaCaps(28)], "pareja " + cfg.nombre);
+      : ["tight", "dense", acortaCaps(46), "fotos-bajas", acortaDif(110), ".cc-par", quitaUltimo(".conf li"), "denser", acortaDif(80), ".r-dato", ".lede", quitaUltimo(".checks li"), ".truc", acortaCaps(28)], "pareja " + cfg.nombre);
     // si al quitar algo ha quedado sitio, vuelve lo quitado por orden de importancia:
     // primero «Compruebe», luego los rasgos, los textos enteros (cuaderno) y, al final, la frase de arriba
     const vuelve = (donde, html, pos = "beforeend") => { donde.insertAdjacentHTML(pos, html); const n = pos === "beforeend" ? donde.lastElementChild : donde.firstElementChild; if (overflows(p)) { n.remove(); return false; } return true; };
     const txt = p.querySelector(".txt"), ul = p.querySelector(".checks ul"), h = p.querySelector(".sp-head");
     if (!p.querySelector(".truc")) vuelve(txt, `<p class="truc"><span class="lab">Compruebe</span>${esc(cfg.compruebe)}</p>`);
     if (ul) for (const c of cfg.claves.slice(ul.children.length)) if (!vuelve(ul, `<li>${esc(c)}</li>`)) break;
+    devuelveParecidos(p, pars);
     if (!GUIA) for (const s of p.querySelectorAll(".cc-d, .pc-t")) { const corto = s.textContent; s.textContent = s.classList.contains("pc-t") ? capCorta(s.dataset.full, 72) : s.dataset.full; if (overflows(p)) s.textContent = corto; }
     if (p.classList.contains("fotos-bajas")) { p.classList.remove("fotos-bajas"); if (overflows(p)) p.classList.add("fotos-bajas"); }
     if (!h.querySelector(".lede")) vuelve(h, `<p class="lede">${esc(cfg.lede)}</p>`);
@@ -1357,7 +1373,7 @@
       creditosPages();
     } else {
       // las parejas casi iguales (rovelló y pinetell) van juntas en la página de la primera
-      // (y las otras parejas, también en tóxicas: dos setas por hoja)
+      // (y las otras parejas de PAREJAS, también en tóxicas: dos setas por hoja)
       ORDEN.forEach(e => { const pj = EN_PAREJA.get(e.id); if (!pj) fichaPage(e); else if (pj[1] === 0) parejaPage(pj[0]); });
       arbolesPages();
       // sin síndromes, «Llame ahora» ni índice (los teléfonos van en la portada; las secciones y los créditos
