@@ -340,8 +340,22 @@
   }
   // fotos elegidas a mano cuando las automáticas no sirven (ou de reig: entero, láminas amarillas y saliendo del huevo)
   const FOTOS_CUADERNO = { "amanita-caesarea": ["fotos/g/8205426474fa.jpg", "fotos/g/6e4d41ce5c8f.jpg", "fotos/g/0fe1b13bc174.jpg"] };
-  // solo en el cuaderno de bolsillo (parasol: el sombrero visto desde arriba en vez de la foto hecha desde abajo; pie y láminas)
-  const FOTOS_BOLSILLO = { "macrolepiota-procera": ["fotos/g/4928e51e29bc.jpg", "fotos/g/dd2fdf885cb9.jpg", "fotos/g/698b7943422d.jpg"] };
+  // solo en el cuaderno de bolsillo: tres fotos que se vean distintas (parasol: el sombrero visto desde arriba en vez de la
+  // foto hecha desde abajo; en las demás, en lugar de una foto repetida o casi igual a otra de la misma página)
+  const FOTOS_BOLSILLO = {
+    "macrolepiota-procera": ["fotos/g/4928e51e29bc.jpg", "fotos/g/dd2fdf885cb9.jpg", "fotos/g/698b7943422d.jpg"],
+    "sparassis-crispa": ["fotos/g/909c6ea8841b.jpg", "fotos/g/3c81b070a22b.jpg", "fotos/g/61be86c85746.jpg"], // al pie del pino
+    "lycoperdon-perlatum": ["fotos/g/152f50ecb24d.jpg", "fotos/g/0c69c19b62ad.jpg", "fotos/g/305eb20d442b.jpg"], // viejo
+    "lepista-nuda": ["fotos/g/83ae72f34586.jpg", "fotos/g/adf851a161e6.jpg", "fotos/g/a2aaafec3863.jpg"], // ya parda
+    "marasmius-oreades": ["fotos/g/4927c8caed3f.jpg", "fotos/g/77a02bc14996.jpg", "fotos/g/13abc7fc3584.jpg"], // el pie
+    "cyclocybe-cylindracea": ["fotos/g/65b5c31f2a4c.jpg", "fotos/g/faf4152b67a7.jpg", "fotos/g/a4db3a92d4d3.jpg"],
+    "russula-torulosa": ["fotos/g/e75f0838fa01.jpg", "fotos/g/8357f30ec219.jpg", "fotos/g/70e8fb7b3bb0.jpg"],
+    "rubroboletus-satanas": ["fotos/g/a151042e0160.jpg", "fotos/g/0cafaa1bc3ed.jpg", "fotos/g/3abc6e4d2d3a.jpg"], // azulea
+    "lepiota-cristata": ["fotos/g/7a06abb49c17.jpg", "fotos/g/1cf83c2a18b9.jpg", "fotos/g/8df0d8bf9042.jpg"],
+    "entoloma-sinuatum": ["fotos/g/a798ac899201.jpg", "fotos/g/049f9a91ae33.jpg", "fotos/g/6f6419be6c01.jpg"],
+    "inosperma-erubescens": ["fotos/g/e591ec1c693d.jpg", "fotos/g/ce9715d17d4c.jpg", "fotos/g/e50624f3a1c1.jpg"],
+    "cortinarius-orellanus": ["fotos/g/3a864a604452.jpg", "fotos/g/d8e9e136d99b.jpg", "fotos/g/79b9a464dca2.jpg"]
+  };
   const PICK = Object.fromEntries(ESENCIAL.map(e => {
     const fijas = ((!GUIA && FOTOS_BOLSILLO[e.id]) || FOTOS_CUADERNO[e.id] || []).map(g => (e.fotos || []).find(f => f.g === g)).filter(Boolean);
     return [e.id, fijas.length ? fijas : pickPhotos(e)];
