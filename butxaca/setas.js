@@ -834,16 +834,18 @@
     return `<div class="ficha2"><div class="f2-col"><h3>${conMeses ? "Cómo es y cuándo sale" : "Cómo es"}</h3>${rasgosHTML(items, esporada)}${conMeses ? dc.cuando : ""}</div>
       <div class="f2-col dc"><h3>Dónde</h3>${dc.donde}</div></div>`;
   }
-  // fotos: un número en cada una y sus textos debajo, en oscuro sobre blanco (en la foto no se leen al imprimir)
-  function fotosB(ph, maxes = [50, 34, 34]) {
+  // fotos: las tres en fila, iguales y casi cuadradas (la seta se ve entera; las alargadas la cortaban),
+  // cada una con su texto debajo, en oscuro sobre blanco (dentro de la foto no se leía al imprimir).
+  // etiquetas: en las parejas, el nombre de cada seta encima de su texto
+  function fotosB(ph, etiquetas = []) {
     if (!ph.length) return "";
-    const cls = ph.length === 1 ? " one" : ph.length === 2 ? " two" : "";
-    const roles = ["ph-main", "ph-a", "ph-b"];
-    const num = ph.filter(f => f.pie).length > 1;
-    const figs = ph.map((f, i) => `<figure class="${roles[i]}"><img src="${G(f.g || f.t)}" alt="">${num && f.pie ? `<span class="ph-n">${i + 1}</span>` : ""}</figure>`).join("");
-    const caps = ph.map((f, i) => (f.pie ? `<span class="pc">${num ? `<b class="pc-n">${i + 1}</b>` : ""}<span class="pc-t" data-full="${esc(f.pie)}">${esc(capCorta(f.pie, maxes[i]))}</span></span>` : "")).join(" ");
-    return `<div class="ph${cls}">${figs}</div>${caps.trim() ? `<p class="ph-caps">${caps}</p>` : ""}`;
+    return `<div class="ph3 n${ph.length}">${ph.map((f, i) => { const pie = pieEs(f.pie); return `<figure><span class="ph3-im"><img src="${G(f.g || f.t)}" alt=""></span>${etiquetas[i] ? `<b class="ph3-et">${esc(etiquetas[i])}</b>` : ""}${pie ? `<figcaption class="pc-t" data-full="${esc(pie)}">${esc(capCorta(pie, 46))}</figcaption>` : ""}</figure>`; }).join("")}</div>`;
   }
+  // los pies de foto de la base de datos que nombran la seta en catalán, con el nombre castellano del libro
+  const PIES_ES = [[/\bCeps recolectados\b/g, "Boletos recolectados"], [/\bdel molleric\b/g, "del boleto granulado"],
+    [/\b(del|un) apagallums\b/g, (m, a) => `${a} parasol`], [/\bel camperol\b/g, "el champiñón silvestre"],
+    [/\bel fredolic delgado\b/g, "la negrilla, más delgada"]];
+  const pieEs = t => PIES_ES.reduce((s, [re, r]) => s.replace(re, r), String(t || ""));
   // pie de foto más corto: hasta los dos puntos o una coma si es posible (sin «…»)
   const capCorta = (c, max) => {
     c = String(c || "").trim();
@@ -869,10 +871,10 @@
     const f = (PICK[x.id] || [])[0] || (x.fotos || []).find(f => f.papel === "adulto") || (x.fotos || [])[0];
     return f ? G(f.g || f.t) : "";
   }
-  // se confunde con: tarjetas con foto grande (dos o tres en fila; si es una, foto al lado)
+  // se confunde con: en dos columnas, cada una con su foto cuadrada al lado del texto (ocupa poco y la seta se ve entera)
   function confsCards(confs, ok, propios) {
     if (!confs.length) return "";
-    return `<div class="conf cards k${confs.length}"><h3>${ok ? "Cuidado: se confunde con" : "Se confunde con"}</h3><ul>${confs.map(c => {
+    return `<div class="conf mini k${confs.length}"><h3>${ok ? "Cuidado: se confunde con" : "Se confunde con"}</h3><ul>${confs.map(c => {
       const im = fotoConfG(c), d = primera(c.diferencia, 170);
       // con su nombre en catalán al lado: muchos textos de diferencias lo nombran así
       const x = c.id && TODAS[c.id], ca = x ? (x.nombres.es[0] ? x.nombres.ca[0] : "") : (c.es && c.ca ? c.ca : "");
@@ -897,8 +899,9 @@
   // cuando la página no cabe se recorta por este orden; después, lo recortado vuelve si ha quedado sitio,
   // por orden de importancia: «Compruebe», los rasgos, los textos enteros, el detalle de «Dónde» y la frase de arriba
   function ajustaB(p, nombre, ...extra) {
-    const pasos = ["tight", ".lede", "dense", acortaCaps(40), ".d-mas", acortaDif(80), quitaUltimo(".conf li"), "denser", acortaDif(62), ".r-dato", acortaCaps(26), ".os", ".ph-caps", ".truc", quitaUltimo(".checks li"), ...extra];
-    const lede = p.querySelector(".lede")?.outerHTML, mas = p.querySelector(".d-mas")?.outerHTML, truc = p.querySelector(".truc")?.outerHTML, caps = p.querySelector(".ph-caps")?.outerHTML;
+    const pasos = ["tight", ".lede", "dense", acortaCaps(40), "fotos-bajas", ".d-mas", acortaDif(80), quitaUltimo(".conf li"), "denser", acortaDif(62), ".r-dato", acortaCaps(24), ".os", ".pc-t", ".truc", quitaUltimo(".checks li"), ...extra];
+    const lede = p.querySelector(".lede")?.outerHTML, mas = p.querySelector(".d-mas")?.outerHTML, truc = p.querySelector(".truc")?.outerHTML;
+    const pies = [...p.querySelectorAll(".ph3 figure")].map(f => f.querySelector(".pc-t")?.outerHTML || "");
     const os = p.querySelector(".os"), osHTML = os?.outerHTML, osAntes = os?.nextElementSibling;
     const claves = [...p.querySelectorAll(".checks li")].map(li => li.outerHTML);
     fit(p, pasos, nombre);
@@ -908,9 +911,15 @@
     if (ul) for (const li of claves.slice(ul.children.length)) if (!vuelve(ul, li)) break;
     // el olor o sabor, en su sitio (detrás de los rasgos)
     if (osHTML && !p.querySelector(".os") && osAntes && osAntes.isConnected) { osAntes.insertAdjacentHTML("beforebegin", osHTML); if (overflows(p)) osAntes.previousElementSibling.remove(); }
+    // los textos de las fotos, debajo de cada una (todos o ninguno)
+    if (!p.querySelector(".pc-t") && pies.some(Boolean)) {
+      const figs = [...p.querySelectorAll(".ph3 figure")];
+      figs.forEach((f, i) => pies[i] && f.insertAdjacentHTML("beforeend", pies[i]));
+      if (overflows(p)) p.querySelectorAll(".ph3 .pc-t").forEach(x => x.remove());
+    }
     for (const s of p.querySelectorAll(".cc-d, .pc-t")) { const corto = s.textContent; s.textContent = s.classList.contains("pc-t") ? capCorta(s.dataset.full, 60) : s.dataset.full; if (overflows(p)) s.textContent = corto; }
-    // los pies de foto, en su sitio (debajo de las fotos)
-    if (caps && !p.querySelector(".ph-caps")) { const ph = p.querySelector(".ph"); if (ph) { ph.insertAdjacentHTML("afterend", caps); if (overflows(p)) ph.nextElementSibling.remove(); } }
+    // las fotos, más altas (casi cuadradas) si caben
+    if (p.classList.contains("fotos-bajas")) { p.classList.remove("fotos-bajas"); if (overflows(p)) p.classList.add("fotos-bajas"); }
     if (mas && !p.querySelector(".d-mas")) vuelve(p.querySelector(".dc"), mas);
     if (lede && !p.querySelector(".lede")) vuelve(p.querySelector(".sp-head"), lede);
   }
@@ -1191,6 +1200,13 @@
     const largo = cfg.nombre.length > 20 ? " largo" : "";
     // cuaderno: lo que tienen los dos (sin detalles: las diferencias van en la tabla), dónde y cuándo juntos
     const esporada = a.morfologia?.esporada === b.morfologia?.esporada ? a.morfologia?.esporada : "";
+    // cuaderno: una foto de cada seta, una al lado de la otra y con su nombre (son distintas: no se mezclan)
+    const unaPorSeta = cfg.ids.map(id => {
+      const i = cfg.fotos.findIndex(([x]) => x === id);
+      if (i < 0) return null;
+      const pie = fotos[i].pie || "", d = pie.indexOf(":");
+      return { ...fotos[i], pie: d > 0 ? cap(pie.slice(d + 1).trim()) : pie };
+    }).filter(Boolean);
     // si los nombres de debajo del título son largos, los meses no caben a su lado: van en el recuadro
     const latLarga = cfg.lat.replace(/<[^>]+>/g, "").length > 46;
     p.insertAdjacentHTML("beforeend", `
@@ -1200,7 +1216,7 @@
         <p class="lat">${cfg.lat}</p>
         <p class="lede">${esc(cfg.lede)}</p>
       </header>` : cabeceraB(esc(cfg.nombre), SECL[est.sec], dn, dt, cfg.lat, latLarga ? "" : meses(mesesU), cfg.lede)}
-      ${GUIA ? photosHTML(fotos) : fotosB(fotos)}
+      ${GUIA ? photosHTML(fotos) : fotosB(unaPorSeta, cols)}
       ${GUIA ? facts : filaPareja(rasgosLista(a, false), [a, b], latLarga ? meses(mesesU) : "")}
       <div class="txt">${tabla}
         <div class="checks${ok ? "" : " alarm"}"><h3>${ok ? "Los dos" : "Rasgos de alarma de los dos"}</h3><ul>${cfg.claves.map(c => `<li>${esc(c)}</li>`).join("")}</ul></div>
@@ -1210,7 +1226,7 @@
       ${foot(SECL[est.sec])}`);
     // la frase de arriba explica por qué van juntas y «Compruebe» es lo práctico: se quitan lo último
     fit(p, GUIA ? ["tight", "dense", quitaUltimo(".conf li"), "denser", ".lede", quitaUltimo(".checks li"), ".truc"]
-      : ["tight", "dense", acortaCaps(46), acortaDif(110), quitaUltimo(".conf li"), "denser", acortaDif(80), ".r-dato", ".lede", quitaUltimo(".checks li"), ".truc", acortaCaps(28)], "pareja " + cfg.nombre);
+      : ["tight", "dense", acortaCaps(46), "fotos-bajas", acortaDif(110), quitaUltimo(".conf li"), "denser", acortaDif(80), ".r-dato", ".lede", quitaUltimo(".checks li"), ".truc", acortaCaps(28)], "pareja " + cfg.nombre);
     // si al quitar algo ha quedado sitio, vuelve lo quitado por orden de importancia:
     // primero «Compruebe», luego los rasgos, los textos enteros (cuaderno) y, al final, la frase de arriba
     const vuelve = (donde, html, pos = "beforeend") => { donde.insertAdjacentHTML(pos, html); const n = pos === "beforeend" ? donde.lastElementChild : donde.firstElementChild; if (overflows(p)) { n.remove(); return false; } return true; };
@@ -1218,6 +1234,7 @@
     if (!p.querySelector(".truc")) vuelve(txt, `<p class="truc"><span class="lab">Compruebe</span>${esc(cfg.compruebe)}</p>`);
     if (ul) for (const c of cfg.claves.slice(ul.children.length)) if (!vuelve(ul, `<li>${esc(c)}</li>`)) break;
     if (!GUIA) for (const s of p.querySelectorAll(".cc-d, .pc-t")) { const corto = s.textContent; s.textContent = s.classList.contains("pc-t") ? capCorta(s.dataset.full, 72) : s.dataset.full; if (overflows(p)) s.textContent = corto; }
+    if (p.classList.contains("fotos-bajas")) { p.classList.remove("fotos-bajas"); if (overflows(p)) p.classList.add("fotos-bajas"); }
     if (!h.querySelector(".lede")) vuelve(h, `<p class="lede">${esc(cfg.lede)}</p>`);
   }
 

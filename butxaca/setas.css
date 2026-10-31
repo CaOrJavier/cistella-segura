@@ -327,7 +327,7 @@ html.libro-bolsillo {
 .rasgos.en-linea li { flex: 0 0 auto; }
 .fila2 .dc-f { margin: 0; }
 .fila2 .mes { margin-left: auto; }
-.cc-ca { font-family: var(--display); font-style: italic; font-weight: 500; color: var(--ink-2); }
+.cc-ca { font-family: var(--display); font-style: italic; font-weight: 500; color: var(--ink-2); font-size: .92em; white-space: nowrap; }
 .libro-bolsillo .st-mortal .hb { padding-bottom: 1.2mm; }
 /* fotos: un número en cada una; los textos, debajo, en oscuro sobre blanco */
 .libro-bolsillo .ph { margin-bottom: 1.1mm; }
@@ -372,6 +372,29 @@ html.libro-bolsillo {
 .conf.cards.k1 .cc-im { width: 28mm; height: 17mm; flex: none; }
 .conf.cards p { margin: 0; line-height: 1.24; }
 .conf.cards .cf-tag { white-space: nowrap; }
+/* fotos de la ficha: las tres en fila, iguales y casi cuadradas, con su texto debajo */
+.ph3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.3mm; margin: 1.5mm 0 1.3mm; }
+.ph3.n2 { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 2.6mm; }
+.ph3.n1 { grid-template-columns: minmax(0, 1fr); width: 62%; }
+.libro-bolsillo .ph3 figure { margin: 0; position: static; overflow: visible; border-radius: 0; background: none; min-height: 0; display: flex; flex-direction: column; gap: .55mm; }
+.ph3-im { display: block; position: relative; aspect-ratio: 1 / .92; overflow: hidden; border-radius: 1.1mm; background: var(--paper-3); }
+.ph3.n2 .ph3-im { aspect-ratio: 4 / 3; }
+.ph3-im img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; display: block; }
+.fotos-bajas .ph3-im { aspect-ratio: 1 / .8; }
+.fotos-bajas .ph3.n2 .ph3-im { aspect-ratio: 3 / 2; }
+.libro-bolsillo .ph3 figcaption { position: static; padding: 0; background: none; color: var(--ink-2); font-size: 6pt; font-weight: 400; line-height: 1.18; }
+.ph3-et { font-family: var(--display); font-weight: 800; font-size: 8pt; line-height: 1.05; color: var(--st, var(--ink)); }
+.edible .ph3-et { color: var(--ok); }
+/* se confunde con: dos columnas, foto cuadrada pequeña al lado del texto */
+.conf.mini ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.4mm 2.4mm; }
+.conf.mini.k1 ul { grid-template-columns: minmax(0, 1fr); }
+.conf.mini li.cfc { display: flex; align-items: flex-start; gap: 1.5mm; padding: 0; margin: 0; min-width: 0; }
+.conf.mini li.cfc::before { content: none; }
+.conf.mini .cc-im { flex: none; width: 13.5mm; height: 13.5mm; object-fit: cover; object-position: 50% 40%; border-radius: 1mm; display: block; }
+.conf.mini p { margin: 0; line-height: 1.22; min-width: 0; }
+.conf.mini .cf-tag { white-space: nowrap; }
+.conf.mini .cc-vacio { display: grid; place-items: center; background: var(--paper-2); }
+.conf.mini .cc-vacio svg { width: auto; height: 72%; opacity: .5; }
 /* las que no tienen foto en la base de datos: un dibujo sencillo, para que las tarjetas queden alineadas */
 .conf.cards .cc-vacio { display: grid; place-items: center; background: var(--paper-2); }
 .conf.cards .cc-vacio svg { width: auto; height: 72%; opacity: .5; }
