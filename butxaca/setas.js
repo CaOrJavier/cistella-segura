@@ -181,6 +181,10 @@
   // otros nombres en castellano (arriba a la derecha)
   const otrosEs = e => (e.nombres.es[0] ? e.nombres.es.slice(1, 2) : []);
   const nombreConf = c => { const x = c.id && TODAS[c.id]; if (x) return tituloHTML(x); return c.es || c.ca ? esc(cap(c.es || c.ca)) : `<i>${esc(c.nombre)}</i>`; };
+  // lo que va debajo de un nombre que hace de título: «catalán · científico» (lo que no sea ya el principal)
+  const dosMas = (es, ca, sci) => [es && ca ? esc(ca) : "", (es || ca) && sci ? `<i>${esc(sci)}</i>` : ""].filter(Boolean).join(" · ");
+  const segundosDe = x => dosMas(x.nombres.es[0], x.nombres.ca[0], x.nombre);
+  const segundosConf = c => { const x = c.id && TODAS[c.id]; return x ? segundosDe(x) : dosMas(c.es, c.ca, c.nombre); };
 
   // ---------- iconos ----------
   const svg = d => `<svg viewBox="0 0 12 12" aria-hidden="true">${d}</svg>`;
@@ -422,7 +426,7 @@
         const e = BY[id], f = (e?.fotos || []).find(x => x.g === g);
         if (!e || !f) return "";
         EXTRA.push(["Portada", f]);
-        return `<figure class="cvm-f"><img src="${G(f.g)}" alt="" style="object-position:${pos}"><figcaption>${esc(titulo(e))} ${ref(id, true)}</figcaption></figure>`;
+        return `<figure class="cvm-f"><img src="${G(f.g)}" alt="" style="object-position:${pos}"><figcaption><span class="cvm-n">${esc(titulo(e))} ${ref(id, true)}</span><span class="cvm-2">${segundosDe(e)}</span></figcaption></figure>`;
       }).join("");
       return `<div class="cvm-fila st-${st}" data-ir="${sec}"><div class="cvm-lab"><b>${GROUPS[sec].length}</b> ${t}</div><div class="cvm-fotos">${figs}</div></div>`;
     }).join("");
@@ -644,7 +648,7 @@
       fotos.forEach(([f]) => EXTRA.push(["Árboles", f]));
       return `<article class="bosc${fotos.length ? " cf" : ""}">
         ${fotos.length ? `<div class="bosc-fotos">${fotos.map(([f, t]) => `<figure><img src="${G(f.t)}" alt=""><figcaption>${t}</figcaption></figure>`).join("")}</div>` : ""}
-        <div class="bosc-txt"><h3>${esc(cap(a.nombres.es[0]))} <small>${esc(a.nombres.ca[0] || "")}</small></h3>
+        <div class="bosc-txt"><h3>${esc(cap(a.nombres.es[0]))} <small>${esc(a.nombres.ca[0] || "")}${a.nombre ? ` · <i>${esc(a.nombre)}</i>` : ""}</small></h3>
         <p class="curt">${esc(GUIA ? primera(a.reconocer?.distancia, 120) : cortaClausula(a.reconocer?.distancia, 85))}</p>
         ${ok.length ? `<p class="ll ok"><span class="lab">Busque</span>${ok.map(nm).join(", ")}</p>` : ""}
         ${ko.length ? `<p class="ll ko"><span class="lab">Cuidado</span>${ko.map(nm).join(", ")}</p>` : ""}</div>
@@ -701,10 +705,12 @@
   // Foto pequeña de una seta con la que se confunde (si está en la base de datos con foto)
   function fotoConf(c) {
     const x = c.id && TODAS[c.id];
-    if (!x) return "";
+    if (!x || !(x.fotos || []).length) { const f = conFoto(c); return f ? G(f.t || f.g) : ""; }
     const f = (PICK[x.id] || [])[0] || (x.fotos || []).find(f => f.papel === "adulto") || (x.fotos || [])[0];
     return f ? G(f.t || f.g) : "";
   }
+  // setas con que se confunde que no tienen ficha (ni foto): su foto de iNaturalist (../datos/fotos-confusiones.js)
+  const conFoto = c => (window.FOTOS_CONF || {})[c.nombre] || null;
   // =========================================================
   // CUADERNO: FICHA PENSADA PARA LEERSE BIEN IMPRESA (sobre todo en A5)
   // - fotos numeradas y sus textos debajo, en oscuro sobre blanco
@@ -839,7 +845,7 @@
   // etiquetas: en las parejas, el nombre de cada seta encima de su texto
   function fotosB(ph, etiquetas = []) {
     if (!ph.length) return "";
-    return `<div class="ph3 n${ph.length}">${ph.map((f, i) => { const pie = pieEs(f.pie); return `<figure><span class="ph3-im"><img src="${G(f.g || f.t)}" alt=""></span>${etiquetas[i] ? `<b class="ph3-et">${esc(etiquetas[i])}</b>` : ""}${pie ? `<figcaption class="pc-t" data-full="${esc(pie)}">${esc(capCorta(pie, 46))}</figcaption>` : ""}</figure>`; }).join("")}</div>`;
+    return `<div class="ph3 n${ph.length}">${ph.map((f, i) => { const pie = pieEs(f.pie); return `<figure><span class="ph3-im"><img src="${G(f.g || f.t)}" alt=""></span>${etiquetas[i] ? `<b class="ph3-et">${esc(etiquetas[i].nombre)}</b>${etiquetas[i].dos ? `<span class="ph3-2">${etiquetas[i].dos}</span>` : ""}` : ""}${pie ? `<figcaption class="pc-t" data-full="${esc(pie)}">${esc(capCorta(pie, 46))}</figcaption>` : ""}</figure>`; }).join("")}</div>`;
   }
   // los pies de foto de la base de datos que nombran la seta en catalán, con el nombre castellano del libro
   const PIES_ES = [[/\bCeps recolectados\b/g, "Boletos recolectados"], [/\bdel molleric\b/g, "del boleto granulado"],
@@ -867,7 +873,7 @@
   // la foto grande de una seta con la que se confunde
   function fotoConfG(c) {
     const x = c.id && TODAS[c.id];
-    if (!x) return "";
+    if (!x || !(x.fotos || []).length) { const f = conFoto(c); return f ? G(f.g || f.t) : ""; }
     const f = (PICK[x.id] || [])[0] || (x.fotos || []).find(f => f.papel === "adulto") || (x.fotos || [])[0];
     return f ? G(f.g || f.t) : "";
   }
@@ -877,8 +883,8 @@
     return `<div class="conf mini k${confs.length}"><h3>${ok ? "Cuidado: se confunde con" : "Se confunde con"}</h3><ul>${confs.map(c => {
       const im = fotoConfG(c), d = primera(c.diferencia, 170);
       // con su nombre en catalán al lado: muchos textos de diferencias lo nombran así
-      const x = c.id && TODAS[c.id], ca = x ? (x.nombres.es[0] ? x.nombres.ca[0] : "") : (c.es && c.ca ? c.ca : "");
-      return `<li class="cfc${im ? "" : " sin-foto"}">${im ? `<img class="cc-im" src="${im}" alt="">` : `<span class="cc-im cc-vacio">${DIBUJO_BAJO.laminas}</span>`}<p><b>${nombreConf(c)}</b>${ca ? ` <i class="cc-ca">${esc(ca)}</i>` : ""} <span class="cf-tag cf-${c.peligro}">${PEL[c.peligro] || c.peligro}</span> <span class="cc-d" data-full="${esc(d)}">${esc(cortaFrase(d, 85))}</span>${c.id && !propios.includes(c.id) ? " " + ref(c.id) : ""}</p></li>`;
+      const dos = segundosConf(c);   // catalán y científico, debajo del castellano
+      return `<li class="cfc${im ? "" : " sin-foto"}">${im ? `<img class="cc-im" src="${im}" alt="">` : `<span class="cc-im cc-vacio">${DIBUJO_BAJO.laminas}</span>`}<p><b>${nombreConf(c)}</b>${dos ? `<span class="cc-2">${dos}</span>` : " "}<span class="cf-tag cf-${c.peligro}">${PEL[c.peligro] || c.peligro}</span> <span class="cc-d" data-full="${esc(d)}">${esc(cortaFrase(d, 72))}</span>${c.id && !propios.includes(c.id) ? " " + ref(c.id) : ""}</p></li>`;
     }).join("")}</ul></div>`;
   }
   const acortaDif = max => p => p.querySelectorAll(".cc-d").forEach(s => (s.textContent = cortaFrase(s.dataset.full, max)));
@@ -1134,7 +1140,7 @@
         if (paginas && p === book.lastElementChild && book.querySelectorAll(".ixg-lista").length === k) p.querySelector(".pf").insertAdjacentHTML("beforebegin", CREDITO);
       });
   }
-  const CREDITO = `<p class="cred-linea">Fotos de iNaturalist y Wikimedia Commons con licencia Creative Commons o de dominio público; el autor y la licencia de cada una, en su ficha de <b>caorjavier.github.io/cistella-segura</b>. Uso personal o sin ánimo de lucro.</p>`;
+  const CREDITO = `<p class="cred-linea">Fotos de iNaturalist y Wikimedia Commons con licencia Creative Commons o de dominio público; el autor y la licencia de cada una, en su ficha de <b>caorjavier.github.io/cistella-segura</b> (las de las setas sin ficha, en los créditos de la guía esencial). Uso personal o sin ánimo de lucro.</p>`;
   function creditosPages() {
     // cada seta con los autores y licencias de sus fotos (el detalle de cada foto, con enlace, en su ficha de la web)
     const porSeta = ESENCIAL.map(e => {
@@ -1144,6 +1150,9 @@
     }).filter(Boolean);
     const otras = [...new Map(EXTRA.map(([, f]) => [f.autor + "|" + f.licencia, f])).values()].map(f => `${esc(f.autor || "?")} (${esc(f.licencia || "")})`);
     if (otras.length) porSeta.push(`<p class="cr"><b>Árboles, parejas y otras</b> ${otras.join(", ")}</p>`);
+    // las setas con que se confunde que no tienen ficha: su foto de iNaturalist, en un solo párrafo
+    const conf = Object.entries(window.FOTOS_CONF || {}).map(([, f]) => `<i>${esc(f.taxon)}</i>, ${esc(f.autor || "?")} (${esc(f.licencia || "")})`);
+    if (conf.length) porSeta.push(`<p class="cr"><b>Setas con que se confunden, sin ficha</b> ${conf.join("; ")}</p>`);
     const mk = anexoPage("Créditos", "Fotografías", "Fotos de iNaturalist y Wikimedia Commons con licencia Creative Commons o de dominio público. Cada una, con su autor, su licencia y el enlace al original, en la ficha de la web.", "Créditos", "cols cr-lista");
     // primero se ve cuántas páginas hacen falta y luego se reparte por igual
     const antes = book.children.length;
@@ -1157,7 +1166,7 @@
     if (!confs.length) return "";
     return `<div class="conf"><h3>${ok ? "Cuidado: se confunde con" : "Se confunde con"}</h3><ul>${confs.map(c => {
       const im = fotoConf(c);
-      return `<li class="cf${im ? " cf-foto" : ""}">${im ? `<img class="cf-im" src="${im}" alt="">` : ""}<span><b>${nombreConf(c)}</b> <span class="cf-tag cf-${c.peligro}">${PEL[c.peligro] || c.peligro}</span> ${esc(primera(c.diferencia, 170))} ${c.id && !propios.includes(c.id) ? ref(c.id) : ""}</span></li>`;
+      return `<li class="cf${im ? " cf-foto" : ""}">${im ? `<img class="cf-im" src="${im}" alt="">` : ""}<span><b>${nombreConf(c)}</b>${segundosConf(c) ? ` <span class="cc-2-in">(${segundosConf(c)})</span>` : ""} <span class="cf-tag cf-${c.peligro}">${PEL[c.peligro] || c.peligro}</span> ${esc(primera(c.diferencia, 170))} ${c.id && !propios.includes(c.id) ? ref(c.id) : ""}</span></li>`;
     }).join("")}</ul></div>`;
   }
 
@@ -1216,7 +1225,7 @@
         <p class="lat">${cfg.lat}</p>
         <p class="lede">${esc(cfg.lede)}</p>
       </header>` : cabeceraB(esc(cfg.nombre), SECL[est.sec], dn, dt, cfg.lat, latLarga ? "" : meses(mesesU), cfg.lede)}
-      ${GUIA ? photosHTML(fotos) : fotosB(unaPorSeta, cols)}
+      ${GUIA ? photosHTML(fotos) : fotosB(unaPorSeta, cfg.ids.map((id, i) => ({ nombre: cols[i], dos: segundosDe(BY[id]) })))}
       ${GUIA ? facts : filaPareja(rasgosLista(a, false), [a, b], latLarga ? meses(mesesU) : "")}
       <div class="txt">${tabla}
         <div class="checks${ok ? "" : " alarm"}"><h3>${ok ? "Los dos" : "Rasgos de alarma de los dos"}</h3><ul>${cfg.claves.map(c => `<li>${esc(c)}</li>`).join("")}</ul></div>

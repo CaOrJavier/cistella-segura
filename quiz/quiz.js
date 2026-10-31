@@ -116,8 +116,11 @@
   // como en la web: en castellano, el nombre castellano primero; en catalán, el catalán
   const comun = (n) => (CA ? (n.ca || [])[0] || (n.es || [])[0] : (n.es || [])[0] || (n.ca || [])[0]) || "";
   const nombre = (e) => cap(comun(e.nombres) || e.nombre);
-  const segundo = (e) => e.nombre;
   const nomArbol = (a) => cap(comun(a.nombres) || a.nombre);
+  // los tres nombres: el del idioma de la web (arriba), y debajo el del otro idioma y el científico
+  const otro = (n) => (CA ? (n.es || [])[0] : (n.ca || [])[0]) || "";
+  const segundoTxt = (e) => { const o = otro(e.nombres); return o && o.toLowerCase() !== nombre(e).toLowerCase() && o.toLowerCase() !== nomArbol(e).toLowerCase() ? o + " · " + e.nombre : e.nombre; };
+  const segundo = (e) => { const o = otro(e.nombres); return o && o.toLowerCase() !== nombre(e).toLowerCase() && o.toLowerCase() !== nomArbol(e).toLowerCase() ? `${esc(o)} · <i>${esc(e.nombre)}</i>` : `<i>${esc(e.nombre)}</i>`; };
   const GRUPO = { comestible: "comestible", condicionada: "comestible", toxica: "toxica", mortal: "mortal" };
   const grupo = (e) => GRUPO[e.comestibilidad.cat] || "no";
   const catTxt = (e) => (V.comestibilidad[e.comestibilidad.cat] || {}).etiqueta || e.comestibilidad.cat;
@@ -337,19 +340,20 @@
       cuerpo = `<h1 class="q-preg">${esc(t("q_id"))}</h1>${fotoHTML(q.foto)}
         ${q.escribir ? `<form class="q-escribe" id="q-form" autocomplete="off"><input id="q-txt" type="text" placeholder="${esc(t("escribe"))}" aria-label="${esc(t("escribe"))}" autocapitalize="off" spellcheck="false">
           <button class="btn prim" type="submit">${esc(t("comprobar"))}</button><button class="btn" type="button" id="q-nose">${esc(t("nolose"))}</button></form>`
-        : `<div class="q-opcs">${q.opciones.map((o, i) => opcion(i, `<b>${esc(nombre(o))}</b><small>${esc(segundo(o))}</small>`)).join("")}</div>`}`;
+        : `<div class="q-opcs">${q.opciones.map((o, i) => opcion(i, `<b>${esc(nombre(o))}</b><small>${segundo(o)}</small>`)).join("")}</div>`}`;
     } else if (q.tipo === "come") {
       const ops = [["comestible", t("c_comestible")], ["no", t("c_no")], ["toxica", t("c_toxica")], ["mortal", t("c_mortal")]];
       cuerpo = `<h1 class="q-preg">${esc(t("q_come"))}</h1>${fotoHTML(q.foto)}
-        <p class="q-sub"><b>${esc(nombre(q.e))}</b> · <i>${esc(q.e.nombre)}</i></p>
+        <p class="q-sub"><b>${esc(nombre(q.e))}</b> · ${segundo(q.e)}</p>
         <div class="q-opcs q-opcs-come">${ops.map(([g, txt], i) => opcion(i, `<b>${esc(txt)}</b>`, `data-g="${g}"`)).join("")}</div>`;
     } else if (q.tipo === "conf") {
       const g = (e) => t({ comestible: "c_comestible", no: "c_no", toxica: "c_toxica", mortal: "c_mortal" }[grupo(e)]).toLowerCase();
       cuerpo = `<h1 class="q-preg q-preg-conf">${t("q_conf", { a: esc(nombre(q.a)), b: esc(nombre(q.b)), ca: esc(g(q.a)), cb: esc(g(q.b)) })}</h1>
+        <p class="q-sub">${[q.a, q.b].map((e) => `<b>${esc(nombre(e))}</b> · ${segundo(e)}`).join(" &nbsp;|&nbsp; ")}</p>
         <div class="q-dos">${q.fotos.map(([e, f], i) => `<div class="q-una">${fotoHTML(f)}${opcion(i, `<b>${esc(t("esta"))}</b>`, `data-id="${esc(e.id)}"`)}</div>`).join("")}</div>`;
     } else {
       cuerpo = `<h1 class="q-preg">${esc(t("q_arbol"))}</h1><div class="q-foto-arb">${fotoHTML(q.foto)}<span class="q-etq">${esc(L.foto[q.foto.papel] || "")}</span></div>
-        <div class="q-opcs">${q.opciones.map((o, i) => opcion(i, `<b>${esc(nomArbol(o))}</b><small>${esc(o.nombre)}</small>`)).join("")}</div>`;
+        <div class="q-opcs">${q.opciones.map((o, i) => opcion(i, `<b>${esc(nomArbol(o))}</b><small>${segundo(o)}</small>`)).join("")}</div>`;
     }
     app.innerHTML = `<section class="q-ronda">${cabecera()}<div class="q-cuerpo">${cuerpo}</div><div id="q-fb" class="q-fb" hidden></div>
       <p class="q-atajos">${esc(t("atajos"))}</p></section>`;
@@ -415,7 +419,7 @@
     const titulo = bien ? pick(L.bien) : q.tipo === "come" ? t("malCome", { c: catTxt(q.e).toLowerCase() }) : q.tipo === "conf" ? t("malConf") : t("mal");
     let html = "";
     const ficha = (e) => `<a class="q-ficha" href="${WEB}#/especie/${esc(e.id)}" target="_blank" rel="noopener">${esc(t("verFicha"))}</a>`;
-    const tarjeta = (e, f) => `<div class="q-sp">${f ? `<img src="${esc(R(f.t || f.g))}" alt="">` : ""}<div><b>${esc(nombre(e))}</b> <i>${esc(e.nombre)}</i><br>${badge(e)}</div></div>`;
+    const tarjeta = (e, f) => `<div class="q-sp">${f ? `<img src="${esc(R(f.t || f.g))}" alt="">` : ""}<div><b>${esc(nombre(e))}</b> ${segundo(e)}<br>${badge(e)}</div></div>`;
     if (q.tipo === "id" || q.tipo === "come") {
       const e = q.e, claves = ((e.identificacion || {}).claves || []).slice(0, 2);
       html = `${tarjeta(e, q.foto)}
@@ -429,7 +433,7 @@
         <span class="q-fichas">${[q.a, q.b].map((e) => `<a class="q-ficha" href="${WEB}#/especie/${esc(e.id)}" target="_blank" rel="noopener">${esc(t("verX", { n: nombre(e) }))}</a>`).join(" ")}</span>`;
     } else {
       const a = q.a, r = a.reconocer || {};
-      html = `<div class="q-sp"><img src="${esc(R(q.foto.t || q.foto.g))}" alt=""><div><b>${esc(nomArbol(a))}</b> <i>${esc(a.nombre)}</i></div></div>
+      html = `<div class="q-sp"><img src="${esc(R(q.foto.t || q.foto.g))}" alt=""><div><b>${esc(nomArbol(a))}</b> ${segundo(a)}</div></div>
         <p class="q-txt">${esc(primera(r.distancia))}${r.hojas ? ` ${esc(primera(r.hojas))}` : ""}</p>
         <a class="q-ficha" href="${WEB}#/arbol/${esc(a.id)}" target="_blank" rel="noopener">${esc(t("verArbol"))}</a>`;
     }
@@ -475,7 +479,7 @@
       ${record ? `<p class="q-record">🏆 ${esc(t("record"))}</p>` : ""}
       ${fallos.length ? `<h2 class="q-h">${esc(t("paraRepasar"))}</h2><div class="q-fallos">${fallos.map(({ e, arbol }) => {
         const f = (e.fotos || [])[0];
-        return `<a class="q-fallo" href="${WEB}#/${arbol ? "arbol" : "especie"}/${esc(e.id)}" target="_blank" rel="noopener">${f ? `<img src="${esc(R(f.t || f.g))}" alt="" loading="lazy">` : ""}<span><b>${esc(arbol ? nomArbol(e) : nombre(e))}</b><i>${esc(e.nombre)}</i>${arbol ? "" : badge(e)}</span></a>`;
+        return `<a class="q-fallo" href="${WEB}#/${arbol ? "arbol" : "especie"}/${esc(e.id)}" target="_blank" rel="noopener">${f ? `<img src="${esc(R(f.t || f.g))}" alt="" loading="lazy">` : ""}<span><b>${esc(arbol ? nomArbol(e) : nombre(e))}</b><i>${esc(segundoTxt(e))}</i>${arbol ? "" : badge(e)}</span></a>`;
       }).join("")}</div>` : ""}
       <div class="q-acc">
         <button type="button" class="btn prim" id="q-otra">${esc(t("otra"))}</button>

@@ -672,12 +672,12 @@
   ];
   // Los dos libros están en la propia web (offline/), no en las «releases» de GitHub (allí sigue la guía anterior, de 336 páginas)
   const BOLSILLO = [
-    { guia: "bolsillo", ed: "A6", uso: "Para leerlo en el móvil o llevarlo a la copistería: pide «cuadernillo A6 a color, a sangre», con espiral o grapado.", mb: 19.5, pag: 52, url: "offline/setas-esenciales-bolsillo.pdf" },
-    { guia: "bolsillo", ed: "Para imprimir en casa (A4)", uso: "Solo 7 hojas A4 a doble cara (14 caras): se cortan por la mitad, se doblan juntas y se grapan.", mb: 19.8, url: "offline/setas-esenciales-bolsillo-imprimir-A4.pdf" },
-    { guia: "bolsillo", ed: "A5 · letra más grande", uso: "El mismo cuaderno en tamaño cuartilla (14,8 × 21 cm): letra y fotos un 40 % más grandes. Para leer en la tableta o llevar a la copistería.", mb: 19.8, pag: 52, url: "offline/setas-esenciales-A5.pdf" },
-    { guia: "bolsillo", ed: "A5 para imprimir en casa (A4)", uso: "13 hojas A4 apaisadas a doble cara (borde corto). No hay que cortar: se doblan juntas por la mitad y se grapan. Gasta el doble de papel que el A6.", mb: 19.8, url: "offline/setas-esenciales-A5-imprimir-A4.pdf" },
-    { guia: "esencial", ed: "A5", uso: "Para leer en el móvil o la tableta, o llevarlo a la copistería: A5 a color, con espiral o grapado.", mb: 28.3, pag: 84, url: "offline/setas-guia-esencial-A5.pdf" },
-    { guia: "esencial", ed: "Para imprimir en casa (A4)", uso: "21 hojas A4 apaisadas a doble cara (borde corto), en dos cuadernillos de 11 y 10 hojas: cada uno se dobla por la mitad y se grapa.", mb: 28.3, url: "offline/setas-guia-esencial-imprimir-A4.pdf" },
+    { guia: "bolsillo", ed: "A6", uso: "Para leerlo en el móvil o llevarlo a la copistería: pide «cuadernillo A6 a color, a sangre», con espiral o grapado.", mb: 20.8, pag: 52, url: "offline/setas-esenciales-bolsillo.pdf" },
+    { guia: "bolsillo", ed: "Para imprimir en casa (A4)", uso: "Solo 7 hojas A4 a doble cara (14 caras): se cortan por la mitad, se doblan juntas y se grapan.", mb: 21.1, url: "offline/setas-esenciales-bolsillo-imprimir-A4.pdf" },
+    { guia: "bolsillo", ed: "A5 · letra más grande", uso: "El mismo cuaderno en tamaño cuartilla (14,8 × 21 cm): letra y fotos un 40 % más grandes. Para leer en la tableta o llevar a la copistería.", mb: 21.1, pag: 52, url: "offline/setas-esenciales-A5.pdf" },
+    { guia: "bolsillo", ed: "A5 para imprimir en casa (A4)", uso: "13 hojas A4 apaisadas a doble cara (borde corto). No hay que cortar: se doblan juntas por la mitad y se grapan. Gasta el doble de papel que el A6.", mb: 21.1, url: "offline/setas-esenciales-A5-imprimir-A4.pdf" },
+    { guia: "esencial", ed: "A5", uso: "Para leer en el móvil o la tableta, o llevarlo a la copistería: A5 a color, con espiral o grapado.", mb: 29.0, pag: 84, url: "offline/setas-guia-esencial-A5.pdf" },
+    { guia: "esencial", ed: "Para imprimir en casa (A4)", uso: "21 hojas A4 apaisadas a doble cara (borde corto), en dos cuadernillos de 11 y 10 hojas: cada uno se dobla por la mitad y se grapa.", mb: 29.0, url: "offline/setas-guia-esencial-imprimir-A4.pdf" },
     { guia: "bolsillo", ed: "En catalán · 50 setas", uso: "Quadern de butxaca, 76 páginas A6 (las muestras de arriba son de la edición en castellano).", mb: 15.4, pag: 76, url: "offline/cistella-segura-butxaca.pdf" },
     { guia: "bolsillo", ed: "En catalán, para imprimir en casa (A4)", uso: "10 hojas A4, un solo cuadernillo.", mb: 15.8, url: "offline/cistella-segura-butxaca-imprimir-A4.pdf" },
   ];

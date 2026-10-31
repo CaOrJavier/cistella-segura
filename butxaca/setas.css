@@ -378,13 +378,22 @@ html.libro-bolsillo {
 .ph3.n1 { grid-template-columns: minmax(0, 1fr); width: 62%; }
 .libro-bolsillo .ph3 figure { margin: 0; position: static; overflow: visible; border-radius: 0; background: none; min-height: 0; display: flex; flex-direction: column; gap: .55mm; }
 .ph3-im { display: block; position: relative; aspect-ratio: 1 / .92; overflow: hidden; border-radius: 1.1mm; background: var(--paper-3); }
-.ph3.n2 .ph3-im { aspect-ratio: 4 / 3; }
+.ph3.n2 .ph3-im { aspect-ratio: 3 / 2; }
 .ph3-im img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; display: block; }
 .fotos-bajas .ph3-im { aspect-ratio: 1 / .8; }
-.fotos-bajas .ph3.n2 .ph3-im { aspect-ratio: 3 / 2; }
+.fotos-bajas .ph3.n2 .ph3-im { aspect-ratio: 16 / 10; }
 .libro-bolsillo .ph3 figcaption { position: static; padding: 0; background: none; color: var(--ink-2); font-size: 6pt; font-weight: 400; line-height: 1.18; }
 .ph3-et { font-family: var(--display); font-weight: 800; font-size: 8pt; line-height: 1.05; color: var(--st, var(--ink)); }
 .edible .ph3-et { color: var(--ok); }
+/* los tres nombres de una seta: castellano y, debajo, catalán · científico (más pequeño) */
+.cc-2 { display: block; font-family: var(--display); font-size: .9em; line-height: 1.15; color: var(--ink-2); margin-bottom: .3mm; }
+.cc-2 i { font-style: italic; }
+.cc-2-in { font-family: var(--display); font-size: .92em; color: var(--ink-2); }
+.ph3-2 { font-family: var(--display); font-size: 6.2pt; line-height: 1.15; color: var(--ink-2); margin-top: -.3mm; }
+.cvm-f figcaption .cvm-n { display: block; }
+.cvm-f figcaption .cvm-2 { display: block; font-family: var(--display); font-weight: 500; font-size: 5.4pt; opacity: .92; margin-top: .2mm; }
+.cvm-f figcaption { background: linear-gradient(transparent, rgb(0 0 0 / .78) 38%); padding-top: 3.2mm; }
+.bosc h3 small i { font-family: var(--display); font-style: italic; letter-spacing: 0; }
 /* se confunde con: dos columnas, foto cuadrada pequeña al lado del texto */
 .conf.mini ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.4mm 2.4mm; }
 .conf.mini.k1 ul { grid-template-columns: minmax(0, 1fr); }
