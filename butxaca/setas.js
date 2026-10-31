@@ -340,8 +340,10 @@
   }
   // fotos elegidas a mano cuando las automáticas no sirven (ou de reig: entero, láminas amarillas y saliendo del huevo)
   const FOTOS_CUADERNO = { "amanita-caesarea": ["fotos/g/8205426474fa.jpg", "fotos/g/6e4d41ce5c8f.jpg", "fotos/g/0fe1b13bc174.jpg"] };
+  // solo en el cuaderno de bolsillo (parasol: el sombrero visto desde arriba en vez de la foto hecha desde abajo; pie y láminas)
+  const FOTOS_BOLSILLO = { "macrolepiota-procera": ["fotos/g/4928e51e29bc.jpg", "fotos/g/dd2fdf885cb9.jpg", "fotos/g/698b7943422d.jpg"] };
   const PICK = Object.fromEntries(ESENCIAL.map(e => {
-    const fijas = (FOTOS_CUADERNO[e.id] || []).map(g => (e.fotos || []).find(f => f.g === g)).filter(Boolean);
+    const fijas = ((!GUIA && FOTOS_BOLSILLO[e.id]) || FOTOS_CUADERNO[e.id] || []).map(g => (e.fotos || []).find(f => f.g === g)).filter(Boolean);
     return [e.id, fijas.length ? fijas : pickPhotos(e)];
   }));
   const thumb = id => { const f = PICK[id]?.[0]; return f ? G(f.t || f.g) : ""; };
