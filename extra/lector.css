@@ -35,27 +35,42 @@ html.leyendo, html.leyendo body { overflow: hidden; }
   .lec-b-pc { display: none !important; }
 }
 
-/* las páginas, una debajo de otra (se baja como en un PDF) */
+/* las páginas: una hoja por pantalla, que se pasa deslizándola a un lado (en pantallas anchas, dos páginas enfrentadas) */
 .lec-cuerpo { flex: 1; min-height: 0; display: flex; position: relative; }
-.lec-scroll { flex: 1; min-width: 0; position: relative; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; outline: none; scroll-padding-top: 8px; }
-.lec-col { display: flex; flex-direction: column; align-items: center; gap: clamp(10px, 2vw, 22px); padding: clamp(8px, 2vw, 22px) clamp(8px, 2vw, 22px) 30vh; }
-.lec-pag { position: relative; width: min(100%, 760px); aspect-ratio: var(--ratio, .7095); flex: none; background: #fff; border-radius: 3px; overflow: hidden; box-shadow: 0 1px 3px rgb(0 0 0 / .18), 0 12px 28px -14px rgb(0 0 0 / .45); }
-.lec-pag img { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; -webkit-user-drag: none; user-select: none; }
+.lec-escena { flex: 1; min-width: 0; position: relative; overflow: hidden; }
+.lec-pista { position: absolute; inset: 0; display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; outline: none; touch-action: pan-x pinch-zoom; -webkit-overflow-scrolling: touch; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.lec-pista::-webkit-scrollbar { display: none; }
+.lec-hoja { flex: 0 0 100%; height: 100%; display: grid; place-items: center; scroll-snap-align: center; scroll-snap-stop: always; }
+.lec-par { display: flex; }
+.lec-pag { position: relative; width: var(--pw, 300px); height: var(--ph, 423px); flex: none; background: #fff; overflow: hidden; border-radius: 3px; box-shadow: 0 1px 3px rgb(0 0 0 / .18), 0 14px 30px -14px rgb(0 0 0 / .45); }
+/* dos páginas enfrentadas: el pliegue del centro */
+.lec-hoja.doble .lec-pag:first-child { border-radius: 3px 0 0 3px; }
+.lec-hoja.doble .lec-pag:last-child { border-radius: 0 3px 3px 0; }
+.lec-hoja.doble .lec-pag::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+.lec-hoja.doble .lec-pag:first-child::after { background: linear-gradient(to left, rgb(0 0 0 / .16), transparent 6%); }
+.lec-hoja.doble .lec-pag:last-child::after { background: linear-gradient(to right, rgb(0 0 0 / .16), transparent 6%); }
+.lec-pag img { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; -webkit-user-drag: none; }
 .lec-pag img.mal { visibility: hidden; }
-.lec-capa { position: absolute; inset: 0; }
+.lec-capa { position: absolute; inset: 0; z-index: 2; }
 .lec-sinfoto { display: none; }
 .lec-pag.sin-foto .lec-sinfoto { display: grid; place-items: center; position: absolute; inset: 0; padding: 1.2rem; text-align: center; color: #5b5b55; font-size: .9rem; background: repeating-linear-gradient(45deg, #faf8f2 0 12px, #f2efe6 12px 24px); }
-@media (max-width: 600px) { .lec-col { gap: 8px; padding: 6px 6px 30vh; } .lec-pag { border-radius: 2px; } }
+
+/* flechas a los lados (en pantallas anchas) */
+.lec-flecha { position: absolute; top: 50%; transform: translateY(-50%); z-index: 4; width: 2.9rem; height: 2.9rem; border-radius: 50%; border: 1px solid var(--line); background: color-mix(in srgb, var(--panel) 88%, transparent); font-size: 1.7rem; line-height: 1; padding-bottom: .2rem; box-shadow: var(--shadow); transition: opacity .2s, background .15s; }
+.lec-flecha:hover:not(:disabled) { background: var(--panel); border-color: var(--accent); }
+.lec-flecha:disabled { opacity: 0; pointer-events: none; }
+.lec-ant { left: clamp(.4rem, 1.5vw, 1.2rem); }
+.lec-sig { right: clamp(.4rem, 1.5vw, 1.2rem); }
+@media (max-width: 600px), (hover: none) and (max-width: 900px) { .lec-flecha { display: none; } }
 
 /* enlaces dentro de la página y lo encontrado al buscar */
-.lec-enl { position: absolute; z-index: 2; border-radius: 3px; background: rgb(255 196 0 / .16); transition: background .15s, box-shadow .15s; }
+.lec-enl { position: absolute; z-index: 2; border-radius: 3px; background: transparent; transition: background .15s, box-shadow .15s; }
 .lec-enl:hover, .lec-enl:focus-visible { background: rgb(255 196 0 / .42); box-shadow: 0 0 0 2px rgb(214 150 0 / .6); outline: none; }
-@media (hover: none) { .lec-enl { background: rgb(255 196 0 / .22); } }
 /* zonas grandes (una seta con su foto, la pestaña del margen): recuadro en vez de color */
-.lec-enl.grande { background: transparent; border-radius: 5px; box-shadow: inset 0 0 0 1.5px rgb(214 150 0 / .55); }
+.lec-enl.grande { background: transparent; border-radius: 5px; }
 .lec-enl.grande:hover, .lec-enl.grande:focus-visible { background: rgb(255 196 0 / .16); box-shadow: inset 0 0 0 2px rgb(214 150 0 / .9); }
 /* al aparecer una página, lo que se puede tocar se ilumina un momento */
-.lec-pag.vista .lec-enl { animation: lec-enl-ve 1.5s ease .2s 1 both; }
+.lec-hoja.vista .lec-enl { animation: lec-enl-ve 1.4s ease .25s 1 both; }
 @keyframes lec-enl-ve { 30% { background-color: rgb(255 196 0 / .5); box-shadow: 0 0 0 3px rgb(255 196 0 / .45); } }
 .lec-marca { position: absolute; z-index: 1; border-radius: 3px; background: rgb(255 226 0 / .5); mix-blend-mode: multiply; pointer-events: none; animation: lec-marca 1s ease 2; }
 @keyframes lec-marca { 50% { background: rgb(255 170 0 / .7); } }
@@ -140,7 +155,6 @@ html.leyendo, html.leyendo body { overflow: hidden; }
 .lec-zoom-ayuda { color: #c9cfc6; font-size: .8rem; margin: -2.3rem 3rem 1.4rem; }
 
 @media (prefers-reduced-motion: reduce) {
-  .lec-scroll { scroll-behavior: auto; }
-  .lec-marca, .lec-panel, .lec-aviso, .lec-pag.vista .lec-enl { animation: none; }
+  .lec-marca, .lec-panel, .lec-aviso, .lec-hoja.vista .lec-enl { animation: none; }
 }
 @media print { .lec { display: none !important; } }

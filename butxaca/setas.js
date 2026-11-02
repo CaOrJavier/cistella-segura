@@ -17,14 +17,14 @@
   // la guía esencial (A5, butxaca/guia.html): todas las setas de la guía, cada una en una página como mucho
   // (las del cuaderno, página entera; las demás, media página) y los árboles en poco espacio.
   const GUIA = window.CUADERNO_MODO === "guia";
-  // Cuadernos mini (butxaca/setas-mini-*.html): las mismas 54 setas, pero 2 o 3 por página y con lo justo
-  // (foto, nombres, meses, cómo es, rasgos, dónde y con qué se confunde): menos hojas que imprimir
+  // Cuadernos mini (butxaca/setas-mini-32.html y setas-mini-24.html, y sus versiones -a5): las mismas 54 setas,
+  // pero 2 o 3 por página y con lo justo (foto, nombres, meses, cómo es, rasgos, dónde y con qué se confunde)
   const MINI = window.CUADERNO_MODO === "mini" ? (+window.MINI_POR_PAGINA === 3 ? 3 : 2) : 0;
   // el cuaderno de bolsillo lleva su propia letra para texto pequeño (setas.css, .libro-bolsillo)
   document.documentElement.classList.add(GUIA ? "libro-guia" : "libro-bolsillo");
   if (MINI) document.documentElement.classList.add("libro-mini", "mini-" + MINI);
-  // en la portada: qué cuaderno es (en los mini, cuántas hojas A4 gasta)
-  const EDLAB = MINI ? `cuaderno mini · ${MINI === 2 ? 4 : 3} hojas` : "cuaderno de bolsillo";
+  // en la portada: qué cuaderno es (los mini, por sus páginas: las hojas dependen de si se imprime en A5 o en A6)
+  const EDLAB = MINI ? `cuaderno mini · ${MINI === 2 ? 32 : 24} páginas` : "cuaderno completo";
   const EDICION = "Otoño 2026";
   // portada: rossinyols en el cuaderno; ceps en la guía (para distinguirlos a primera vista)
   const PORTADA = GUIA ? { id: "boletus-edulis", papel: "recolectado" } : { id: "cantharellus-cibarius", papel: "recolectado" };

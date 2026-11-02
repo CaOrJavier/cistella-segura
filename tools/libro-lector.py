@@ -4,8 +4,9 @@ libros/<libro>/p001.jpg... (800 px de ancho), t001.jpg... (300 px, miniaturas) y
 
 Uso, desde la raiz del repositorio, despues de hacer el PDF (tools/generar-pdf.ps1):
   python tools/libro-lector.py setas.html bolsillo offline/setas-esenciales-bolsillo.pdf
-  python tools/libro-lector.py setas-mini-4hojas.html mini4 offline/setas-esenciales-mini-4hojas.pdf
-  python tools/libro-lector.py setas-mini-3hojas.html mini3 offline/setas-esenciales-mini-3hojas.pdf
+  python tools/libro-lector.py setas-mini-32.html mini32 offline/setas-esenciales-mini-32.pdf
+  python tools/libro-lector.py setas-mini-24.html mini24 offline/setas-esenciales-mini-24.pdf
+(con el PDF A6: el A5 es la misma pagina ampliada, y las imagenes salen iguales)
 Con --paginas=1,5-7 solo rehace esas imagenes (el texto, siempre entero): asi no cambian las que estan igual.
 
 El texto y los enlaces los da el propio cuaderno abierto con «?lector» (Edge en modo headless);

@@ -2,7 +2,7 @@
 #   offline\cistella-segura-butxaca.pdf             A6, per llegir al mobil o portar a la copisteria
 #   offline\cistella-segura-butxaca-imprimir-A4.pdf A4, per imprimir a casa, retallar, doblegar i grapar
 #   offline\setas-esenciales-bolsillo*.pdf          el mateix, en castella, amb les 54 especies del quadern (datosreve.js)
-#   offline\setas-esenciales-mini-*hojas*.pdf       quaderns mini: les mateixes 54, 2 o 3 per pagina (4 o 3 fulls A4)
+#   offline\setas-esenciales-mini-32*.pdf, -24*.pdf quaderns mini: les mateixes 54, 2 o 3 per pagina (A5 i A6)
 # Us (des de l'arrel del repositori):  powershell -ExecutionPolicy Bypass -File tools\generar-pdf.ps1
 $root = Split-Path -Parent $PSScriptRoot
 # El quadern català fa servir butxaca\dades.js (dades fixes de l'antiga web catalana, ja retirada).
@@ -42,9 +42,12 @@ Print-Pdf (Join-Path $root 'butxaca\setas-imprimir-a4.html') (Join-Path $root 'o
 # El mismo cuaderno en A5 (letra más grande) y en A4 apaisado para doblar en casa
 Print-Pdf (Join-Path $root 'butxaca\setas-a5.html') (Join-Path $root 'offline\setas-esenciales-A5.pdf')
 Print-Pdf (Join-Path $root 'butxaca\setas-a5-imprimir-a4.html') (Join-Path $root 'offline\setas-esenciales-A5-imprimir-A4.pdf')
-# Cuadernos mini: las mismas 54 setas, 2 por pagina (32 pags, 4 hojas A4) o 3 por pagina (24 pags, 3 hojas A4)
-Print-Pdf (Join-Path $root 'butxaca\setas-mini-4hojas.html') (Join-Path $root 'offline\setas-esenciales-mini-4hojas.pdf')
-Print-Pdf (Join-Path $root 'butxaca\setas-mini-4hojas-imprimir-a4.html') (Join-Path $root 'offline\setas-esenciales-mini-4hojas-imprimir-A4.pdf')
-Print-Pdf (Join-Path $root 'butxaca\setas-mini-3hojas.html') (Join-Path $root 'offline\setas-esenciales-mini-3hojas.pdf')
-Print-Pdf (Join-Path $root 'butxaca\setas-mini-3hojas-imprimir-a4.html') (Join-Path $root 'offline\setas-esenciales-mini-3hojas-imprimir-A4.pdf')
+# Cuadernos mini: las mismas 54 setas, 2 por pagina (32 pags) o 3 por pagina (24 pags).
+# En A5 (A4 doblada: 8 o 6 hojas) y en A6 (A4 cortada por la mitad: 4 o 3 hojas)
+foreach ($n in 32, 24) {
+  Print-Pdf (Join-Path $root "butxaca\setas-mini-$n-a5.html") (Join-Path $root "offline\setas-esenciales-mini-$n-A5.pdf")
+  Print-Pdf (Join-Path $root "butxaca\setas-mini-$n-a5-imprimir-a4.html") (Join-Path $root "offline\setas-esenciales-mini-$n-A5-imprimir-A4.pdf")
+  Print-Pdf (Join-Path $root "butxaca\setas-mini-$n.html") (Join-Path $root "offline\setas-esenciales-mini-$n.pdf")
+  Print-Pdf (Join-Path $root "butxaca\setas-mini-$n-imprimir-a4.html") (Join-Path $root "offline\setas-esenciales-mini-$n-imprimir-A4.pdf")
+}
 # Paginas del lector de la web (libros/<libro>/): python tools/libro-lector.py <html> <libro> <pdf> (ver el archivo)

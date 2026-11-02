@@ -2,9 +2,10 @@
    - Páginas: libros/<libro>/pNNN.jpg (800 px) y tNNN.jpg (miniatura, se ve mientras carga la grande y sin internet).
    - libros/<libro>/texto.js: el texto de cada página (para buscar), los enlaces dentro de la página («→ p. 29» y los
      números de los índices), qué ficha de la web corresponde a cada página y el índice. Todo sale de los PDF.
-   - Las páginas van una debajo de otra, como un PDF en el móvil: se baja con el dedo o la rueda, sin animaciones.
+   - Como un lector de libros del móvil: la página entera en la pantalla y se pasa deslizándola a un lado o tocando
+     el borde (en pantallas anchas, dos páginas enfrentadas). Doble toque o dos dedos para ampliar.
      Abajo, la página en la que se está, una barra para saltar y las fichas de la web de las setas de esa página.
-   - El cuaderno de bolsillo tiene dos ediciones: en castellano (bolsillo) y en catalán (butxaca). */
+   - El cuaderno completo tiene dos ediciones: en castellano (bolsillo) y en catalán (butxaca). El botón PDF baja el A5. */
 (function () {
   "use strict";
   const CA = window.IDIOMA === "ca";
@@ -15,8 +16,8 @@
     res1: "1 pàgina", resN: "{n} pàgines", resMas: "{n} pàgines (en surten {m})", nada: "No surt en aquest llibre.", corto: "Escriu almenys 2 lletres.",
     cargando: "Obrint el llibre…", noTexto: "No s'ha pogut carregar el text del llibre: es pot fullejar, però no cercar.",
     cerrar: "Tanca", edicion: "Edició", edES: "En castellà", edCA: "En català", de: "de",
-    pista: "Baixa amb el dit per anar passant les pàgines; amb dos dits, l'amplies. El que s'il·lumina en groc es pot tocar: et porta a aquella part del llibre.",
-    pistaPC: "Baixa amb la roda del ratolí o fes servir ← → per anar de pàgina en pàgina; amb doble clic, l'amplies. El que s'il·lumina en groc es pot tocar: et porta a aquella part del llibre.",
+    pista: "Llisca cap al costat o toca la vora per passar de pàgina; toca dues vegades per ampliar-la. El que brilla en groc un moment es pot tocar: et porta a aquella part del llibre.",
+    pistaPC: "Fes servir ← → (o la roda del ratolí) per passar de pàgina; doble clic per ampliar-la. El que brilla en groc un moment es pot tocar: et porta a aquella part del llibre.",
     entendido: "Entesos", sinFoto: "Aquesta pàgina no està desada per veure-la sense internet.", zoomAyuda: "Toca fora de la pàgina o prem Esc per tornar.",
   } : {
     volver: "Libros", indice: "Índice", buscar: "Buscar", paginas: "Páginas", ampliar: "Ampliar", pantalla: "Pantalla completa",
@@ -25,8 +26,8 @@
     res1: "1 página", resN: "{n} páginas", resMas: "{n} páginas (se muestran {m})", nada: "No aparece en este libro.", corto: "Escribe al menos 2 letras.",
     cargando: "Abriendo el libro…", noTexto: "No se ha podido cargar el texto del libro: se puede hojear, pero no buscar.",
     cerrar: "Cerrar", edicion: "Edición", edES: "En castellano", edCA: "En catalán", de: "de",
-    pista: "Baja con el dedo para ir pasando las páginas; con dos dedos, la amplías. Lo que se ilumina en amarillo se puede tocar: te lleva a esa parte del libro.",
-    pistaPC: "Baja con la rueda del ratón o usa ← → para ir de página en página; con doble clic, la amplías. Lo que se ilumina en amarillo se puede tocar: te lleva a esa parte del libro.",
+    pista: "Desliza a un lado o toca el borde para pasar de página; toca dos veces para ampliarla. Lo que brilla en amarillo un momento se puede tocar: te lleva a esa parte del libro.",
+    pistaPC: "Usa ← → (o la rueda del ratón) para pasar de página; doble clic para ampliarla. Lo que brilla en amarillo un momento se puede tocar: te lleva a esa parte del libro.",
     entendido: "Entendido", sinFoto: "Esta página no está guardada para verla sin internet.", zoomAyuda: "Toca fuera de la página o pulsa Esc para volver.",
   };
   const fmt = (s, o) => s.replace(/\{(\w+)\}/g, (_, k) => o[k]);
@@ -36,14 +37,14 @@
   const TACTIL = window.matchMedia && matchMedia("(hover: none)").matches;
 
   const LIBROS = {
-    bolsillo: { tit: "Setas esenciales · cuaderno de bolsillo", sub: CA ? "56 pàgines · 54 bolets" : "56 páginas · 54 setas", n: 56,
-      pdf: "offline/setas-esenciales-bolsillo.pdf", ed: "es", otra: "butxaca" },
+    bolsillo: { tit: "Setas esenciales · cuaderno completo", sub: CA ? "56 pàgines · 54 bolets" : "56 páginas · 54 setas", n: 56,
+      pdf: "offline/setas-esenciales-A5.pdf", ed: "es", otra: "butxaca" },
     butxaca: { tit: "Cistella Segura · quadern de butxaca", sub: CA ? "76 pàgines · 50 bolets" : "76 páginas · 50 setas · en catalán", n: 76,
       pdf: "offline/cistella-segura-butxaca.pdf", ed: "ca", otra: "bolsillo" },
-    mini4: { tit: "Setas esenciales · cuaderno mini (4 hojas)", sub: CA ? "32 pàgines · 54 bolets" : "32 páginas · 54 setas", n: 32,
-      pdf: "offline/setas-esenciales-mini-4hojas.pdf" },
-    mini3: { tit: "Setas esenciales · cuaderno mini (3 hojas)", sub: CA ? "24 pàgines · 54 bolets" : "24 páginas · 54 setas", n: 24,
-      pdf: "offline/setas-esenciales-mini-3hojas.pdf" },
+    mini32: { tit: "Setas esenciales · cuaderno mini (32 páginas)", sub: CA ? "32 pàgines · 54 bolets" : "32 páginas · 54 setas", n: 32,
+      pdf: "offline/setas-esenciales-mini-32-A5.pdf" },
+    mini24: { tit: "Setas esenciales · cuaderno mini (24 páginas)", sub: CA ? "24 pàgines · 54 bolets" : "24 páginas · 54 setas", n: 24,
+      pdf: "offline/setas-esenciales-mini-24-A5.pdf" },
     esencial: { tit: "Setas comestibles esenciales de Cataluña", sub: CA ? "84 pàgines · 80 bolets" : "84 páginas · 80 setas", n: 84,
       pdf: "offline/setas-guia-esencial-A5.pdf", a5: true },
   };
@@ -54,7 +55,7 @@
     get(g) { return +this.todo()[g] || 0; },
     set(g, n) { try { const o = this.todo(); o[g] = n; localStorage.setItem("setas:leer", JSON.stringify(o)); } catch (e) { /* sin almacenamiento */ } },
   };
-  // el cuaderno de bolsillo se abre en el idioma de la web
+  // el cuaderno completo se abre en el idioma de la web
   const porIdioma = (g) => (g === "bolsillo" && CA ? "butxaca" : g);
 
   // ---------- texto del libro (libros/<libro>/texto.js) ----------
@@ -76,18 +77,26 @@
   const plano = (s) => { let o = ""; for (let i = 0; i < s.length; i++) o += letra(s[i]); return o; };
 
   // ---------- estado ----------
-  let S = null;   // { g, L, D, N, n, pags, panel, marca, q, … }
+  let S = null;   // { g, L, D, N, n, k, D2, doble, pw, ph, panel, marca, q, … }
   let G = null;   // utilidades de la web (window.GUIA)
   const $ = (s, el) => (el || document).querySelector(s);
   const $$ = (s, el) => Array.from((el || document).querySelectorAll(s));
-  // la página que se está leyendo (las demás se ven al bajar)
-  const vis = () => ({ todas: [S.n] });
+  // Las páginas van en «hojas» que se pasan de lado: en el móvil, una página; en pantallas anchas, dos enfrentadas
+  // (la portada, sola). S.k es la hoja que se ve y S.n la página (la primera de la hoja, o a la que se ha saltado).
+  function hojas() {
+    const out = [];
+    if (!S.doble) { for (let n = 1; n <= S.N; n++) out.push([n]); return out; }
+    out.push([1]);
+    for (let n = 2; n <= S.N; n += 2) out.push(n + 1 <= S.N ? [n, n + 1] : [n]);
+    return out;
+  }
+  const hojaDe = (n) => Math.max(0, S.D2.findIndex((d) => d.includes(n)));
+  const vis = () => ({ todas: (S.D2 && S.D2[S.k]) || [S.n] });
 
   // ---------- montar y desmontar ----------
   window.addEventListener("hashchange", () => { if (S && !/^#\/leer\//.test(location.hash)) desmontar(); });
   function desmontar() {
     if (!S) return;
-    if (S.io) S.io.disconnect();
     if (S.ro) S.ro.disconnect();
     S.root.remove();
     document.documentElement.classList.remove("leyendo");
@@ -103,15 +112,15 @@
     G.app.innerHTML = `<p class="muted">${esc(T.cargando)}</p>`;
     document.title = /Cistella Segura/.test(L.tit) ? L.tit : L.tit + " · Cistella Segura";
     const n = Math.min(Math.max(parseInt(n0, 10) || pos.get(g0) || 1, 1), L.n);
-    if (S && S.g === g0) { if (n !== S.n) irA(n); return; }
+    if (S && S.g === g0) { if (!vis().todas.includes(n)) irA(n); return; }
     desmontar();
     // proporción de la página: A6 (bolsillo y mini) o A5 (guía)
-    S = { g: g0, L, N: L.n, n, D: null, ratio: L.a5 ? 148 / 210 : 105 / 148, panel: null, marca: null, q: "" };
+    S = { g: g0, L, N: L.n, n, k: 0, D: null, ratio: L.a5 ? 148 / 210 : 105 / 148, panel: null, marca: null, q: "" };
     construir();
     cargarTexto(g0).then((D) => {
       if (!S || S.g !== g0) return;
       S.D = D;
-      if (D && D.n && D.n !== S.N) { S.N = D.n; S.n = Math.min(S.n, S.N); montarPaginas(); irA(S.n); }
+      if (D && D.n && D.n !== S.N) { S.N = D.n; S.n = Math.min(S.n, S.N); montar(); irA(S.n); }
       if (!D) aviso(T.noTexto);
       capas();
       actualizar();
@@ -138,8 +147,12 @@
         </div>
       </div>
       <div class="lec-cuerpo">
-        <div class="lec-scroll" tabindex="-1"><div class="lec-col"></div></div>
-        <div class="lec-aviso" role="status" hidden></div>
+        <div class="lec-escena">
+          <div class="lec-pista" tabindex="-1"></div>
+          <button type="button" class="lec-flecha lec-ant" aria-label="${esc(T.ant)}">‹</button>
+          <button type="button" class="lec-flecha lec-sig" aria-label="${esc(T.sig)}">›</button>
+          <div class="lec-aviso" role="status" hidden></div>
+        </div>
         <aside class="lec-panel" hidden></aside>
       </div>
       <div class="lec-pie">
@@ -155,11 +168,11 @@
     document.body.appendChild(root);
     document.documentElement.classList.add("leyendo");
     S.root = root;
-    S.el = { scroll: $(".lec-scroll", root), col: $(".lec-col", root), num: $(".lec-num", root), rango: $(".lec-rango input", root),
+    S.el = { escena: $(".lec-escena", root), pista: $(".lec-pista", root), num: $(".lec-num", root), rango: $(".lec-rango input", root),
       previa: $(".lec-previa", root), fichas: $(".lec-fichas", root), panel: $(".lec-panel", root), zoom: $(".lec-zoom", root), aviso: $(".lec-aviso", root) };
     // botones
-    $(".lec-p-ant", root).onclick = () => pasar(-1);
-    $(".lec-p-sig", root).onclick = () => pasar(1);
+    $(".lec-ant", root).onclick = $(".lec-p-ant", root).onclick = () => pasar(-1);
+    $(".lec-sig", root).onclick = $(".lec-p-sig", root).onclick = () => pasar(1);
     $$("[data-panel]", root).forEach((b) => (b.onclick = () => panel(S.panel === b.dataset.panel ? null : b.dataset.panel)));
     $(".lec-b-zoom", root).onclick = () => zoom(true);
     const pc = $(".lec-b-pc", root);
@@ -178,7 +191,7 @@
       const n = +a.dataset.ir;
       const q = a.dataset.q ? S.q : "";
       if (!esAncho() && S.panel) panel(null);
-      irA(n, { marca: q });
+      irA(n, { marca: q, suave: !q && Math.abs(hojaDe(n) - S.k) === 1 });
     });
     // fotos que no cargan (sin internet): se queda la miniatura; si tampoco hay, un aviso en la página
     root.addEventListener("error", (e) => {
@@ -188,44 +201,95 @@
       const p = im.closest(".lec-pag");
       if (p && $$("img", p).every((x) => x.classList.contains("mal"))) p.classList.add("sin-foto");
     }, true);
-    // doble clic o doble toque en una página: se amplía
-    S.el.col.addEventListener("dblclick", (e) => { const p = e.target.closest(".lec-pag"); if (p && !e.target.closest("a")) { S.n = +p.dataset.n; actualizar(); zoom(true); } });
+    const pt0 = S.el.pista;
+    // tocar el borde izquierdo o derecho de la pantalla: página anterior o siguiente (como en un lector de libros)
+    pt0.addEventListener("click", (e) => {
+      if (e.target.closest("a, button") || e.detail > 1) return;
+      const rc = S.el.escena.getBoundingClientRect(), x = (e.clientX - rc.left) / rc.width;
+      clearTimeout(S.tToque);
+      // se espera un poco: si es un doble toque, se amplía en vez de pasar
+      S.tToque = setTimeout(() => { if (x < 0.28) pasar(-1); else if (x > 0.72) pasar(1); }, 230);
+    });
+    // doble toque o doble clic: la página, ampliada
+    pt0.addEventListener("dblclick", (e) => {
+      if (e.target.closest("a, button")) return;
+      clearTimeout(S.tToque);
+      const p = e.target.closest(".lec-pag");
+      if (p) S.n = +p.dataset.n;
+      zoom(true);
+    });
+    // al deslizar: qué hoja se ve
+    pt0.addEventListener("scroll", () => { if (!S.rf) S.rf = requestAnimationFrame(alDeslizar); }, { passive: true });
+    // rueda del ratón hacia abajo o a un lado: página siguiente
+    let rueda = 0;
+    pt0.addEventListener("wheel", (e) => {
+      const d = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : 0;
+      if (Math.abs(d) < 4) return;
+      e.preventDefault();
+      const ahora = Date.now();
+      if (ahora - rueda < 380) return;
+      rueda = ahora;
+      pasar(d > 0 ? 1 : -1);
+    }, { passive: false });
     S.el.zoom.addEventListener("click", (e) => { if (!e.target.closest("img")) zoom(false); });
-    // al bajar: qué página se está leyendo
-    S.el.scroll.addEventListener("scroll", () => { if (!S.rf) S.rf = requestAnimationFrame(alDesplazar); }, { passive: true });
-    // si cambia el tamaño (girar el móvil, abrir un panel), se sigue en el mismo sitio de la misma página
-    S.ro = new ResizeObserver(() => { if (S && S.pags) anclar(); });
-    S.ro.observe(S.el.scroll);
-    montarPaginas();
-    requestAnimationFrame(() => { if (S) { irA(S.n); S.el.scroll.focus({ preventScroll: true }); } });
+    // si cambia el tamaño (girar el móvil, abrir un panel): las páginas se recolocan y se sigue en la misma
+    S.ro = new ResizeObserver(() => { clearTimeout(S && S.rz); if (S) S.rz = setTimeout(() => { if (S) recolocar(); }, 60); });
+    S.ro.observe(S.el.escena);
+    medidas();
+    montar();
+    irA(S.n);
+    S.el.pista.focus({ preventScroll: true });
     pista();
   }
 
-  // ---------- las páginas, una debajo de otra ----------
-  // cada una con su miniatura debajo (se ve mientras carga la grande y sin internet); se cargan al acercarse
-  function montarPaginas() {
+  // ---------- tamaño: la página entera en la pantalla; una o dos según el ancho ----------
+  const esAncho = () => window.innerWidth >= 1000;
+  function medidas() {
+    const flechas = getComputedStyle($(".lec-sig", S.root)).display !== "none";
+    const e = S.el.escena, movil = window.innerWidth < 600;
+    const W = e.clientWidth - (flechas ? 136 : movil ? 8 : 24), H = e.clientHeight - (movil ? 8 : 32), r = S.ratio;
+    S.doble = W / H > 1.12 && W >= 620;
+    const ph = Math.max(120, Math.floor(S.doble ? Math.min(H, W / (2 * r)) : Math.min(H, W / r)));
+    S.ph = ph; S.pw = Math.floor(ph * r);
+    S.el.pista.style.setProperty("--pw", S.pw + "px");
+    S.el.pista.style.setProperty("--ph", S.ph + "px");
+  }
+  function recolocar() {
+    const antes = S.doble;
+    medidas();
+    if (S.doble !== antes) montar();
+    irA(S.n);
+  }
+
+  // ---------- las hojas ----------
+  // las imágenes solo se cargan en las hojas cercanas (la miniatura primero: se ve mientras llega la grande)
+  function montar() {
     const d = S.L.dir;
-    if (S.io) S.io.disconnect();
-    S.el.col.style.setProperty("--ratio", S.ratio);
-    S.el.col.innerHTML = Array.from({ length: S.N }, (_, i) => i + 1).map((n) =>
-      `<div class="lec-pag" data-n="${n}"><img class="lec-mini" src="${d}/t${n3(n)}.jpg" alt="" aria-hidden="true" loading="lazy" draggable="false"><img class="lec-img" src="${d}/p${n3(n)}.jpg" alt="${esc(T.pag)} ${n}" loading="lazy" decoding="async" draggable="false"><span class="lec-sinfoto">${esc(T.sinFoto)}</span><div class="lec-capa"></div></div>`).join("");
-    S.pags = $$(".lec-pag", S.el.col);
+    S.D2 = hojas();
+    S.el.pista.innerHTML = S.D2.map((h, k) => `<div class="lec-hoja${h.length === 2 ? " doble" : ""}" data-k="${k}"><div class="lec-par">${h.map((n) =>
+      `<div class="lec-pag" data-n="${n}"><img class="lec-mini" data-src="${d}/t${n3(n)}.jpg" alt="" aria-hidden="true" draggable="false"><img class="lec-img" data-src="${d}/p${n3(n)}.jpg" alt="${esc(T.pag)} ${n}" decoding="async" draggable="false"><span class="lec-sinfoto">${esc(T.sinFoto)}</span><div class="lec-capa"></div></div>`).join("")}</div></div>`).join("");
+    S.hojasEl = $$(".lec-hoja", S.el.pista);
     S.el.rango.max = S.N;
-    // lo que se puede tocar se ilumina un momento la primera vez que se ve la página
-    S.io = new IntersectionObserver((es) => es.forEach((x) => { if (x.isIntersecting) { x.target.classList.add("vista"); S.io.unobserve(x.target); } }), { root: S.el.scroll, threshold: 0.35 });
-    S.pags.forEach((p) => S.io.observe(p));
     capas();
+  }
+  function cargarCerca() {
+    // las grandes, en la hoja que se ve y las de al lado; las miniaturas, unas cuantas más (al deslizar rápido no sale nada en blanco)
+    for (let k = S.k - 4; k <= S.k + 6; k++) {
+      const h = S.hojasEl[k];
+      if (!h) continue;
+      const cerca = k >= S.k - 1 && k <= S.k + 2;
+      $$(cerca ? "img[data-src]" : "img.lec-mini[data-src]", h).forEach((im) => { im.src = im.dataset.src; im.removeAttribute("data-src"); });
+    }
   }
   // enlaces y lo encontrado al buscar, encima de cada página
   function capas(solo) {
-    if (!S || !S.pags) return;
+    if (!S || !S.hojasEl) return;
     const D = S.D || {};
-    S.pags.forEach((p) => {
+    $$(".lec-pag", S.el.pista).forEach((p) => {
       const n = +p.dataset.n;
       if (solo && !solo.includes(n)) return;
       const enl = ((D.l || {})[n] || []).map(([x, y, w, h, dst]) => {
         const t = fmt(T.irA, { n: dst });
-        // las zonas grandes (una seta entera con su foto) van recuadradas en vez de pintadas
         return `<a class="lec-enl${w * h > 0.004 ? " grande" : ""}" href="#/leer/${S.g}/${dst}" data-ir="${dst}" style="left:${(x * 100).toFixed(2)}%;top:${(y * 100).toFixed(2)}%;width:${(w * 100).toFixed(2)}%;height:${(h * 100).toFixed(2)}%" aria-label="${esc(t)}" title="${esc(t)}"></a>`;
       }).join("");
       const mar = S.marca && S.marca.n === n ? S.marca.cajas.map(([x0, y, x1, h]) =>
@@ -234,46 +298,56 @@
     });
   }
 
-  // ---------- dónde se está ----------
-  const esAncho = () => window.innerWidth >= 1000;
-  // la página que ocupa la línea a un 40 % de la altura de la pantalla (al llegar abajo del todo, la última)
-  function paginaActual() {
-    const sc = S.el.scroll;
-    if (sc.scrollTop + sc.clientHeight >= sc.scrollHeight - 2) return S.N;
-    const y = sc.scrollTop + sc.clientHeight * 0.4;
-    let n = 1;
-    for (const p of S.pags) { if (p.offsetTop <= y) n = +p.dataset.n; else break; }
-    return n;
-  }
-  function alDesplazar() {
+  // ---------- pasar de hoja ----------
+  function alDeslizar() {
     if (!S) return;
     S.rf = 0;
-    const p = S.pags[S.n - 1], sc = S.el.scroll;
     if (S.saltando) return;
-    const n = paginaActual();
-    S.frac = p ? (sc.scrollTop - p.offsetTop) / Math.max(1, p.offsetHeight) : 0;
-    if (n !== S.n) { S.n = n; S.frac = (sc.scrollTop - S.pags[n - 1].offsetTop) / Math.max(1, S.pags[n - 1].offsetHeight); actualizar(); }
+    const pt = S.el.pista, k = Math.round(pt.scrollLeft / Math.max(1, pt.clientWidth));
+    if (k !== S.k && S.D2[k]) { S.k = k; S.n = S.D2[k][0]; if (S.marca && !S.D2[k].includes(S.marca.n)) { const m = S.marca.n; S.marca = null; capas([m]); } actualizar(); }
   }
-  function anclar() {
-    const p = S.pags[S.n - 1];
-    if (!p) return;
+  function irA(n, { suave = false, marca = "" } = {}) {
+    if (!S || !S.D2) return;
+    n = Math.min(Math.max(1, n | 0), S.N);
+    const antes = S.marca ? S.marca.n : 0;
+    S.marca = marca ? marcas(n, marca) : null;
+    if (antes || S.marca) capas([antes, n]);
+    S.n = n; S.k = hojaDe(n);
+    const pt = S.el.pista;
     S.saltando = true;
-    S.el.scroll.scrollTop = p.offsetTop + (S.frac || 0) * p.offsetHeight;
-    requestAnimationFrame(() => { if (S) S.saltando = false; });
+    pt.scrollTo({ left: S.k * pt.clientWidth, behavior: suave && MOV ? "smooth" : "auto" });
+    clearTimeout(S.tSalto);
+    S.tSalto = setTimeout(() => { if (S) S.saltando = false; }, suave && MOV ? 550 : 80);
+    actualizar();
+  }
+  function pasar(dir) {
+    if (!S) return;
+    const k = S.k + dir;
+    if (k < 0 || k >= S.D2.length) return;
+    irA(S.D2[k][0], { suave: true });
   }
   function actualizar() {
     if (!S) return;
-    S.el.num.textContent = `${S.n} ${T.de} ${S.N}`;
+    const v = vis();
+    cargarCerca();
+    const txt = v.todas.length === 2 ? `${v.todas[0]}–${v.todas[1]}` : String(v.todas[0]);
+    S.el.num.textContent = `${txt} ${T.de} ${S.N}`;
     S.el.rango.value = S.n;
     S.el.rango.style.setProperty("--avance", ((S.n - 1) / Math.max(1, S.N - 1) * 100).toFixed(1) + "%");
-    $(".lec-p-ant", S.root).disabled = S.n <= 1;
-    $(".lec-p-sig", S.root).disabled = S.n >= S.N;
-    fichas(vis());
+    const ant = S.k <= 0, sig = S.k >= S.D2.length - 1;
+    $$(".lec-ant, .lec-p-ant", S.root).forEach((b) => (b.disabled = ant));
+    $$(".lec-sig, .lec-p-sig", S.root).forEach((b) => (b.disabled = sig));
+    fichas(v);
+    // lo que se puede tocar brilla un momento al llegar a la hoja
+    $$(".lec-hoja.vista", S.el.pista).forEach((h) => h.classList.remove("vista"));
+    const h = S.hojasEl[S.k];
+    if (h) { void h.offsetWidth; h.classList.add("vista"); }
     // la dirección lleva la página (para volver aquí con «atrás» o compartir el enlace)
-    const h = `#/leer/${S.g}/${S.n}`;
-    if (location.hash !== h) history.replaceState(history.state, "", h);
+    const hs = `#/leer/${S.g}/${S.n}`;
+    if (location.hash !== hs) history.replaceState(history.state, "", hs);
     pos.set(S.g, S.n);
     if (S.panel === "indice" || S.panel === "paginas") marcarActual();
+    if (!S.el.zoom.hidden) zoom(true);
   }
   function fichas(v) {
     const D = S.D || {}, by = (G && G.BYID) || {}, vistos = new Set();
@@ -298,34 +372,6 @@
     for (const e of I) if (e[0] <= n) s = e; else break;
     return s ? s[1] : "";
   }
-
-  // ---------- ir a una página ----------
-  // salta (o baja suave, con las flechas) hasta el principio de la página; si se viene de buscar, hasta lo encontrado
-  function irA(n, { suave = false, marca = "" } = {}) {
-    if (!S || !S.pags) return;
-    n = Math.min(Math.max(1, n | 0), S.N);
-    const antes = S.marca ? S.marca.n : 0;
-    S.marca = marca ? marcas(n, marca) : null;
-    if (antes || S.marca) capas([antes, n]);
-    const p = S.pags[n - 1], sc = S.el.scroll;
-    let top = p.offsetTop - 8;
-    if (S.marca) {
-      const y = Math.min(...S.marca.cajas.map((c) => c[1])) * p.offsetHeight + p.offsetTop;
-      if (y > top + sc.clientHeight * 0.7) top = y - sc.clientHeight * 0.3;
-    }
-    S.n = n; S.frac = (top - p.offsetTop) / Math.max(1, p.offsetHeight);
-    S.saltando = true;
-    sc.scrollTo({ top, behavior: suave && MOV ? "smooth" : "auto" });
-    // mientras baja suave no se recalcula la página (no parpadea el número)
-    clearTimeout(S.tSalto);
-    S.tSalto = setTimeout(() => { if (S) S.saltando = false; }, suave && MOV ? 600 : 60);
-    actualizar();
-  }
-  function pasar(dir) {
-    if (!S) return;
-    const d = S.n + dir;
-    if (d >= 1 && d <= S.N) irA(d, { suave: true });
-  }
   function cambiarEdicion(g) {
     if (!S || g === S.g) return;
     // si se está viendo una seta, se abre la misma en la otra edición (si está en las dos)
@@ -338,7 +384,7 @@
     });
   }
 
-  // ---------- teclado: ← → de página en página; ↑ ↓ y la barra espaciadora bajan como siempre ----------
+  // ---------- teclado ----------
   document.addEventListener("keydown", (e) => {
     if (!S || e.altKey) return;
     const t = e.target, escribe = t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA") && t.type !== "range";
@@ -352,14 +398,15 @@
       return;
     }
     if (escribe || (t && t.type === "range")) return;
-    const k = e.key;
-    if (k === "ArrowRight" || k === "PageDown") { e.preventDefault(); pasar(1); }
-    else if (k === "ArrowLeft" || k === "PageUp") { e.preventDefault(); pasar(-1); }
+    const k = e.key, boton = t && t.closest && t.closest("button, a");   // la barra espaciadora pulsa el botón que tenga el foco
+    if (k === "ArrowRight" || k === "ArrowDown" || k === "PageDown" || (k === " " && !boton && !e.shiftKey)) { e.preventDefault(); pasar(1); }
+    else if (k === "ArrowLeft" || k === "ArrowUp" || k === "PageUp" || (k === " " && !boton && e.shiftKey)) { e.preventDefault(); pasar(-1); }
     else if (k === "Home") { e.preventDefault(); irA(1); }
     else if (k === "End") { e.preventDefault(); irA(S.N); }
     else if (k === "/") { e.preventDefault(); panel("buscar"); }
     else if (k === "z" || k === "+") zoom(S.el.zoom.hidden);
   });
+  document.addEventListener("fullscreenchange", () => { if (S) recolocar(); });
 
   // ---------- paneles: índice, buscar, miniaturas ----------
   function panel(tipo) {
@@ -393,7 +440,7 @@
     P.hidden = false;
     $(".lec-cerrar", P).onclick = () => panel(null);
     if (tipo !== "buscar") marcarActual(true);
-    // en pantallas anchas el panel va al lado y las páginas se estrechan (el ResizeObserver mantiene el sitio)
+    // en pantallas anchas el panel va al lado y las páginas se encogen (las recoloca el ResizeObserver)
   }
   function marcarActual(desplazar) {
     const P = S.el.panel, v = vis();
@@ -473,7 +520,7 @@
     return cerrar;
   }
   function pista() {
-    try { if (localStorage.getItem("setas:leer-pista3")) return; localStorage.setItem("setas:leer-pista3", "1"); } catch (e) { return; }
+    try { if (localStorage.getItem("setas:leer-pista4")) return; localStorage.setItem("setas:leer-pista4", "1"); } catch (e) { return; }
     const cerrar = aviso(TACTIL ? T.pista : T.pistaPC, T.entendido);
     setTimeout(cerrar, 9000);
   }

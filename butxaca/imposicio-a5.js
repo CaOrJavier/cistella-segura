@@ -26,6 +26,10 @@
     for (const p of [pages[1], ...pages.slice(2, -1).reverse()].filter(Boolean)) {
       const pf = p.querySelector(".pf");
       if (!pf) continue;
+      // cuadernos mini: en un hueco para notas; las páginas llenas de fichas, no se tocan
+      const hueco = p.querySelector(".mf-notas");
+      if (hueco) { hueco.insertAdjacentHTML("beforeend", html); break; }
+      if (p.querySelector(".mini-in")) continue;
       pf.insertAdjacentHTML("beforebegin", html);
       if (p.scrollHeight <= p.clientHeight + 1) break;
       p.querySelector(".howto-mini").remove();
