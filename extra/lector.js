@@ -37,14 +37,14 @@
   const TACTIL = window.matchMedia && matchMedia("(hover: none)").matches;
 
   const LIBROS = {
-    bolsillo: { tit: "Setas esenciales · cuaderno completo", sub: CA ? "56 pàgines · 54 bolets" : "56 páginas · 54 setas", n: 56,
+    bolsillo: { tit: "Setas esenciales · cuaderno completo", sub: CA ? "52 pàgines · 54 bolets" : "52 páginas · 54 setas", n: 52,
       pdf: "offline/setas-esenciales-A5.pdf", ed: "es", otra: "butxaca" },
-    butxaca: { tit: "Cistella Segura · quadern de butxaca", sub: CA ? "76 pàgines · 50 bolets" : "76 páginas · 50 setas · en catalán", n: 76,
+    butxaca: { tit: "Cistella Segura · quadern de butxaca", sub: CA ? "72 pàgines · 50 bolets" : "72 páginas · 50 setas · en catalán", n: 72,
       pdf: "offline/cistella-segura-butxaca.pdf", ed: "ca", otra: "bolsillo" },
     mini32: { tit: "Setas esenciales · cuaderno mini (32 páginas)", sub: CA ? "32 pàgines · 54 bolets" : "32 páginas · 54 setas", n: 32,
       pdf: "offline/setas-esenciales-mini-32-A5.pdf" },
-    mini24: { tit: "Setas esenciales · cuaderno mini (24 páginas)", sub: CA ? "24 pàgines · 54 bolets" : "24 páginas · 54 setas", n: 24,
-      pdf: "offline/setas-esenciales-mini-24-A5.pdf" },
+    mini20: { tit: "Setas esenciales · cuaderno mini (20 páginas)", sub: CA ? "20 pàgines · 54 bolets" : "20 páginas · 54 setas", n: 20,
+      pdf: "offline/setas-esenciales-mini-20-A5.pdf" },
     esencial: { tit: "Setas comestibles esenciales de Cataluña", sub: CA ? "84 pàgines · 80 bolets" : "84 páginas · 80 setas", n: 84,
       pdf: "offline/setas-guia-esencial-A5.pdf", a5: true },
   };

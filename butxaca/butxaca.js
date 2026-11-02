@@ -459,19 +459,6 @@
     fit(p, ["dense"], "mites");
   }
 
-  function troballesPage(first) {
-    const p = newPage("annex");
-    const N = 13;
-    let cells = `<span class="lh">Data</span><span class="lh">Lloc i bosc</span><span class="lh">Bolet i notes</span>`;
-    for (let i = 0; i < N; i++) cells += `<span class="lc"></span><span class="lc"></span><span class="lc"></span>`;
-    p.insertAdjacentHTML("beforeend", `
-      ${first ? `<div class="kicker">Quadern de camp</div><h2 class="pt">Les meves troballes</h2>
-      <p class="log-hint">Apunta-ho al bosc: on, quan i amb qui ho vas confirmar.</p>` : `<div class="kicker">Les meves troballes</div>`}
-      <div class="log" style="grid-template-rows:auto repeat(${N}, 1fr)">${cells}</div>
-      ${foot("Les meves troballes")}`);
-    return p;
-  }
-
   function creditsPages() {
     const lines = [];
     const cf = REPORT.cover;
@@ -519,8 +506,6 @@
       <ul class="sos-t">${SOS.temps.map(([t, d]) => `<li><strong>${esc(t)}</strong><span>${esc(d)}</span></li>`).join("")}</ul>
       <div class="h3">Què fer</div>
       <ul class="sos-f">${SOS.fer.map(t => `<li>${esc(t)}</li>`).join("")}</ul>
-      <div class="h3" style="margin-top:auto">Apunta-ho abans de sortir</div>
-      ${["Allotjament", "Centre de salut", "Societat micològica", "On he aparcat"].map(t => `<div class="wi"><span>${t}</span><i></i></div>`).join("")}
       ${foot("SOS")}`);
     fit(p, ["dense"], "sos");
   }
@@ -603,21 +588,15 @@
     caraPages();
     casaPage();
     mitesPage();
-    const firstLog = troballesPage(true);
-    troballesPage(false);
+    // sense pàgines per apuntar (no calen): el quadern acaba amb el glossari, l'índex, els crèdits i el SOS
     glossariPage();
     alfaPages();
     creditsPages();
     sosPage();
 
-    // Paginas de notes extra perque el total sigui multiple de 4 (per imprimir en quadernet)
-    const extra = (4 - (book.children.length % 4)) % 4;
-    let after = firstLog.nextElementSibling;
-    for (let i = 0; i < extra; i++) {
-      const p = troballesPage(false);
-      book.insertBefore(p, after.nextElementSibling);
-      after = p;
-    }
+    // per imprimir en quadernet, el total ha de ser múltiple de 4: no s'omple amb pàgines de notes; si no quadra, s'avisa
+    const falta = (4 - (book.children.length % 4)) % 4;
+    if (falta) REPORT.overflow.push(`falten ${falta} pàgines perquè el total sigui múltiple de 4`);
 
     // Numeracio
     const pages = [...book.children];
@@ -639,7 +618,6 @@
       { t: "Tòxics i precaució", d: `${GROUPS.toxic.length + GROUPS.precaucio.length} bolets`, c: SEC.toxics.c, n: secFirst("toxics") },
       { t: "Cara a cara", d: `${COMPARA.length} confusions perilloses`, c: SEC.cara.c, n: secFirst("cara") },
       { t: "A casa", d: "abans de menjar, cuina, mites", c: SEC.annex.c, n: secFirst("annex") },
-      { t: "Les meves troballes", d: "per apuntar", c: SEC.annex.c, n: first(p => p.querySelector(".log")) },
       { t: "Glossari i índex", d: "paraules i tots els noms", c: SEC.annex.c, n: first(p => p.querySelector(".glossa")) },
       { t: "SOS", d: "si algú es troba malament", c: "var(--deadly)", n: secFirst("sos") }
     ]);

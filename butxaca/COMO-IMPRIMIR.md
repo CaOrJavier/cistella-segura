@@ -4,15 +4,15 @@ Los cuadernos de *Setas esenciales* se imprimen sobre todo en **A5** (14,8 × 21
 
 | Cuaderno | A5 para leer o la copistería | A5 para imprimir en casa (A4 doblada) | A6 | A6 para imprimir en casa (A4 cortada) |
 |---|---|---|---|---|
-| **Completo** (54 setas, una por página, 56 págs.) | `setas-esenciales-A5.pdf` | `setas-esenciales-A5-imprimir-A4.pdf` · 14 hojas | `setas-esenciales-bolsillo.pdf` | `setas-esenciales-bolsillo-imprimir-A4.pdf` · 7 hojas |
+| **Completo** (54 setas, una por página, 52 págs.) | `setas-esenciales-A5.pdf` | `setas-esenciales-A5-imprimir-A4.pdf` · 13 hojas | `setas-esenciales-bolsillo.pdf` | `setas-esenciales-bolsillo-imprimir-A4.pdf` · 7 hojas |
 | **Mini 32** (dos por página, 32 págs.) | `setas-esenciales-mini-32-A5.pdf` | `setas-esenciales-mini-32-A5-imprimir-A4.pdf` · 8 hojas | `setas-esenciales-mini-32.pdf` | `setas-esenciales-mini-32-imprimir-A4.pdf` · 4 hojas |
-| **Mini 24** (tres por página, 24 págs.) | `setas-esenciales-mini-24-A5.pdf` | `setas-esenciales-mini-24-A5-imprimir-A4.pdf` · 6 hojas | `setas-esenciales-mini-24.pdf` | `setas-esenciales-mini-24-imprimir-A4.pdf` · 3 hojas |
-| **Cistella Segura** (catalán, 50 bolets, 76 págs.) | — | — | `cistella-segura-butxaca.pdf` | `cistella-segura-butxaca-imprimir-A4.pdf` · 10 hojas |
+| **Mini 20** (tres por página, 20 págs.) | `setas-esenciales-mini-20-A5.pdf` | `setas-esenciales-mini-20-A5-imprimir-A4.pdf` · 5 hojas | `setas-esenciales-mini-20.pdf` | `setas-esenciales-mini-20-imprimir-A4.pdf` · 3 hojas |
+| **Cistella Segura** (catalán, 50 bolets, 72 págs.) | — | — | `cistella-segura-butxaca.pdf` | `cistella-segura-butxaca-imprimir-A4.pdf` · 9 hojas |
 
 ## En casa, en A5 (archivos `...-A5-imprimir-A4.pdf`)
 
 1. **Imprime a doble cara, volteando por el borde corto**, a **tamaño real (100 %)**.
-2. **No se corta nada:** ordena las hojas por su número pequeño (1/14, 2/14…), la 1 encima.
+2. **No se corta nada:** ordena las hojas por su número pequeño (1/13, 2/13…), la 1 encima.
 3. **Dobla el montón** por la mitad, con la portada por fuera, y **grapa por el pliegue** con 2 grapas.
 
 ## En casa, en A6 (archivos `...-imprimir-A4.pdf` sin «A5»)
@@ -31,7 +31,7 @@ Necesitas: las hojas A4 de la tabla (mejor de 90–100 g si tienes), tijeras o c
    - Si tu grapadora no llega al centro: ábrela del todo, apoya el cuaderno abierto sobre una goma de borrar o un trozo de corcho, grapa desde fuera por la línea del pliegue y dobla las patas de la grapa con el dedo.
    - Alternativa más resistente: haz 3 agujeros en el pliegue con una aguja gruesa y cóselo con hilo.
 
-Si sobra media hoja (lleva estas instrucciones), se puede tirar o usar de punto de libro. En *Setas esenciales* no sobra ninguna: las instrucciones van resumidas en la página de las reglas o en un hueco para notas.
+Si sobra media hoja (lleva estas instrucciones), se puede tirar o usar de punto de libro. Ningún cuaderno lleva páginas de notas: si no sobra media hoja, las instrucciones van resumidas en la página «Antes de salir» o donde quepan.
 
 ## En una copistería
 

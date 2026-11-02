@@ -474,3 +474,47 @@ html.libro-bolsillo {
 .mf-notas { background: repeating-linear-gradient(to bottom, transparent 0 6.6mm, var(--line) 6.6mm 6.85mm); background-origin: content-box; }
 .mf-notas .lab { color: var(--muted); background: #fff; padding-right: 1mm; }
 .mf-notas .howto-mini { background: #fff; margin-top: 2mm; }
+
+/* =========================================================
+   «ANTES DE SALIR» EN UNA PÁGINA (cuadernos): reglas, cómo mirar, descarte y cómo leer las fichas, en pequeño
+   ========================================================= */
+.antes-page .pt { font-size: 13pt; }
+.reglas.compactas { margin: .6mm 0 0; }
+.reglas.compactas li { padding: .28mm 0; }
+.reglas.compactas .nn { font-size: 7pt; }
+.reglas.compactas p { font-size: 6.3pt; line-height: 1.16; }
+.mirar-c { margin-top: 1.6mm; }
+.mirar-c .h3 { margin: 0 0 .8mm; }
+.mirar-c-in { display: grid; grid-template-columns: 36mm 1fr; gap: 0 2mm; align-items: center; }
+.mirar-c .anat { margin: 0; }
+.mirar-c .mirar { grid-template-columns: 1fr; gap: .35mm; }
+.mirar-c .mirar li { font-size: 5.8pt; line-height: 1.15; grid-template-columns: 2.8mm 1fr; }
+.mirar-c .mirar .nn { font-size: 6.6pt; }
+.mirar-c .redbar { margin-top: 1.2mm; padding: .9mm 2mm; font-size: 6.2pt; }
+.antes-page .leyenda { margin-top: 1.6mm; padding-top: 1.4mm; }
+.antes-page .ley li { padding: .45mm 0; font-size: 5.8pt; }
+.antes-page .cred-linea { margin-top: 1.2mm; font-size: 5pt; }
+.antes-page.denso .reglas.compactas p { font-size: 6pt; }
+.antes-page.denso .ley li { padding: .3mm 0; }
+.antes-page.denso2 .mirar-c-in { grid-template-columns: 30mm 1fr; }
+.antes-page.denso2 .reglas.compactas li { padding: .15mm 0; }
+.antes-page:not(:has(.anat)) .mirar-c-in { grid-template-columns: 1fr; }
+.antes-page:not(:has(.anat)) .mirar-c .mirar { grid-template-columns: 1fr 1fr; }
+
+/* huecos de los mini con contenido: «La edad cuenta» y «Llame ahora» */
+.mf-extra { min-height: 0; overflow: hidden; display: flex; flex-direction: column; gap: .8mm; padding: 2mm 2.4mm; border-radius: 1.4mm; border: .3mm solid var(--line); }
+.mf-extra .kicker { margin: 0; }
+.mf-extra .mf-n { margin: 0; }
+.mf-x-t { margin: 0; font-size: 6.3pt; line-height: 1.25; color: var(--ink-2); }
+.mf-edad .edat { flex: 1 1 auto; min-height: 0; }
+.mf-edad .edat figure { height: auto; min-height: 14mm; }
+.mf-sos { border: .5mm solid var(--deadly); }
+.mf-sos .kicker, .mf-sos .mf-n { color: var(--deadly); }
+.mf-sos-n { display: flex; gap: 2mm; flex-wrap: wrap; font-size: 6pt; color: var(--ink-2); }
+.mf-sos-n span { display: inline-flex; align-items: baseline; gap: 1mm; }
+.mf-sos-n strong { font-family: var(--display); font-weight: 800; font-size: 11pt; color: var(--deadly); }
+.mf-sos .sos-f { margin: 0; padding: 0; list-style: none; }
+.mf-sos .sos-f li { font-size: 6.2pt; margin: .2mm 0; padding-left: 2.6mm; color: var(--ink); }
+.mf-sos .sos-f li::before { content: "→"; position: absolute; left: 0; color: var(--deadly); }
+.mf-sos .sos-alarma { margin-top: auto; padding: 1mm 1.6mm; border-radius: 1mm; border: .3mm solid var(--deadly); color: var(--deadly); font-weight: 700; font-size: 5.9pt; }
+.mf-extra.dense .mf-x-t, .mf-extra.dense .sos-f li { font-size: 5.8pt; }

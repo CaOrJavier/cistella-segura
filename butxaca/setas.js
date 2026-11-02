@@ -17,14 +17,14 @@
   // la guía esencial (A5, butxaca/guia.html): todas las setas de la guía, cada una en una página como mucho
   // (las del cuaderno, página entera; las demás, media página) y los árboles en poco espacio.
   const GUIA = window.CUADERNO_MODO === "guia";
-  // Cuadernos mini (butxaca/setas-mini-32.html y setas-mini-24.html, y sus versiones -a5): las mismas 54 setas,
+  // Cuadernos mini (butxaca/setas-mini-32.html y setas-mini-20.html, y sus versiones -a5): las mismas 54 setas,
   // pero 2 o 3 por página y con lo justo (foto, nombres, meses, cómo es, rasgos, dónde y con qué se confunde)
   const MINI = window.CUADERNO_MODO === "mini" ? (+window.MINI_POR_PAGINA === 3 ? 3 : 2) : 0;
   // el cuaderno de bolsillo lleva su propia letra para texto pequeño (setas.css, .libro-bolsillo)
   document.documentElement.classList.add(GUIA ? "libro-guia" : "libro-bolsillo");
   if (MINI) document.documentElement.classList.add("libro-mini", "mini-" + MINI);
   // en la portada: qué cuaderno es (los mini, por sus páginas: las hojas dependen de si se imprime en A5 o en A6)
-  const EDLAB = MINI ? `cuaderno mini · ${MINI === 2 ? 32 : 24} páginas` : "cuaderno completo";
+  const EDLAB = MINI ? "cuaderno mini" : "cuaderno completo";   // en los mini se añaden las páginas al final (build)
   const EDICION = "Otoño 2026";
   // portada: rossinyols en el cuaderno; ceps en la guía (para distinguirlos a primera vista)
   const PORTADA = GUIA ? { id: "boletus-edulis", papel: "recolectado" } : { id: "cantharellus-cibarius", papel: "recolectado" };
@@ -458,7 +458,7 @@
     }).join("");
     const grupo = (sec, st, t) => `<span class="cvc-gr st-${st}" data-ir="${sec}"><i></i><b>${GROUPS[sec].length}</b> ${t}</span>`;
     p.innerHTML = `
-      <div class="cvc-ed"><span>Cistella Segura · ${esc(EDLAB)}</span><span>${EDICION}</span></div>
+      <div class="cvc-ed"><span>Cistella Segura · <span class="cvc-edlab">${esc(EDLAB)}</span></span><span>${EDICION}</span></div>
       <h1 class="cvc-t">Setas<em>esenciales</em></h1>
       <p class="cvc-sub">de Cataluña</p>
       ${circ}
@@ -496,7 +496,9 @@
   // =========================================================
   // GUÍA
   // =========================================================
-  // Cuaderno: las 12 reglas en media hoja (una línea cada una) y, debajo, cómo leer las fichas
+  // Cuadernos (completo y mini): todo lo de antes de salir en una sola página, en pequeño (no hace falta más):
+  // las 12 reglas, una línea cada una; cómo mirar una seta (el dibujo y los seis pasos); «láminas blancas +
+  // anillo + volva = descarte»; cómo leer las fichas y en qué página empieza cada sección
   const REGLAS_CORTAS = [
     "Recolecte solo lo que conoce a fondo.",
     "Saque la seta entera, con la base del pie.",
@@ -512,14 +514,16 @@
     "Evite cunetas, zonas industriales y campos tratados."
   ];
   function reglasCortasPage() {
-    const p = newPage("guia", "reglas-page");
+    const p = newPage("guia", "reglas-page antes-page");
     const gd = n => `<span class="gd">${[1, 2, 3].map(i => `<i class="${i <= n ? "on" : ""}"></i>`).join("")}</span>`;
     const sec = (k, t) => `<span class="${EST[k].st === "precaucio" ? "" : "st-" + EST[k].st}"><i></i>${t} <span class="ref" data-ref="sec:${EST[k].sec}" data-fmt="n">00</span></span>`;
     p.insertAdjacentHTML("beforeend", `
       <div class="kicker">Antes de salir</div>
       <h2 class="pt">Las ${REGLAS_CORTAS.length} reglas</h2>
-      <p class="ps">No admiten excepciones. Ante la duda, no la recolecte para comer.</p>
-      <ol class="normes reglas cortas spread">${REGLAS_CORTAS.map((r, i) => `<li><span class="nn">${i + 1}</span><p>${esc(r)}</p></li>`).join("")}</ol>
+      <ol class="normes reglas cortas compactas">${REGLAS_CORTAS.map((r, i) => `<li><span class="nn">${i + 1}</span><p>${esc(r)}</p></li>`).join("")}</ol>
+      <div class="mirar-c"><div class="h3">Cómo mirar una seta</div>
+        <div class="mirar-c-in">${ANATOMIA}<ol class="mirar">${MIRAR.map(([t, d], i) => `<li><span class="nn">${i + 1}</span><span><b>${esc(t)}.</b> ${esc(d)}</span></li>`).join("")}</ol></div>
+        <p class="redbar">Láminas blancas + anillo + volva = DESCARTE</p></div>
       <div class="leyenda">
         <div class="kicker">Cómo leer las fichas</div>
         <ul class="ley">
@@ -535,7 +539,7 @@
       </div>
       ${CREDITO}
       ${foot("Antes de salir")}`);
-    fit(p, [".ps"], "reglas");
+    fit(p, ["denso", "denso2", ".anat"], "antes de salir");
   }
   function reglasPage() {
     if (!GUIA) return reglasCortasPage();
@@ -582,6 +586,40 @@
       gleba: svg(`<path d="M11.3 4.6a8 8 0 0 0 0 16z" fill="${CAP}" stroke="${T}" stroke-width=".8" stroke-linejoin="round"/>${[[7.4, 8.4], [5.6, 11.6], [8.4, 12.4], [6.2, 15.2], [8.8, 16.6], [9.6, 7]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r=".55" fill="${T}" opacity=".55"/>`).join("")}<path d="M12.9 4.6a8 8 0 0 1 0 16z" fill="#fff" stroke="${T}" stroke-width=".8" stroke-linejoin="round"/><path d="M12.9 4.6v16" stroke="${T}" stroke-width=".8"/>`)
     };
   })();
+  // «Cómo mirar una seta»: el dibujo con sus partes y los seis pasos (en la guía, en su página; en los cuadernos,
+  // en pequeño en la página «Antes de salir»)
+  const MIRAR = [
+    ["Sombrero", "Color, textura (lisa, escamosa, viscosa) y margen."],
+    ["Debajo", "Láminas, poros, pliegues o aguijones. Color, y si bajan por el pie."],
+    ["Anillo", "¿Tiene? ¿Fijo o se desliza?"],
+    ["Pie", "Lleno o hueco, fibroso o quebradizo. ¿Dibujos?"],
+    ["Base", "Extráigala entera y escarbe: ¿hay volva?"],
+    ["Carne", "Córtela: ¿látex? ¿Cambia de color? ¿Olor?"]
+  ];
+  const ANATOMIA = `<svg class="anat" viewBox="0 0 200 112" aria-hidden="true">
+        <defs><pattern id="gl" width="2.2" height="12" patternUnits="userSpaceOnUse"><path d="M1.1 0V12" stroke="#9a7650" stroke-width=".45"/></pattern></defs>
+        <path d="M24 99H138" stroke="#8b6b4a" stroke-width=".7" stroke-dasharray="2.4 1.8"/>
+        <text x="26" y="96" class="hint">tierra</text>
+        <path d="M84 47C83 66 82 81 80 96H104C102 81 101 66 100 47Z" fill="#f4ecdc" stroke="#3a2f25" stroke-width=".8"/>
+        <path d="M74 88C73 97 80 104 92 104S111 97 110 88C106 93 100 95 92 95S78 93 74 88Z" fill="#fff" stroke="#a3201a" stroke-width=".9"/>
+        <path d="M82 56C87 59 97 59 102 56L106 65C98 69 86 69 78 65Z" fill="#fff" stroke="#3a2f25" stroke-width=".7"/>
+        <path d="M42 44C47 20 67 8 92 8S137 20 142 44C122 49 62 49 42 44Z" fill="#c98d55" stroke="#3a2f25" stroke-width=".8"/>
+        <path d="M42 44C62 49 122 49 142 44C130 52 108 54 92 54S54 52 42 44Z" fill="url(#gl)" stroke="#3a2f25" stroke-width=".6"/>
+        <path d="M62 20c6-5 14-7 22-7" stroke="#fff" stroke-opacity=".5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+        <g stroke="#3a2f25" stroke-width=".4" fill="none">
+          <path d="M126 22L150 14"/><path d="M128 50L150 38"/><path d="M104 62L150 61"/><path d="M101 80L150 81"/><path d="M109 95L150 99" stroke="#a3201a"/>
+          <path d="M83 74L50 74" stroke-dasharray="1.2 1"/>
+        </g>
+        <text x="152" y="16"><tspan class="n">1</tspan> Sombrero</text>
+        <text x="152" y="40"><tspan class="n">2</tspan> Debajo</text>
+        <text x="152" y="47" class="hint">láminas, poros…</text>
+        <text x="152" y="63"><tspan class="n">3</tspan> Anillo</text>
+        <text x="152" y="83"><tspan class="n">4</tspan> Pie</text>
+        <text x="152" y="101" class="r"><tspan class="n r">5</tspan> Volva</text>
+        <text x="152" y="108" class="hint">saco, a menudo enterrado</text>
+        <text x="20" y="72"><tspan class="n">6</tspan> Carne</text>
+        <text x="20" y="79" class="hint">córtela y mire</text>
+      </svg>`;
   function mirarPage() {
     const p = newPage("guia");
     // qué hay bajo el sombrero: una foto real de cada tipo (se ve mucho mejor que un dibujo pequeño)
@@ -607,42 +645,11 @@
       EXTRA.push(["Cómo mirar · la edad", f]);
       return `<figure><img src="${G(f.t || f.g)}" alt=""><figcaption><b class="${ok ? "" : "no"}">${ok ? "✓" : "✕"}</b> ${t}</figcaption></figure>`;
     }).join("");
-    const MIRAR = [
-      ["Sombrero", "Color, textura (lisa, escamosa, viscosa) y margen."],
-      ["Debajo", "Láminas, poros, pliegues o aguijones. Color, y si bajan por el pie."],
-      ["Anillo", "¿Tiene? ¿Fijo o se desliza?"],
-      ["Pie", "Lleno o hueco, fibroso o quebradizo. ¿Dibujos?"],
-      ["Base", "Extráigala entera y escarbe: ¿hay volva?"],
-      ["Carne", "Córtela: ¿látex? ¿Cambia de color? ¿Olor?"]
-    ];
     p.insertAdjacentHTML("beforeend", `
       <div class="kicker">Antes del nombre</div>
       <h2 class="pt">Cómo mirar una seta</h2>
       <p class="ps">Seis cosas, siempre en este orden. Si falta una, no la puede identificar.</p>
-      <svg class="anat" viewBox="0 0 200 112" aria-hidden="true">
-        <defs><pattern id="gl" width="2.2" height="12" patternUnits="userSpaceOnUse"><path d="M1.1 0V12" stroke="#9a7650" stroke-width=".45"/></pattern></defs>
-        <path d="M24 99H138" stroke="#8b6b4a" stroke-width=".7" stroke-dasharray="2.4 1.8"/>
-        <text x="26" y="96" class="hint">tierra</text>
-        <path d="M84 47C83 66 82 81 80 96H104C102 81 101 66 100 47Z" fill="#f4ecdc" stroke="#3a2f25" stroke-width=".8"/>
-        <path d="M74 88C73 97 80 104 92 104S111 97 110 88C106 93 100 95 92 95S78 93 74 88Z" fill="#fff" stroke="#a3201a" stroke-width=".9"/>
-        <path d="M82 56C87 59 97 59 102 56L106 65C98 69 86 69 78 65Z" fill="#fff" stroke="#3a2f25" stroke-width=".7"/>
-        <path d="M42 44C47 20 67 8 92 8S137 20 142 44C122 49 62 49 42 44Z" fill="#c98d55" stroke="#3a2f25" stroke-width=".8"/>
-        <path d="M42 44C62 49 122 49 142 44C130 52 108 54 92 54S54 52 42 44Z" fill="url(#gl)" stroke="#3a2f25" stroke-width=".6"/>
-        <path d="M62 20c6-5 14-7 22-7" stroke="#fff" stroke-opacity=".5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-        <g stroke="#3a2f25" stroke-width=".4" fill="none">
-          <path d="M126 22L150 14"/><path d="M128 50L150 38"/><path d="M104 62L150 61"/><path d="M101 80L150 81"/><path d="M109 95L150 99" stroke="#a3201a"/>
-          <path d="M83 74L50 74" stroke-dasharray="1.2 1"/>
-        </g>
-        <text x="152" y="16"><tspan class="n">1</tspan> Sombrero</text>
-        <text x="152" y="40"><tspan class="n">2</tspan> Debajo</text>
-        <text x="152" y="47" class="hint">láminas, poros…</text>
-        <text x="152" y="63"><tspan class="n">3</tspan> Anillo</text>
-        <text x="152" y="83"><tspan class="n">4</tspan> Pie</text>
-        <text x="152" y="101" class="r"><tspan class="n r">5</tspan> Volva</text>
-        <text x="152" y="108" class="hint">saco, a menudo enterrado</text>
-        <text x="20" y="72"><tspan class="n">6</tspan> Carne</text>
-        <text x="20" y="79" class="hint">córtela y mire</text>
-      </svg>
+      ${ANATOMIA}
       <ol class="mirar">${MIRAR.map(([t, d], i) => `<li><span class="nn">${i + 1}</span><span><b>${esc(t)}.</b> ${esc(d)}</span></li>`).join("")}</ol>
       <div class="h3">Qué hay bajo el sombrero</div>
       <div class="bajo">${formas}</div>
@@ -1132,20 +1139,53 @@
     });
     return out;
   }
-  // una sección: MINI setas por página; los huecos que sobran en la última, para notas
-  function miniPages(lista_, sec) {
-    const label = sec === "comestibles" ? "Comestibles" : sec === "mortales" ? "Mortales" : "Tóxicas";
+  const LABEL = { comestibles: "Comestibles", toxicas: "Tóxicas", mortales: "Mortales" };
+  const secDe = e => EST[e.comestibilidad.cat].sec;
+  // una página de fichas mini (y, si sobra sitio, los huecos que se le den)
+  function miniPagina(grupo, sec, huecos = []) {
+    const p = newPage(sec, "mini-pg");
+    p.insertAdjacentHTML("beforeend", `<div class="mini-in">${grupo.map(miniFicha).join("")}${huecos.join("")}</div>${foot(LABEL[sec])}`);
+    grupo.forEach(e => (PAGE_OF[e.id] = p));
+    // si no cabe: fuera, por este orden, en qué se distinguen, el último rasgo, la causa, letra algo menor…
+    p.querySelectorAll(".mf").forEach(m => fitEl(m, ["dense", quitaUno(".mf-cf .cfd"), quitaUno(".mf-cl li"), ".mf-causa", quitaUno(".mf-cf .cfd"),
+      "denser", quitaUno(".mf-cl li"), ".mf-do", quitaUno(".mf-cf .cfi")]));
+    p.querySelectorAll(".mf-extra").forEach(m => fitEl(m, ["dense", ".sos-f .sr", ".mf-x-t"]));
+  }
+  // una sección: MINI setas por página; el hueco que sobre en la última, con lo que se le dé (nunca notas)
+  function miniPages(lista_, sec, rellenos) {
     const orden = ordenMini(lista_);
     for (let i = 0; i < orden.length; i += MINI) {
       const grupo = orden.slice(i, i + MINI);
-      const p = newPage(sec, "mini-pg");
-      const huecos = Array.from({ length: MINI - grupo.length }, () => `<div class="mf-notas"><span class="lab">Notas</span></div>`).join("");
-      p.insertAdjacentHTML("beforeend", `<div class="mini-in">${grupo.map(miniFicha).join("")}${huecos}</div>${foot(label)}`);
-      grupo.forEach(e => (PAGE_OF[e.id] = p));
-      // si no cabe: fuera, por este orden, en qué se distinguen, el último rasgo, la causa, letra algo menor…
-      p.querySelectorAll(".mf").forEach(m => fitEl(m, ["dense", quitaUno(".mf-cf .cfd"), quitaUno(".mf-cl li"), ".mf-causa", quitaUno(".mf-cf .cfd"),
-        "denser", quitaUno(".mf-cl li"), ".mf-do", quitaUno(".mf-cf .cfi")]));
+      const huecos = Array.from({ length: MINI - grupo.length }, () => (rellenos.length ? rellenos.shift()() : ""));
+      miniPagina(grupo, sec, huecos);
     }
+  }
+  // todas seguidas, MINI por página (cada página, en la sección de su primera seta)
+  function miniSeguidas(orden) {
+    for (let i = 0; i < orden.length; i += MINI) { const grupo = orden.slice(i, i + MINI); miniPagina(grupo, secDe(grupo[0])); }
+  }
+  // hueco «La edad cuenta»: una comestible vieja o pasada también intoxica (fotos de la misma seta a cuatro edades)
+  function edadHueco() {
+    const ETAPAS = [["joven", "Joven", true], ["adulto", "En su punto", true], ["viejo", "Viejo", false], ["descompuesto", "Pasado", false]];
+    const cuenta = e => ETAPAS.filter(([papel]) => (e.fotos || []).some(f => f.papel === papel)).length;
+    const serie = [...GROUPS.comestibles].sort((a, b) => cuenta(b) - cuenta(a))[0];
+    const edad = ETAPAS.map(([papel, t, ok]) => {
+      const f = (serie?.fotos || []).find(x => x.papel === papel);
+      if (!f) return "";
+      EXTRA.push(["La edad cuenta", f]);
+      return `<figure><img src="${G(f.t || f.g)}" alt=""><figcaption><b class="${ok ? "" : "no"}">${ok ? "✓" : "✕"}</b> ${t}</figcaption></figure>`;
+    }).join("");
+    return `<div class="mf-extra mf-edad"><div class="kicker">Antes de cogerla</div><h2 class="mf-n">La edad cuenta</h2>
+      <p class="mf-x-t">Una comestible vieja, agusanada o pasada también intoxica: cójala joven y firme.${serie ? ` (${esc(titulo(serie))})` : ""}</p>
+      <div class="edat">${edad}</div></div>`;
+  }
+  // hueco «Si alguien se encuentra mal»: los teléfonos, qué hacer y la señal de alarma, en pequeño
+  function sosHueco() {
+    const { hacer, alarma } = sosDatos();
+    return `<div class="mf-extra mf-sos"><div class="kicker">Si alguien se encuentra mal</div><h2 class="mf-n">Llame ahora</h2>
+      <div class="mf-sos-n"><span><strong>112</strong> Emergencias</span><span><strong>91 562 04 20</strong> Toxicología 24 h</span></div>
+      <ul class="sos-f">${hacer.map(([b, r]) => `<li><b>${esc(b)}</b><span class="sr">${esc(r)}</span></li>`).join("")}</ul>
+      ${alarma ? `<p class="mf-x-t sos-alarma">${esc(hasta(alarma, 230))}</p>` : ""}</div>`;
   }
 
   // =========================================================
@@ -1406,15 +1446,8 @@
     }, "síndromes");
   }
 
-  // Solo si el total no da múltiplo de 4: página en blanco para notas
-  function notasPage() {
-    const p = newPage("anexo");
-    p.insertAdjacentHTML("beforeend", `<div class="kicker">Notas</div><div class="notas"></div>${foot("Notas")}`);
-    return p;
-  }
-
-
-  function sosPage() {
+  // qué hacer si alguien se encuentra mal y la señal de alarma (de los textos de la web)
+  function sosDatos() {
     const d = html(DB.textos.intoxicacion);
     // como en las reglas: si la negrita es solo el principio de la frase, el resto la continúa
     const hacer = listaTras(d, /qué hacer/i).map(li => {
@@ -1426,6 +1459,10 @@
       return [cont ? b : b.replace(/[.:]$/, "") + ".", (cont && !/^[,;:]/.test(rest) ? " " : cont ? "" : " ") + primera(rest, 120)];
     });
     const alarma = [...d.querySelectorAll("p")].map(x => x.textContent.trim()).find(t => /^Señal de alarma/i.test(t));
+    return { hacer, alarma };
+  }
+  function sosPage() {
+    const { hacer, alarma } = sosDatos();
     const p = newPage("sos", "sos-page");
     p.insertAdjacentHTML("beforeend", `
       <div class="kicker">Si alguien se encuentra mal</div>
@@ -1437,9 +1474,7 @@
       <div class="h3">Qué hacer</div>
       <ul class="sos-f">${hacer.map(([b, r]) => `<li><b>${esc(b)}</b>${esc(r)}</li>`).join("")}</ul>
       ${alarma ? `<p class="sos-alarma">${esc(hasta(alarma, 230))}</p>` : ""}
-      <div class="h3" style="margin-top:auto">Anótelo antes de salir</div>
-      ${["Alojamiento", "Centro de salud", "Sociedad micológica", "Dónde aparqué"].map(t => `<div class="wi"><span>${t}</span><i></i></div>`).join("")}
-      ${MINI ? "" : CREDITO}
+      <div style="margin-top:auto">${CREDITO}</div>
       ${foot("SOS")}`);
     fit(p, ["dense", ".sos-alarma", p2 => p2.querySelectorAll(".sos-f li").forEach(li => { const b = li.querySelector("b"); li.innerHTML = b ? b.outerHTML : li.innerHTML; })], "sos");
   }
@@ -1469,7 +1504,7 @@
     // Orden: comestibles, tóxicas y mortales; los árboles, al final (en el anexo), porque son lo menos importante
     portada();
     reglasPage();
-    mirarPage();
+    if (GUIA) mirarPage();
     if (GUIA) {
       // guía: cada sección con sus setas (las del cuaderno, página entera; las demás, media página)
       seccionGuia(GROUPS.comestibles, "comestibles");
@@ -1481,11 +1516,17 @@
       glosarioPages();
       indicePages();
       creditosPages();
+    } else if (MINI === 2) {
+      // mini de dos por página: cada sección empieza en página nueva; el hueco que queda al final de las
+      // comestibles, «La edad cuenta», y al final de las mortales, qué hacer si alguien se encuentra mal;
+      // los árboles cierran el cuaderno (así salen 32 páginas justas, sin notas)
+      miniPages(GROUPS.comestibles, "comestibles", [edadHueco]);
+      miniPages(GROUPS.toxicas, "toxicas", []);
+      miniPages(GROUPS.mortales, "mortales", [sosHueco]);
+      arbolesPages();
     } else if (MINI) {
-      // mini: cada sección empieza en página nueva; sin parejas ni árboles; urgencias en la contraportada
-      miniPages(GROUPS.comestibles, "comestibles");
-      miniPages(GROUPS.toxicas, "toxicas");
-      miniPages(GROUPS.mortales, "mortales");
+      // mini de tres por página: todas seguidas (54 setas = 18 páginas justas, sin huecos)
+      miniSeguidas([...ordenMini(GROUPS.comestibles), ...ordenMini(GROUPS.toxicas), ...ordenMini(GROUPS.mortales)]);
     } else {
       // las parejas casi iguales (rovelló y pinetell) van juntas en la página de la primera
       // (y las otras parejas de PAREJAS, también en tóxicas: dos setas por hoja)
@@ -1494,15 +1535,15 @@
       // sin síndromes, «Llame ahora» ni índice (los teléfonos van en la portada; las secciones y los créditos
       // de las fotos, en la página de las reglas): los árboles cierran el cuaderno
     }
-    const antesDeSOS = book.lastElementChild;
-    if (GUIA || MINI) sosPage();
+    if (GUIA) sosPage();
 
-    // si hace falta, páginas de notas para que el total sea múltiplo de 4 (antes de la contraportada)
-    const extra = (4 - (book.children.length % 4)) % 4;
-    REPORT.notas = extra;
-    for (let i = 0; i < extra; i++) book.insertBefore(notasPage(), antesDeSOS.nextElementSibling);
+    // para imprimir en cuadernillo, el total tiene que ser múltiplo de 4. No se rellena con páginas de notas
+    // (no hacen falta): si no cuadra, se avisa y hay que ajustar el contenido
+    const falta = (4 - (book.children.length % 4)) % 4;
+    if (falta) REPORT.overflow.push(`faltan ${falta} páginas para que el total sea múltiplo de 4`);
 
     const pages = [...book.children];
+    if (MINI) document.querySelectorAll(".cvc-edlab").forEach(x => (x.textContent = `cuaderno mini · ${pages.length} páginas`));
     pages.forEach((p, i) => {
       const n = i + 1;
       p.dataset.n = n;
