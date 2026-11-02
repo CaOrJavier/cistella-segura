@@ -164,7 +164,7 @@
       </section>
       <div class="destacados no-print">
         <a class="dest dest-quiz" href="quiz/"><span class="dest-ico" aria-hidden="true">🍄</span><span><b>Quiz de setas</b><small>¿Sabrías distinguirlas? Ponte a prueba con fotos reales.</small></span></a>
-        <a class="dest dest-libros" href="#/libros"><span class="dest-ico" aria-hidden="true">📚</span><span><b>Libros en PDF</b><small>Un cuaderno de bolsillo para el bosque y una guía para estudiar. Hojéalos antes de descargar.</small></span></a>
+        <a class="dest dest-libros" href="#/libros"><span class="dest-ico" aria-hidden="true">📚</span><span><b>Libros en PDF</b><small>Cuadernos para el bosque (también mini, de 4 o 3 hojas) y una guía para estudiar. Hojéalos antes de descargar.</small></span></a>
         ${(() => { const g = EN_ARCHIVO || store.get("sinInternet", null);
           return `<a class="dest dest-red${g ? " guardada" : ""}" href="#/sin-internet"><span class="dest-ico" aria-hidden="true">${g ? "✓" : "⬇"}</span><span><b>${g ? "Lista para usar sin internet" : "Usar sin internet"}</b><small>${g ? "Está guardada en este dispositivo." : "Guárdala en el móvil antes de ir al bosque."}</small></span></a>`; })()}
       </div>
@@ -652,7 +652,8 @@
       <div class="tabla-scroll"><table class="tabla"><tr><th>Especie</th><th>Tipo</th><th>Cuestión</th></tr>${filas.sort((a, b) => a[0].nombre.localeCompare(b[0].nombre)).map(([e, t, m]) => `<tr><td><a href="#/especie/${e.id}"><i>${esc(e.nombre)}</i></a></td><td>${esc(t)}</td><td>${esc(m)}</td></tr>`).join("")}</table></div>`;
   }
   // ---------------- Vista: libros en PDF, con páginas de muestra para hojearlos antes de descargar ----------------
-  // Dos libros, cada uno con su uso: el cuaderno de bolsillo (A6) para llevar al bosque y la guía (A5) para estudiar.
+  // Los libros, cada uno con su uso: el cuaderno de bolsillo (A6) para llevar al bosque, sus dos versiones mini
+  // (las mismas 54 setas en 32 o 24 páginas: 4 o 3 hojas A4) y la guía (A5) para estudiar.
   // El cuaderno de campo A5 y el catálogo se retiraron por repetir contenido; sus PDF siguen en las «releases» de GitHub.
   // Las muestras son imágenes sacadas de los PDF: libros/<libro>/pNNN.jpg (grande) y tNNN.jpg (miniatura)
   const MUESTRAS = {
@@ -660,6 +661,10 @@
     bolsillo: { total: 56, pags: [[1, "Portada"], [2, "Las 12 reglas y cómo leer las fichas"], [3, "Cómo mirar una seta"], [4, "Níscalos: en qué se diferencian"],
       [7, "Ficha del boleto: cómo es, dónde sale y con qué se confunde"], [11, "Ficha de la trompeta de los muertos"], [14, "Ficha de la oronja"], [31, "Falsos rebozuelos: los que se confunden con el rebozuelo"],
       [34, "Amanita pantera y matamoscas: dos amanitas con el mismo veneno"], [42, "Pequeñas con muscarina: barret de bruixa y Mycena pura"], [44, "Ficha de la oronja verde (mortal)"], [52, "Árboles y sus setas, con la hoja y el tronco"]] },
+    mini4: { total: 32, pags: [[1, "Portada"], [2, "Las 12 reglas y cómo leer las fichas"], [3, "Cómo mirar una seta"], [4, "Comestibles: dos setas por página"],
+      [9, "Comestibles"], [19, "Tóxicas"], [27, "Mortales"], [32, "Si alguien se encuentra mal"]] },
+    mini3: { total: 24, pags: [[1, "Portada"], [2, "Las 12 reglas y cómo leer las fichas"], [3, "Cómo mirar una seta"], [4, "Comestibles: tres setas por página"],
+      [7, "Comestibles"], [16, "Tóxicas"], [20, "Mortales"], [24, "Si alguien se encuentra mal"]] },
     esencial: { total: 84, pags: [[1, "Portada"], [2, "Las 12 reglas"], [4, "Níscalos: en qué se diferencian"], [8, "Ficha del boleto: página entera"],
       [9, "Gorro verde y boleto negro: media página cada una"], [19, "Ficha de la oronja"], [48, "Ficha de la amanita pantera (tóxica): gravedad y por qué"], [62, "Ficha de la oronja verde (mortal)"],
       [70, "Árboles y sus setas: cinco por página"], [74, "Calendario"], [76, "Síndromes: según cuándo aparecen los síntomas"], [78, "Índice de todos los nombres"]] },
@@ -667,6 +672,10 @@
   const LIBROS = [
     { g: "bolsillo", corto: "Cuaderno de bolsillo", uso: "Para llevar al bosque", tit: "Setas esenciales · cuaderno de bolsillo", formato: "56 páginas · A6 (10,5 × 14,8 cm) o A5 (14,8 × 21 cm) · fondo blanco, gasta poca tinta",
       txt: "Las 54 setas imprescindibles (25 comestibles, 20 tóxicas o no comestibles y 9 mortales), cada una con su nombre en castellano y en catalán: fotos, cómo reconocerla, qué tiene y qué no (✓ ✗), dónde sale (árboles, prados, madera), a qué altura y en qué meses, su olor o sabor si es peculiar y con qué se confunde: si está en el cuaderno, por qué y en qué página; si no, con foto. En las tóxicas, por qué lo son y cuánto. Las que se parecen mucho van de dos en dos en una hoja, con una tabla de diferencias. Al principio, las 12 reglas y cómo leer las fichas; al final, los árboles principales. Los teléfonos de urgencias, en la portada. Pensado para leerse bien impreso, también en A5." },
+    { g: "mini4", corto: "Mini · 4 hojas", uso: "Para imprimir con poco papel", tit: "Setas esenciales · cuaderno mini (4 hojas)", formato: "32 páginas A6 · 4 hojas A4 en casa · fondo blanco",
+      txt: "Las mismas 54 setas que el cuaderno de bolsillo, dos por página y con lo justo: dos fotos y los meses, sus tres nombres, qué tiene y qué no (✓ ✗), los rasgos para reconocerla, dónde sale y con qué se confunde (con su página). En las tóxicas, cuánto y por qué. Al principio, las 12 reglas y cómo mirar una seta; al final, qué hacer si alguien se encuentra mal." },
+    { g: "mini3", corto: "Mini · 3 hojas", uso: "Lo mínimo para llevar encima", tit: "Setas esenciales · cuaderno mini (3 hojas)", formato: "24 páginas A6 · 3 hojas A4 en casa · fondo blanco",
+      txt: "Las mismas 54 setas, tres por página y aún más corto: una foto con los meses, sus tres nombres, qué tiene y qué no (✓ ✗), dos rasgos, dónde sale y con qué se confunde (con su página). Con las 12 reglas, cómo mirar una seta y qué hacer si alguien se encuentra mal." },
     { g: "esencial", corto: "Guía esencial", uso: "Para estudiar en casa", tit: "Setas comestibles esenciales de Cataluña", formato: "84 páginas · A5 (14,8 × 21 cm)",
       txt: "80 setas a fondo, cada una en una página como mucho: las 54 del cuaderno de bolsillo en página entera (cómo reconocerla, cómo es, dónde y cuándo sale, con qué se confunde y, en las tóxicas, por qué y cuánto) y otras 26 en media página. Con los árboles, el calendario, los síndromes, un glosario y el índice de todos los nombres." },
   ];
@@ -676,11 +685,20 @@
     { guia: "bolsillo", ed: "Para imprimir en casa (A4)", uso: "Solo 7 hojas A4 a doble cara (14 caras): se cortan por la mitad, se doblan juntas y se grapan.", mb: 22.1, url: "offline/setas-esenciales-bolsillo-imprimir-A4.pdf" },
     { guia: "bolsillo", ed: "A5 · letra más grande", uso: "El mismo cuaderno en tamaño cuartilla (14,8 × 21 cm): letra y fotos un 40 % más grandes. Para leer en la tableta o llevar a la copistería.", mb: 22.1, pag: 56, url: "offline/setas-esenciales-A5.pdf" },
     { guia: "bolsillo", ed: "A5 para imprimir en casa (A4)", uso: "14 hojas A4 apaisadas a doble cara (borde corto). No hay que cortar: se doblan juntas por la mitad y se grapan. Gasta el doble de papel que el A6.", mb: 22.1, url: "offline/setas-esenciales-A5-imprimir-A4.pdf" },
+    { guia: "mini4", ed: "A6", uso: "Para leerlo en el móvil o llevarlo a la copistería: pide «cuadernillo A6 grapado».", mb: 12.1, pag: 32, url: "offline/setas-esenciales-mini-4hojas.pdf" },
+    { guia: "mini4", ed: "Para imprimir en casa (A4)", uso: "4 hojas A4 a doble cara (8 caras): se cortan por la mitad, se doblan juntas y se grapan.", mb: 12.3, url: "offline/setas-esenciales-mini-4hojas-imprimir-A4.pdf" },
+    { guia: "mini3", ed: "A6", uso: "Para leerlo en el móvil o llevarlo a la copistería: pide «cuadernillo A6 grapado».", mb: 7.3, pag: 24, url: "offline/setas-esenciales-mini-3hojas.pdf" },
+    { guia: "mini3", ed: "Para imprimir en casa (A4)", uso: "3 hojas A4 a doble cara (6 caras): se cortan por la mitad, se doblan juntas y se grapan.", mb: 7.4, url: "offline/setas-esenciales-mini-3hojas-imprimir-A4.pdf" },
     { guia: "esencial", ed: "A5", uso: "Para leer en el móvil o la tableta, o llevarlo a la copistería: A5 a color, con espiral o grapado.", mb: 29.0, pag: 84, url: "offline/setas-guia-esencial-A5.pdf" },
     { guia: "esencial", ed: "Para imprimir en casa (A4)", uso: "21 hojas A4 apaisadas a doble cara (borde corto), en dos cuadernillos de 11 y 10 hojas: cada uno se dobla por la mitad y se grapa.", mb: 29.0, url: "offline/setas-guia-esencial-imprimir-A4.pdf" },
     { guia: "bolsillo", ed: "En catalán · 50 setas", uso: "Quadern de butxaca, 76 páginas A6 (las muestras de arriba son de la edición en castellano).", mb: 15.4, pag: 76, url: "offline/cistella-segura-butxaca.pdf" },
     { guia: "bolsillo", ed: "En catalán, para imprimir en casa (A4)", uso: "10 hojas A4, un solo cuadernillo.", mb: 15.8, url: "offline/cistella-segura-butxaca-imprimir-A4.pdf" },
   ];
+  const imprimirMini = (n) => `<details class="caja como-imprimir"><summary><b>Cómo imprimirlo en casa</b></summary><ol>
+        <li>Descarga el PDF <b>para imprimir en casa (A4)</b>. Imprime a <b>doble cara</b>, volteando por el <b>borde largo</b>, a <b>tamaño real (100 %)</b>.</li>
+        <li><b>Corta</b> las hojas por la mitad, por la línea de puntos ✂.</li>
+        <li><b>Ordena</b> las mitades por el número pequeño de abajo (1/${n}, 2/${n}…), la 1 encima.</li>
+        <li><b>Dobla</b> el montón por la mitad y <b>grapa</b> por el pliegue con 2 grapas.</li></ol></details>`;
   const IMPRIMIR = {
     bolsillo: `<details class="caja como-imprimir"><summary><b>Cómo imprimirlo en casa</b></summary><ol>
         <li>Descarga el PDF <b>para imprimir en casa (A4)</b>. Imprime a <b>doble cara</b>, volteando por el <b>borde largo</b>, a <b>tamaño real (100 %)</b>.</li>
@@ -688,6 +706,9 @@
         <li><b>Ordena</b> las mitades por el número pequeño de abajo (1/15, 2/15…), la 1 encima.</li>
         <li><b>Dobla</b> el montón por la mitad y <b>grapa</b> por el pliegue con 2 grapas.</li></ol>
         <p class="small"><b>Versión A5:</b> imprime a doble cara volteando por el <b>borde corto</b>. No se corta nada: ordena las hojas por su número, dóblalas juntas por la mitad y grapa.</p></details>`,
+    // los mini, como el de bolsillo (los mismos textos: así sirve la traducción al catalán)
+    mini4: imprimirMini(8),
+    mini3: imprimirMini(6),
     esencial: `<details class="caja como-imprimir"><summary><b>Cómo imprimirlo en casa</b></summary><ol>
         <li>Descarga el PDF <b>para imprimir en casa (A4)</b>. Imprime a <b>doble cara</b>, volteando por el <b>borde corto</b>, a <b>tamaño real (100 %)</b>.</li>
         <li>Salen <b>dos montones</b>, A y B. Ordena cada uno por el número pequeño de abajo (A 1/11, A 2/11…), la 1 encima.</li>
@@ -725,7 +746,7 @@
     };
     const hay = LIBROS.filter((b) => L.some((l) => l.guia === b.g));
     app.innerHTML = `<h1>Libros en PDF</h1>
-      <p class="ap-intro">Dos libros: uno pequeño para llevar al bosque, con las 54 setas imprescindibles, y otro grande para estudiar en casa, con 80. Léelos aquí antes de descargarlos: se pasan las páginas como en un libro y puedes buscar una seta o una palabra.</p>
+      <p class="ap-intro">Un cuaderno pequeño para llevar al bosque, con las 54 setas imprescindibles (también en versión mini, para imprimir solo 4 o 3 hojas), y una guía grande para estudiar en casa, con 80. Léelos aquí antes de descargarlos: se pasan las páginas como en un libro y puedes buscar una seta o una palabra.</p>
       ${hay.length > 2 ? `<div class="libro-saltos">${hay.map((b) => `<button class="btn" data-ir="libro-${b.g}">${esc(b.corto)}</button>`).join("")}</div>` : ""}
       ${hay.length ? hay.map(libro).join("") : `<p class="muted">Los PDF no están disponibles en esta copia de la web.</p>`}
       <p class="small muted">Todos salen de la misma base de datos que esta web. Muchas fotografías tienen licencia CC BY-NC: los PDF son para uso personal o sin ánimo de lucro.</p>`;

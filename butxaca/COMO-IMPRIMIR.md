@@ -1,11 +1,13 @@
 # Cómo imprimir los cuadernos de bolsillo
 
-Hay dos cuadernos, cada uno en dos versiones, en `offline/`:
+Hay cuatro cuadernos, cada uno en dos versiones, en `offline/`:
 
 | Cuaderno | Para leer o llevar a la copistería (A6) | Para imprimir en casa (A4) |
 |---|---|---|
 | **Cistella Segura** (catalán, 50 bolets, 76 págs.) | `cistella-segura-butxaca.pdf` | `cistella-segura-butxaca-imprimir-A4.pdf` · 10 hojas, 1 cuadernillo |
 | **Setas esenciales** (castellano, 54 setas, 56 págs., fondo blanco) | `setas-esenciales-bolsillo.pdf` | `setas-esenciales-bolsillo-imprimir-A4.pdf` · 7 hojas, 1 cuadernillo |
+| **Setas esenciales · mini 4 hojas** (las mismas 54, dos por página, 32 págs.) | `setas-esenciales-mini-4hojas.pdf` | `setas-esenciales-mini-4hojas-imprimir-A4.pdf` · 4 hojas, 1 cuadernillo |
+| **Setas esenciales · mini 3 hojas** (las mismas 54, tres por página, 24 págs.) | `setas-esenciales-mini-3hojas.pdf` | `setas-esenciales-mini-3hojas-imprimir-A4.pdf` · 3 hojas, 1 cuadernillo |
 
 Las páginas A6 miden 10,5 × 14,8 cm: la mitad de un A5, un cuarto de un A4.
 

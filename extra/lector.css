@@ -35,51 +35,17 @@ html.leyendo, html.leyendo body { overflow: hidden; }
   .lec-b-pc { display: none !important; }
 }
 
-/* escena y libro */
+/* las páginas, una debajo de otra (se baja como en un PDF) */
 .lec-cuerpo { flex: 1; min-height: 0; display: flex; position: relative; }
-.lec-escena { flex: 1; min-width: 0; position: relative; display: grid; place-items: center; overflow: hidden; }
-.lec-libro { position: relative; perspective: calc(var(--pw, 400px) * 4.5); transition: transform .5s cubic-bezier(.3, .7, .2, 1); touch-action: pan-y pinch-zoom; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; cursor: pointer; }
-.lec-libro.doble.cerrado-izq { transform: translateX(calc(var(--pw) * -.5)); }
-.lec-libro.doble.cerrado-der { transform: translateX(calc(var(--pw) * .5)); }
-.lec-hoja { position: absolute; top: 0; height: 100%; width: var(--pw); }
-.lec-izq { left: 0; }
-.lec-der { left: var(--pw); }
-.lec-libro.simple .lec-der { left: 0; }
-.lec-libro.simple .lec-izq { display: none; }
-.lec-pag { position: absolute; inset: 0; background: #fff; overflow: hidden; box-shadow: 0 1px 3px rgb(0 0 0 / .18), 0 16px 34px -14px rgb(0 0 0 / .45); }
-.lec-izq .lec-pag { border-radius: 4px 0 0 4px; }
-.lec-der .lec-pag { border-radius: 0 4px 4px 0; }
-.lec-libro.simple .lec-der .lec-pag { border-radius: 3px; }
-/* el pliegue del centro */
-.lec-libro.doble .lec-izq .lec-pag::after, .lec-libro.doble .lec-der .lec-pag::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1; }
-.lec-libro.doble .lec-izq .lec-pag::after { background: linear-gradient(to left, rgb(0 0 0 / .2), rgb(0 0 0 / .05) 3%, transparent 9%); }
-.lec-libro.doble .lec-der .lec-pag::after { background: linear-gradient(to right, rgb(0 0 0 / .2), rgb(0 0 0 / .05) 3%, transparent 9%); }
-.lec-libro.doble.cerrado-izq .lec-der .lec-pag::after { background: linear-gradient(to right, rgb(0 0 0 / .12), transparent 4%); }
-.lec-pag img { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; -webkit-user-drag: none; }
+.lec-scroll { flex: 1; min-width: 0; position: relative; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; outline: none; scroll-padding-top: 8px; }
+.lec-col { display: flex; flex-direction: column; align-items: center; gap: clamp(10px, 2vw, 22px); padding: clamp(8px, 2vw, 22px) clamp(8px, 2vw, 22px) 30vh; }
+.lec-pag { position: relative; width: min(100%, 760px); aspect-ratio: var(--ratio, .7095); flex: none; background: #fff; border-radius: 3px; overflow: hidden; box-shadow: 0 1px 3px rgb(0 0 0 / .18), 0 12px 28px -14px rgb(0 0 0 / .45); }
+.lec-pag img { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; -webkit-user-drag: none; user-select: none; }
 .lec-pag img.mal { visibility: hidden; }
+.lec-capa { position: absolute; inset: 0; }
 .lec-sinfoto { display: none; }
 .lec-pag.sin-foto .lec-sinfoto { display: grid; place-items: center; position: absolute; inset: 0; padding: 1.2rem; text-align: center; color: #5b5b55; font-size: .9rem; background: repeating-linear-gradient(45deg, #faf8f2 0 12px, #f2efe6 12px 24px); }
-/* grosor del libro: las páginas que quedan a cada lado */
-.lec-canto { position: absolute; top: 3px; bottom: 3px; pointer-events: none; background: repeating-linear-gradient(90deg, #fdfcf7 0 1px, #d6cfbf 1px 2px); transition: width .4s; }
-.lec-canto-izq { right: 100%; width: var(--ci, 0); border-radius: 3px 0 0 3px; }
-.lec-canto-der { left: 100%; width: var(--cd, 0); border-radius: 0 3px 3px 0; }
-.lec-libro.doble.cerrado-der .lec-canto-der { left: 50%; }
-.lec-libro.doble.cerrado-izq .lec-canto-izq { right: 50%; }
-
-/* la hoja que gira */
-.lec-giro { position: absolute; top: 0; height: 100%; width: var(--pw); transform-style: preserve-3d; transform-origin: left center; z-index: 3; pointer-events: none; will-change: transform; }
-.lec-libro.doble .lec-giro.a-der { left: var(--pw); }
-.lec-libro.simple .lec-giro { left: 0; }
-.lec-giro.a-izq { left: 0; transform-origin: right center; }
-.lec-cara, .lec-dorso { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; box-shadow: 0 0 calc(var(--lift, 0) * 34px) rgb(0 0 0 / calc(var(--lift, 0) * .35)); }
-.lec-dorso { transform: rotateY(180deg); }
-.lec-cara .lec-pag, .lec-dorso .lec-pag { box-shadow: none; border-radius: 0; }
-.lec-blanco { position: absolute; inset: 0; background: var(--lec-papel); }
-.lec-sombra { position: absolute; inset: 0; pointer-events: none; opacity: 0; z-index: 2; }
-.a-der .lec-cara .lec-sombra { background: linear-gradient(to right, rgb(0 0 0 / .55), rgb(0 0 0 / .2) 70%, rgb(0 0 0 / .3)); }
-.a-der .lec-dorso .lec-sombra { background: linear-gradient(to left, rgb(0 0 0 / .5), rgb(0 0 0 / .15) 60%, rgb(0 0 0 / .25)); }
-.a-izq .lec-cara .lec-sombra { background: linear-gradient(to left, rgb(0 0 0 / .55), rgb(0 0 0 / .2) 70%, rgb(0 0 0 / .3)); }
-.a-izq .lec-dorso .lec-sombra { background: linear-gradient(to right, rgb(0 0 0 / .5), rgb(0 0 0 / .15) 60%, rgb(0 0 0 / .25)); }
+@media (max-width: 600px) { .lec-col { gap: 8px; padding: 6px 6px 30vh; } .lec-pag { border-radius: 2px; } }
 
 /* enlaces dentro de la página y lo encontrado al buscar */
 .lec-enl { position: absolute; z-index: 2; border-radius: 3px; background: rgb(255 196 0 / .16); transition: background .15s, box-shadow .15s; }
@@ -89,25 +55,10 @@ html.leyendo, html.leyendo body { overflow: hidden; }
 .lec-enl.grande { background: transparent; border-radius: 5px; box-shadow: inset 0 0 0 1.5px rgb(214 150 0 / .55); }
 .lec-enl.grande:hover, .lec-enl.grande:focus-visible { background: rgb(255 196 0 / .16); box-shadow: inset 0 0 0 2px rgb(214 150 0 / .9); }
 /* al aparecer una página, lo que se puede tocar se ilumina un momento */
-.lec-hoja .lec-enl { animation: lec-enl-ve 1.5s ease .35s 1 both; }
+.lec-pag.vista .lec-enl { animation: lec-enl-ve 1.5s ease .2s 1 both; }
 @keyframes lec-enl-ve { 30% { background-color: rgb(255 196 0 / .5); box-shadow: 0 0 0 3px rgb(255 196 0 / .45); } }
 .lec-marca { position: absolute; z-index: 1; border-radius: 3px; background: rgb(255 226 0 / .5); mix-blend-mode: multiply; pointer-events: none; animation: lec-marca 1s ease 2; }
 @keyframes lec-marca { 50% { background: rgb(255 170 0 / .7); } }
-
-.lec-libro.salto .lec-hoja .lec-pag { animation: lec-salto .32s ease; }
-@keyframes lec-salto { from { opacity: .2; transform: scale(.985); } }
-.lec-libro.rebote-der { animation: lec-rebote-der .35s ease; }
-.lec-libro.rebote-izq { animation: lec-rebote-izq .35s ease; }
-@keyframes lec-rebote-der { 35% { translate: -10px 0; } }
-@keyframes lec-rebote-izq { 35% { translate: 10px 0; } }
-
-/* flechas a los lados */
-.lec-flecha { position: absolute; top: 50%; transform: translateY(-50%); z-index: 4; width: 2.9rem; height: 2.9rem; border-radius: 50%; border: 1px solid var(--line); background: color-mix(in srgb, var(--panel) 88%, transparent); font-size: 1.7rem; line-height: 1; padding-bottom: .2rem; box-shadow: var(--shadow); transition: opacity .2s, background .15s; }
-.lec-flecha:hover:not(:disabled) { background: var(--panel); border-color: var(--accent); }
-.lec-flecha:disabled { opacity: 0; pointer-events: none; }
-.lec-ant { left: clamp(.4rem, 1.5vw, 1.2rem); }
-.lec-sig { right: clamp(.4rem, 1.5vw, 1.2rem); }
-@media (max-width: 600px), (hover: none) and (max-width: 900px) { .lec-flecha { display: none; } }
 
 /* pie: fichas y barra de páginas */
 .lec-pie { background: var(--panel); border-top: 1px solid var(--line); padding: .35rem clamp(.5rem, 2vw, 1rem) calc(.4rem + env(safe-area-inset-bottom)); position: relative; z-index: 7; }
@@ -189,7 +140,7 @@ html.leyendo, html.leyendo body { overflow: hidden; }
 .lec-zoom-ayuda { color: #c9cfc6; font-size: .8rem; margin: -2.3rem 3rem 1.4rem; }
 
 @media (prefers-reduced-motion: reduce) {
-  .lec-libro, .lec-canto { transition: none; }
-  .lec-libro.salto .lec-hoja .lec-pag, .lec-marca, .lec-panel, .lec-aviso, .lec-hoja .lec-enl { animation: none; }
+  .lec-scroll { scroll-behavior: auto; }
+  .lec-marca, .lec-panel, .lec-aviso, .lec-pag.vista .lec-enl { animation: none; }
 }
 @media print { .lec { display: none !important; } }

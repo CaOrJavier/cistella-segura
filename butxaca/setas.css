@@ -276,28 +276,31 @@ html.libro-bolsillo {
 .ley-ic svg:last-child { fill: #6b5a45; }
 
 /* =========================================================
-   PORTADA DEL CUADERNO: título, nueve fotos (comestibles, tóxicas, mortales) y urgencias
+   PORTADA DE LOS CUADERNOS (bolsillo y mini): verde bosque, título grande y fotos redondas
+   con un aro del color de su grupo (verde comestible, naranja tóxica, rojo mortal)
    ========================================================= */
-.cover-m { padding: 6.2mm 6.5mm 5.6mm; display: flex; flex-direction: column; }
-.cvm-ed { display: flex; justify-content: space-between; font-size: 5.8pt; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); padding-bottom: 1.6mm; border-bottom: .35mm solid var(--ink); }
-.cvm-t { font-family: var(--display); font-weight: 800; font-size: 29pt; line-height: .95; letter-spacing: -.02em; margin-top: 3mm; color: var(--ink); white-space: nowrap; }
-.cvm-t em { font-style: italic; font-weight: 700; color: var(--accent); }
-.cvm-sub { font-family: var(--display); font-style: italic; font-weight: 700; font-size: 11pt; line-height: 1; color: var(--ink-2); margin-top: .8mm; }
-.cvm-s { font-size: 7.4pt; line-height: 1.3; color: var(--ink-2); margin-top: 2.2mm; }
-.cvm-filas { flex: 1 1 auto; display: flex; flex-direction: column; gap: 2mm; margin: 3.2mm 0 3mm; min-height: 0; }
-.cvm-fila { flex: 1 1 0; display: flex; flex-direction: column; min-height: 0; }
-.cvm-lab { display: flex; align-items: baseline; gap: 1.2mm; font-size: 6.4pt; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--st); margin-bottom: .9mm; }
-.cvm-lab b { font-family: var(--display); font-size: 10pt; font-weight: 800; letter-spacing: 0; line-height: .8; }
-.cvm-lab::after { content: ""; flex: 1; height: .35mm; background: var(--st); align-self: center; opacity: .55; }
-.cvm-fotos { flex: 1 1 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2mm; min-height: 0; }
-.cvm-f { margin: 0; position: relative; overflow: hidden; border-radius: 1.2mm; background: var(--paper-3); }
-.cvm-f img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
-.cvm-f figcaption { padding: 3mm 1.3mm .8mm; font-size: 6pt; font-weight: 600; line-height: 1.1; }
-.cvm-f figcaption .ref { color: #fff; opacity: .85; font-family: var(--display); font-style: italic; font-weight: 700; font-size: 6.4pt; margin-left: .4mm; }
-.cvm-sos { display: flex; align-items: center; justify-content: space-between; gap: 2mm; padding: 1.8mm 2.4mm; border: .5mm solid var(--deadly); border-radius: 1.4mm; }
-.cvm-sos b { font-family: var(--display); font-size: 9.6pt; font-weight: 800; line-height: 1.05; color: var(--deadly); }
-.cvm-sos span { font-size: 6.4pt; line-height: 1.3; color: var(--ink-2); text-align: right; }
-.cvm-sos strong { font-size: 7.6pt; font-weight: 700; color: var(--ink); }
+.cover-c { padding: 0; background: #13281c; color: #fbf6ea; }
+.cvc-ed { position: absolute; left: 6.5mm; right: 6.5mm; top: 5.6mm; display: flex; justify-content: space-between; font-size: 5.3pt; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: #e2d5b4; padding-bottom: 1.4mm; border-bottom: .3mm solid rgb(226 213 180 / .45); }
+.cvc-t { position: absolute; left: 6.5mm; top: 12.5mm; margin: 0; font-family: var(--display); font-weight: 800; font-size: 33pt; line-height: .86; letter-spacing: -.025em; color: #fbf6ea; }
+.cvc-t em { display: block; font-style: italic; font-weight: 700; color: #f2a65a; margin-left: 5mm; }
+.cvc-sub { position: absolute; right: 6.5mm; top: 31mm; margin: 0; font-family: var(--display); font-style: italic; font-weight: 700; font-size: 11pt; color: #e2d5b4; }
+.cvc-f { position: absolute; margin: 0; border-radius: 50%; overflow: hidden; background: #0d1c13; border: 1.1mm solid var(--st); box-shadow: 0 0 0 .8mm #13281c, 0 1.2mm 3mm rgb(0 0 0 / .45); }
+.cvc-f img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* los aros, en colores que destacan sobre el verde oscuro */
+.cover-c .st-comestible { --st: #7cc47f; }
+.cover-c .st-toxic { --st: #f0a43a; }
+.cover-c .st-mortal { --st: #ef5a4c; }
+.cvc-pie { position: absolute; left: 6.5mm; right: 6.5mm; bottom: 5.4mm; }
+.cvc-s { margin: 0 0 1.8mm; font-size: 6.7pt; line-height: 1.3; color: #efe6d2; }
+.cvc-s b { color: #fff; }
+.cvc-grs { display: flex; justify-content: space-between; margin: 0 0 2.2mm; padding: 1.5mm 0; border-top: .25mm solid rgb(226 213 180 / .35); border-bottom: .25mm solid rgb(226 213 180 / .35); font-size: 6pt; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: #efe6d2; }
+.cvc-gr { display: inline-flex; align-items: center; gap: 1mm; }
+.cvc-gr i { width: 2.6mm; height: 2.6mm; border-radius: 50%; border: .7mm solid var(--st); }
+.cvc-gr b { font-family: var(--display); font-size: 9.5pt; font-weight: 800; letter-spacing: 0; line-height: .8; color: var(--st); }
+.cvc-sos { display: flex; align-items: center; justify-content: space-between; gap: 2mm; margin: 0; padding: 1.6mm 2.3mm; background: #fbf6ea; border-radius: 1.3mm; border-left: 1.2mm solid var(--deadly); }
+.cvc-sos b { font-family: var(--display); font-size: 8.6pt; font-weight: 800; line-height: 1.05; color: var(--deadly); }
+.cvc-sos span { font-size: 5.9pt; line-height: 1.3; color: var(--ink-2); text-align: right; }
+.cvc-sos strong { font-size: 7.2pt; font-weight: 700; color: var(--ink); }
 
 /* =========================================================
    FICHA DEL CUADERNO (pensada para leerse bien impresa, sobre todo en A5)
@@ -390,9 +393,6 @@ html.libro-bolsillo {
 .cc-2 i { font-style: italic; }
 .cc-2-in { font-family: var(--display); font-size: .92em; color: var(--ink-2); }
 .ph3-2 { font-family: var(--display); font-size: 6.2pt; line-height: 1.15; color: var(--ink-2); margin-top: -.3mm; }
-.cvm-f figcaption .cvm-n { display: block; }
-.cvm-f figcaption .cvm-2 { display: block; font-family: var(--display); font-weight: 500; font-size: 5.4pt; opacity: .92; margin-top: .2mm; }
-.cvm-f figcaption { background: linear-gradient(transparent, rgb(0 0 0 / .78) 38%); padding-top: 3.2mm; }
 .bosc h3 small i { font-family: var(--display); font-style: italic; letter-spacing: 0; }
 /* se confunde con: dos columnas, foto cuadrada pequeña al lado del texto */
 .conf.mini ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.4mm 2.4mm; }
@@ -415,3 +415,62 @@ html.libro-bolsillo {
 /* las que no tienen foto en la base de datos: un dibujo sencillo, para que las tarjetas queden alineadas */
 .conf.cards .cc-vacio { display: grid; place-items: center; background: var(--paper-2); }
 .conf.cards .cc-vacio svg { width: auto; height: 72%; opacity: .5; }
+
+/* =========================================================
+   CUADERNOS MINI (setas-mini-*.html): 2 o 3 setas por página
+   foto a la izquierda, con la raya del color de su grupo; el texto a la derecha
+   ========================================================= */
+.mini-in { flex: 1 1 auto; min-height: 0; display: grid; grid-template-rows: repeat(var(--n), minmax(0, 1fr)); gap: 2.4mm; }
+.mini-2 .mini-in { --n: 2; }
+.mini-3 .mini-in { --n: 3; gap: 2mm; }
+.mf, .mf-notas { min-height: 0; padding-bottom: 2mm; border-bottom: .3mm solid var(--line); }
+.mini-in > :last-child { border-bottom: 0; padding-bottom: 0; }
+.mf { display: grid; grid-template-columns: var(--fw) 1fr; column-gap: 2.6mm; overflow: hidden; }
+.mini-2 .mf { --fw: 32mm; }
+.mini-3 .mf { --fw: 25mm; column-gap: 2.2mm; }
+.mf-fotos { min-height: 0; display: flex; flex-direction: column; gap: 1mm; }
+.mf-im { position: relative; overflow: hidden; border-radius: 1.1mm; background: var(--paper-3); flex: 1 1 0; min-height: 0; }
+.mini-2 .mf-im:not(.mf-im2) { flex: none; aspect-ratio: 1; }
+.mf-im2::after { display: none; }
+/* la tira de meses, debajo de la foto y a todo su ancho */
+.mf-fotos .mes { display: flex; gap: .2mm; }
+.mf-fotos .mes span { flex: 1 1 0; width: auto; height: 3.1mm; font-size: 4.8pt; }
+.mini-3 .mf-fotos .mes span { height: 2.8mm; font-size: 4.4pt; }
+.mf-im img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; display: block; }
+.mf-im::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1mm; background: var(--st); }
+.mf-t { min-width: 0; display: flex; flex-direction: column; gap: .75mm; font-size: 6.5pt; line-height: 1.24; }
+.mini-3 .mf-t { font-size: 6.15pt; gap: .55mm; line-height: 1.2; }
+.mf-k { display: flex; align-items: center; gap: .9mm; font-size: 5.6pt; color: var(--st); }
+.mf-k .pill { font-size: 5.2pt; padding: .3mm 1mm .2mm; }
+.mf-k .dif { font-weight: 700; color: var(--st); }
+.mf-n { font-family: var(--display); font-weight: 800; font-size: 12.5pt; line-height: 1; letter-spacing: -.01em; margin: .5mm 0 0; color: var(--ink); }
+.mini-3 .mf-n { font-size: 10.5pt; margin-top: .2mm; }
+.st-mortal .mf-n { color: var(--deadly); }
+.mf-2 { font-family: var(--display); font-size: 6.6pt; line-height: 1.15; color: var(--muted); margin: -.4mm 0 .2mm; }
+.mini-3 .mf-2 { font-size: 6.1pt; }
+.mf .rasgos.en-linea { display: flex; flex-wrap: wrap; column-gap: 2mm; font-size: 6.2pt; }
+.mf .rasgos.en-linea li { flex: 0 0 auto; }
+.mini-3 .mf .rasgos.en-linea { font-size: 5.9pt; }
+.mini-3 .mf .mk { width: 2.2mm; height: 2.2mm; }
+.mf-cl { list-style: none; margin: 0; padding: 0; }
+.mf-cl li { position: relative; padding-left: 2.3mm; margin-bottom: .25mm; }
+.mf-cl li::before { content: "✓"; position: absolute; left: 0; top: 0; font-weight: 800; color: var(--st); }
+.mf-cl.alarm li::before { content: "!"; left: .5mm; }
+.mf-grav, .mf-do, .mf-cf { margin: 0; }
+.mf-grav { color: var(--ink); }
+.mf-grav .gd { display: inline-flex; gap: .45mm; margin-right: .9mm; vertical-align: .1mm; }
+.mf-grav .gd i { width: 1.6mm; height: 1.6mm; border-radius: 50%; border: .25mm solid var(--st); }
+.mf-grav .gd i.on { background: var(--st); }
+.mf-grav b { color: var(--st); }
+.mf-cf { padding-left: 1.6mm; border-left: .7mm solid var(--deadly); }
+.mf:not(.edible) .mf-cf { border-left-color: var(--ok); }
+.mf-cf .cfi { display: block; }
+.mf-cf .cfi b { font-weight: 700; }
+.mf-cf .ref { font-family: var(--display); font-style: italic; }
+.mf .lab { margin-right: .9mm; }
+.mf.dense .mf-t { font-size: 6.1pt; line-height: 1.2; gap: .5mm; }
+.mf.denser .mf-t { font-size: 5.8pt; line-height: 1.17; gap: .4mm; }
+.mf.denser .mf-n { font-size: 10pt; }
+.mf-notas { background: repeating-linear-gradient(to bottom, transparent 0 6.6mm, var(--line) 6.6mm 6.85mm); background-origin: content-box; }
+.mf-notas .lab { color: var(--muted); background: #fff; padding-right: 1mm; }
+.mf-notas .howto-mini { background: #fff; margin-top: 2mm; }

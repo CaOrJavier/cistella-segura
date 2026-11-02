@@ -17,8 +17,14 @@
   // la guía esencial (A5, butxaca/guia.html): todas las setas de la guía, cada una en una página como mucho
   // (las del cuaderno, página entera; las demás, media página) y los árboles en poco espacio.
   const GUIA = window.CUADERNO_MODO === "guia";
+  // Cuadernos mini (butxaca/setas-mini-*.html): las mismas 54 setas, pero 2 o 3 por página y con lo justo
+  // (foto, nombres, meses, cómo es, rasgos, dónde y con qué se confunde): menos hojas que imprimir
+  const MINI = window.CUADERNO_MODO === "mini" ? (+window.MINI_POR_PAGINA === 3 ? 3 : 2) : 0;
   // el cuaderno de bolsillo lleva su propia letra para texto pequeño (setas.css, .libro-bolsillo)
   document.documentElement.classList.add(GUIA ? "libro-guia" : "libro-bolsillo");
+  if (MINI) document.documentElement.classList.add("libro-mini", "mini-" + MINI);
+  // en la portada: qué cuaderno es (en los mini, cuántas hojas A4 gasta)
+  const EDLAB = MINI ? `cuaderno mini · ${MINI === 2 ? 4 : 3} hojas` : "cuaderno de bolsillo";
   const EDICION = "Otoño 2026";
   // portada: rossinyols en el cuaderno; ceps en la guía (para distinguirlos a primera vista)
   const PORTADA = GUIA ? { id: "boletus-edulis", papel: "recolectado" } : { id: "cantharellus-cibarius", papel: "recolectado" };
@@ -418,35 +424,53 @@
   // =========================================================
   // PORTADA
   // =========================================================
-  // Portada del cuaderno: título, nueve fotos en tres filas (comestibles, tóxicas, mortales) con su página
-  // y el aviso de urgencias. [especie, foto, encuadre (object-position)]
-  const PORTADA_FILAS = [
-    ["comestibles", "comestible", "Comestibles", [["cantharellus-cibarius", "fotos/g/4c81aed9b18d.jpg", "50% 45%"], ["boletus-edulis", "fotos/g/daa8b786e6b5.jpg", "45% 40%"], ["lactarius-deliciosus", "fotos/g/87b9e09821d1.jpg", "50% 45%"]]],
-    ["toxicas", "toxic", "Tóxicas", [["amanita-muscaria", "fotos/g/6fe8c495e42f.jpg", "50% 32%"], ["rubroboletus-satanas", "fotos/g/a151042e0160.jpg", "50% 42%"], ["omphalotus-olearius", "fotos/g/fb8831e7a529.jpg", "50% 50%"]]],
-    ["mortales", "mortal", "Mortales", [["amanita-phalloides", "fotos/g/47b20ff9a6ff.jpg", "50% 30%"], ["amanita-verna", "fotos/g/366ea7c73945.jpg", "50% 8%"], ["cortinarius-orellanus", "fotos/g/3a864a604452.jpg", "50% 50%"]]]
-  ];
-  function portadaBolsillo() {
-    const p = newPage(null, "cover cover-m");
-    const filas = PORTADA_FILAS.map(([sec, st, t, fotos]) => {
-      const figs = fotos.map(([id, g, pos]) => {
-        const e = BY[id], f = (e?.fotos || []).find(x => x.g === g);
-        if (!e || !f) return "";
-        EXTRA.push(["Portada", f]);
-        return `<figure class="cvm-f"><img src="${G(f.g)}" alt="" style="object-position:${pos}"><figcaption><span class="cvm-n">${esc(titulo(e))} ${ref(id, true)}</span><span class="cvm-2">${segundosDe(e)}</span></figcaption></figure>`;
-      }).join("");
-      return `<div class="cvm-fila st-${st}" data-ir="${sec}"><div class="cvm-lab"><b>${GROUPS[sec].length}</b> ${t}</div><div class="cvm-fotos">${figs}</div></div>`;
+  // Portada de los cuadernos (bolsillo y mini): fondo verde bosque, el título grande y un racimo de fotos
+  // redondas, cada una con un aro del color de su grupo (verde comestible, naranja tóxica, rojo mortal):
+  // de un vistazo se ve para qué sirve el cuaderno, distinguirlas. Abajo, los grupos y urgencias.
+  // Huecos del racimo: [centro x, centro y, diámetro] en mm; la primera, la grande.
+  const CIRCULOS = [[54, 75, 44], [19, 58, 26], [88, 54, 24], [90, 87, 28], [17, 92, 28], [40, 106, 14], [68, 107, 16], [40, 43, 13]];
+  // las fotos de cada cuaderno, en el orden de los huecos: [especie, foto, encuadre]; otras en cada uno para distinguirlos
+  const PORTADA_FOTOS = {
+    bolsillo: [["boletus-edulis", "fotos/g/daa8b786e6b5.jpg", "50% 45%"], ["cantharellus-cibarius", "fotos/g/4c81aed9b18d.jpg", "40% 50%"],
+      ["lactarius-deliciosus", "fotos/g/87b9e09821d1.jpg", "50% 50%"], ["amanita-muscaria", "fotos/g/6fe8c495e42f.jpg", "50% 35%"],
+      ["amanita-phalloides", "fotos/g/47b20ff9a6ff.jpg", "50% 40%"], ["craterellus-cornucopioides", "fotos/g/fed8d2eb141c.jpg", "50% 50%"],
+      ["cortinarius-orellanus", "fotos/g/3a864a604452.jpg", "45% 45%"], ["omphalotus-olearius", "fotos/g/fb8831e7a529.jpg", "50% 50%"]],
+    mini2: [["amanita-caesarea", "fotos/g/8205426474fa.jpg", "40% 50%"], ["macrolepiota-procera", "fotos/g/dd2fdf885cb9.jpg", "50% 30%"],
+      ["lepista-nuda", "fotos/g/83ae72f34586.jpg", "50% 45%"], ["rubroboletus-satanas", "fotos/g/a151042e0160.jpg", "50% 45%"],
+      ["amanita-verna", "fotos/g/366ea7c73945.jpg", "50% 25%"], ["lycoperdon-perlatum", "fotos/g/152f50ecb24d.jpg", "50% 50%"],
+      ["galerina-marginata", "fotos/g/62c60c539d4a.jpg", "50% 50%"], ["amanita-pantherina", "fotos/g/9d81561ed5de.jpg", "50% 40%"]],
+    mini3: [["cantharellus-cibarius", "fotos/g/1229e0d17140.jpg", "50% 50%"], ["morchella-esculenta", "fotos/g/bcc923ad70aa.jpg", "50% 40%"],
+      ["lactarius-sanguifluus", "fotos/g/db970a74779d.jpg", "45% 50%"], ["tricholoma-equestre", "fotos/g/cc4d0abd4b86.jpg", "50% 50%"],
+      ["amanita-virosa", "fotos/g/e240bdd5104e.jpg", "50% 40%"], ["hydnum-repandum", "fotos/g/3340f88ce6bd.jpg", "50% 50%"],
+      ["lepiota-brunneoincarnata", "fotos/g/2c853bcda179.jpg", "50% 50%"], ["amanita-muscaria", "fotos/g/9242ccdca2ab.jpg", "50% 45%"]]
+  };
+  function portadaCirculos() {
+    const fotos = PORTADA_FOTOS[MINI ? "mini" + MINI : "bolsillo"];
+    const p = newPage(null, "cover cover-c");
+    const circ = fotos.map(([id, g, pos], k) => {
+      const e = BY[id], f = (e?.fotos || []).find(x => x.g === g), c = CIRCULOS[k];
+      if (!e || !f || !c) return "";
+      EXTRA.push(["Portada", f]);
+      const [x, y, d] = c;
+      // el aro, del color de la sección del cuaderno (las «condicionadas», con las comestibles)
+      const st = { comestibles: "comestible", toxicas: "toxic", mortales: "mortal" }[EST[e.comestibilidad.cat].sec];
+      return `<figure class="cvc-f st-${st}" style="left:${x - d / 2}mm;top:${y - d / 2}mm;width:${d}mm;height:${d}mm"><img src="${G(f.g)}" alt="" style="object-position:${pos}"></figure>`;
     }).join("");
+    const grupo = (sec, st, t) => `<span class="cvc-gr st-${st}" data-ir="${sec}"><i></i><b>${GROUPS[sec].length}</b> ${t}</span>`;
     p.innerHTML = `
-      <div class="cvm-ed"><span>Cistella Segura · cuaderno de bolsillo</span><span>${EDICION}</span></div>
-      <h1 class="cvm-t">Setas <em>esenciales</em></h1>
-      <p class="cvm-sub">de Cataluña</p>
-      <p class="cvm-s">Las ${ESENCIAL.length} que hay que conocer: cómo reconocerlas, dónde y cuándo salen, y con qué no confundirlas.</p>
-      <div class="cvm-filas">${filas}</div>
-      <div class="cvm-sos"><b>Ante la duda,<br>no la recolecte.</b><span>Emergencias <strong>112</strong><br>Toxicología 24 h <strong>91 562 04 20</strong></span></div>`;
+      <div class="cvc-ed"><span>Cistella Segura · ${esc(EDLAB)}</span><span>${EDICION}</span></div>
+      <h1 class="cvc-t">Setas<em>esenciales</em></h1>
+      <p class="cvc-sub">de Cataluña</p>
+      ${circ}
+      <div class="cvc-pie">
+        <p class="cvc-s">Las <b>${ESENCIAL.length}</b> que hay que conocer: cómo reconocerlas, dónde y cuándo salen, y con qué no confundirlas.</p>
+        <p class="cvc-grs">${grupo("comestibles", "comestible", "comestibles")}${grupo("toxicas", "toxic", "tóxicas")}${grupo("mortales", "mortal", "mortales")}</p>
+        <p class="cvc-sos"><b>Ante la duda, no la recolecte.</b><span>Emergencias <strong>112</strong><br>Toxicología 24 h <strong>91 562 04 20</strong></span></p>
+      </div>`;
     if (overflows(p)) REPORT.overflow.push("portada: no cabe");
   }
   function portada() {
-    if (!GUIA) return portadaBolsillo();
+    if (!GUIA) return portadaCirculos();
     const p = newPage(null, "cover");
     const e = DB.especies.find(x => x.id === PORTADA.id);
     const f = (e?.fotos || []).find(x => x.papel === PORTADA.papel) || e?.fotos?.[0];
@@ -503,11 +527,11 @@
           <li><span class="v st-comestible"><span class="lvl"><i class="on"></i><i class="on"></i><i></i></span><b>Media</b></span><span>Dificultad para reconocerla: fácil, media o difícil.</span></li>
           <li><span class="v st-comestible">${meses([9, 10, 11], [8, 12])}</span><span>Meses en que sale; en claro, solo algunos años.</span></li>
           <li><span class="v"><span class="rasgos en-linea"><span class="r-si"><i class="mk">${MARCA.si}</i></span><span class="r-no"><i class="mk">${MARCA.no}</i></span><span class="r-medio"><i class="mk">${MARCA.medio}</i></span></span></span><span>Cómo es: lo tiene, no lo tiene, solo en parte.</span></li>
-          <li><span class="v ley-ic">${ICON.pineda}${ICON.fulla}${ICON.prat}${ICON.fusta}${ICON.monte}</span><span>Dónde: pinos y abetos, árboles de hoja ancha, prados, madera, altitud.</span></li>
+          ${MINI ? "" : `<li><span class="v ley-ic">${ICON.pineda}${ICON.fulla}${ICON.prat}${ICON.fusta}${ICON.monte}</span><span>Dónde: pinos y abetos, árboles de hoja ancha, prados, madera, altitud.</span></li>`}
           <li><span class="v st-toxic grav">${gd(2)}<b>Grave</b></span><span>En las tóxicas: leve, moderada, grave o mortal.</span></li>
           <li><span class="v"><span class="refx">→ p. 12</span></span><span>Página de la seta con la que se confunde.</span></li>
         </ul>
-        <p class="secs"><b>Empiezan en la página</b>${sec("comestible", "Comestibles")}${sec("toxica", "Tóxicas")}${sec("mortal", "Mortales")}<span class="st-arb"><i></i>Árboles <span class="ref" data-ref="sec:anexo" data-fmt="n">00</span></span></p>
+        <p class="secs"><b>Empiezan en la página</b>${sec("comestible", "Comestibles")}${sec("toxica", "Tóxicas")}${sec("mortal", "Mortales")}${MINI ? "" : `<span class="st-arb"><i></i>Árboles <span class="ref" data-ref="sec:anexo" data-fmt="n">00</span></span>`}</p>
       </div>
       ${CREDITO}
       ${foot("Antes de salir")}`);
@@ -1054,6 +1078,76 @@
     return t ? `<p class="cuando"><span class="lab">Cuándo</span>${esc(hasta(t, 190))}</p>` : "";
   }
 
+
+  // =========================================================
+  // CUADERNOS MINI: 2 o 3 setas por página, con lo justo para reconocerla en el monte
+  // fotos y meses a la izquierda; a la derecha: grupo, dificultad, nombres, cómo es (✓ ✗), 2–3 rasgos,
+  // en las tóxicas la gravedad, dónde sale y con qué se confunde (con su página)
+  // =========================================================
+  // un rasgo, corto: sin paréntesis y, si es largo, hasta el primer «;» o «:»
+  const claveCorta = (t, max) => {
+    let s = String(t || "").replace(/\s*\([^)]*\)/g, "").replace(/\s+([.,;:])/g, "$1").trim();
+    if (s.length > max) { const c = s.split(/;\s|:\s/)[0].replace(/[.,]$/, ""); if (c.length >= 14) s = c + "."; }
+    return s.length <= max ? s : cortaFrase(s, max);
+  };
+  const SIN_ANILLO = /^\s*sin anillo( ni volva)?\.?\s*$|^\s*sin volva( ni anillo)?\.?\s*$/i;
+  function miniFicha(e) {
+    const est = EST[e.comestibilidad.cat], ok = comestible(e);
+    const [dn, dt] = DIF[e.identificacion?.dificultad] || [2, "Media"];
+    // fotos: en el de 4 hojas, la principal cuadrada y otra debajo; en el de 3, solo la principal
+    const fs = (PICK[e.id] || []).slice(0, MINI === 2 ? 2 : 1);
+    const nCl = MINI === 2 ? 3 : 2, maxCl = MINI === 2 ? 90 : 70;
+    const claves = (e.identificacion?.claves || []).filter(c => !SIN_ANILLO.test(c)).slice(0, nCl);
+    const confs = [...(e.confusiones || [])].sort((a, b) => (ok ? SEV[a.peligro] - SEV[b.peligro] : SEV[b.peligro] - SEV[a.peligro])).slice(0, 2);
+    const cf = confs.map(c => {
+      const d = cortaFrase(primera(c.diferencia, 170).replace(/\.$/, ""), MINI === 2 ? 64 : 48);
+      return `<span class="cfi"><b>${nombreConf(c)}</b> <span class="cf-tag cf-${c.peligro}">${PEL[c.peligro] || c.peligro}</span>${c.id && BY[c.id] && c.id !== e.id ? " " + ref(c.id) : ""}<span class="cfd">: ${esc(d.charAt(0).toLowerCase() + d.slice(1))}</span></span>`;
+    }).join(" ");
+    const arb = arboles(e, 3), h = habitatIcons(e).map(x => x[1]);
+    const otros = [h.includes("prados") && "en prados", h.includes("madera") && "sobre madera"].filter(Boolean);
+    const donde = [arb ? `Con ${arb}.` : "", otros.length ? cap(lista(otros)) + "." : ""].filter(Boolean).join(" ");
+    const [gn, gt] = gravedad(e);
+    const tox = ok ? "" : `<p class="mf-grav"><span class="gd">${[1, 2, 3].map(i => `<i class="${i <= gn ? "on" : ""}"></i>`).join("")}</span><b>${gt}.</b> <span class="mf-causa">${esc(causa(e))}</span></p>`;
+    return `<article class="mf st-${est.st}${ok ? " edible" : ""}" data-id="${e.id}">
+      <div class="mf-fotos">${fs.map((f, i) => `<div class="mf-im${i ? " mf-im2" : ""}"><img src="${G(f.g || f.t)}" alt=""></div>`).join("")}${meses(e.fenologia?.meses, e.fenologia?.excepcional)}</div>
+      <div class="mf-t">
+        <div class="mf-k"><span class="pill">${est.pill}</span>${dots(dn)}<b class="dif">${dt}</b></div>
+        <h2 class="mf-n">${tituloHTML(e)}</h2>
+        <p class="mf-2">${segundosDe(e)}</p>
+        <ul class="rasgos en-linea">${rasgosLista(e, false).map(([t, l]) => `<li class="r-${t}${t === "si" && l === "Volva" ? " alarma" : ""}"><i class="mk">${MARCA[t]}</i><span><b>${l}</b></span></li>`).join("")}</ul>
+        ${claves.length ? `<ul class="mf-cl${ok ? "" : " alarm"}">${claves.map(c => `<li>${esc(claveCorta(c, maxCl))}</li>`).join("")}</ul>` : ""}
+        ${tox}
+        ${donde ? `<p class="mf-do"><span class="lab">Dónde</span>${esc(donde)}</p>` : ""}
+        ${cf ? `<p class="mf-cf"><span class="lab">${ok ? "Cuidado" : "Se confunde"}</span>${cf}</p>` : ""}
+      </div></article>`;
+  }
+  // las casi iguales (níscalos, carlet y babosa…) seguidas, para que caigan juntas o una detrás de otra
+  function ordenMini(lista_) {
+    const out = [];
+    lista_.forEach(e => {
+      if (out.includes(e)) return;
+      out.push(e);
+      const pj = EN_PAREJA.get(e.id);
+      if (pj) pj[0].ids.forEach(id => { const x = lista_.find(y => y.id === id); if (x && !out.includes(x)) out.push(x); });
+    });
+    return out;
+  }
+  // una sección: MINI setas por página; los huecos que sobran en la última, para notas
+  function miniPages(lista_, sec) {
+    const label = sec === "comestibles" ? "Comestibles" : sec === "mortales" ? "Mortales" : "Tóxicas";
+    const orden = ordenMini(lista_);
+    for (let i = 0; i < orden.length; i += MINI) {
+      const grupo = orden.slice(i, i + MINI);
+      const p = newPage(sec, "mini-pg");
+      const huecos = Array.from({ length: MINI - grupo.length }, () => `<div class="mf-notas"><span class="lab">Notas</span></div>`).join("");
+      p.insertAdjacentHTML("beforeend", `<div class="mini-in">${grupo.map(miniFicha).join("")}${huecos}</div>${foot(label)}`);
+      grupo.forEach(e => (PAGE_OF[e.id] = p));
+      // si no cabe: fuera, por este orden, en qué se distinguen, el último rasgo, la causa, letra algo menor…
+      p.querySelectorAll(".mf").forEach(m => fitEl(m, ["dense", quitaUno(".mf-cf .cfd"), quitaUno(".mf-cl li"), ".mf-causa", quitaUno(".mf-cf .cfd"),
+        "denser", quitaUno(".mf-cl li"), ".mf-do", quitaUno(".mf-cf .cfi")]));
+    }
+  }
+
   // =========================================================
   // GUÍA: media página (dos setas por página), calendario, glosario, índice y créditos
   // =========================================================
@@ -1345,7 +1439,7 @@
       ${alarma ? `<p class="sos-alarma">${esc(hasta(alarma, 230))}</p>` : ""}
       <div class="h3" style="margin-top:auto">Anótelo antes de salir</div>
       ${["Alojamiento", "Centro de salud", "Sociedad micológica", "Dónde aparqué"].map(t => `<div class="wi"><span>${t}</span><i></i></div>`).join("")}
-      ${CREDITO}
+      ${MINI ? "" : CREDITO}
       ${foot("SOS")}`);
     fit(p, ["dense", ".sos-alarma", p2 => p2.querySelectorAll(".sos-f li").forEach(li => { const b = li.querySelector("b"); li.innerHTML = b ? b.outerHTML : li.innerHTML; })], "sos");
   }
@@ -1387,6 +1481,11 @@
       glosarioPages();
       indicePages();
       creditosPages();
+    } else if (MINI) {
+      // mini: cada sección empieza en página nueva; sin parejas ni árboles; urgencias en la contraportada
+      miniPages(GROUPS.comestibles, "comestibles");
+      miniPages(GROUPS.toxicas, "toxicas");
+      miniPages(GROUPS.mortales, "mortales");
     } else {
       // las parejas casi iguales (rovelló y pinetell) van juntas en la página de la primera
       // (y las otras parejas de PAREJAS, también en tóxicas: dos setas por hoja)
@@ -1396,7 +1495,7 @@
       // de las fotos, en la página de las reglas): los árboles cierran el cuaderno
     }
     const antesDeSOS = book.lastElementChild;
-    if (GUIA) sosPage();
+    if (GUIA || MINI) sosPage();
 
     // si hace falta, páginas de notas para que el total sea múltiplo de 4 (antes de la contraportada)
     const extra = (4 - (book.children.length % 4)) % 4;
@@ -1421,8 +1520,47 @@
     REPORT.pages = pages.length;
     window.BUILD_REPORT = REPORT;
     window.libroInfo = () => libroInfo(pages);
+    // con «?lector» en la dirección: el texto y los enlaces de cada página, para el lector de la web
+    // (tools/libro-lector.py los saca de aquí con Edge y escribe libros/<libro>/texto.js)
+    if (/[?&]lector\b/.test(location.search)) {
+      const j = document.createElement("script");
+      j.type = "application/json"; j.id = "lector-json";
+      j.textContent = JSON.stringify({ ...libroInfo(pages), p: pages.map(textoPagina) }).replace(/</g, "\\u003c");
+      document.body.appendChild(j);
+    }
     document.dispatchEvent(new CustomEvent("llibre-llest"));
     document.body.dataset.ready = "1";
+  }
+
+  // El texto de una página, en líneas con su caja: [texto, izquierda, arriba, derecha, alto] en fracciones de la página
+  // (el lector lo usa para buscar y marcar en amarillo lo encontrado)
+  function textoPagina(pg) {
+    const r3 = x => Math.round(x * 1000) / 1000;
+    const pr = pg.getBoundingClientRect(), words = [];
+    const tw = document.createTreeWalker(pg, NodeFilter.SHOW_TEXT);
+    let nd;
+    while ((nd = tw.nextNode())) {
+      const cs = getComputedStyle(nd.parentElement);
+      if (cs.visibility === "hidden" || cs.display === "none") continue;
+      const up = cs.textTransform === "uppercase", fs = parseFloat(cs.fontSize), re = /\S+/g;
+      // la columna en la que está: dos fotos o dos celdas vecinas no forman una sola línea
+      const col = nd.parentElement.closest("figure, td, th, .f2-col, .mf-fotos, .mf-t, .cvx-gr, .tab");
+      let m;
+      while ((m = re.exec(nd.data))) {
+        const rg = document.createRange(); rg.setStart(nd, m.index); rg.setEnd(nd, m.index + m[0].length);
+        const r = [...rg.getClientRects()].find(x => x.width > 0);
+        if (r && r.bottom > pr.top && r.top < pr.bottom) words.push({ t: up ? m[0].toUpperCase() : m[0], l: r.left, r: r.right, t0: r.top, b: r.bottom, fs, col });
+      }
+    }
+    // palabras de la misma columna en la misma línea (centro a la misma altura) y sin un hueco grande entre ellas
+    const lines = [];
+    for (const w of words) {
+      const cy = (w.t0 + w.b) / 2;
+      const L = lines.find(L => L.col === w.col && Math.abs(L.cy - cy) < Math.min(L.h, w.b - w.t0) * .5 && w.l - L.r < w.fs * 1.6 && w.l >= L.l);
+      if (L) { L.t += " " + w.t; L.r = Math.max(L.r, w.r); L.t0 = Math.min(L.t0, w.t0); L.b = Math.max(L.b, w.b); }
+      else lines.push({ t: w.t, l: w.l, r: w.r, t0: w.t0, b: w.b, cy, h: w.b - w.t0, col: w.col });
+    }
+    return lines.map(L => [L.t, r3((L.l - pr.left) / pr.width), r3((L.t0 - pr.top) / pr.height), r3((L.r - pr.left) / pr.width), r3((L.b - L.t0) / pr.height)]);
   }
 
   // Para leer el libro en la web (extra/lector.js): dónde se puede tocar en cada página y adónde lleva,
@@ -1445,9 +1583,9 @@
       // cada seta con la que se confunde (foto, nombre y texto) lleva a su página
       p.querySelectorAll(".conf li").forEach(li => { const ref = li.querySelector(".ref[data-ref]"); if (ref) { hechos.add(ref); pon(li, destDe(ref)); } });
       // en «Árboles y sus setas»: el nombre con su número
-      // filas de la portada: la etiqueta lleva al principio de su sección
-      p.querySelectorAll("[data-ir] .cvm-lab").forEach(el => pon(el, inicio[el.parentElement.dataset.ir]));
-      p.querySelectorAll(".nm, .ixg, .secs > span, .cvm-f").forEach(nm => { const ref = nm.querySelector(".ref[data-ref]"); if (ref) { hechos.add(ref); pon(nm, destDe(ref)); } });
+      // portada: «25 comestibles», «20 tóxicas», «9 mortales» llevan al principio de su sección
+      p.querySelectorAll(".cover [data-ir]").forEach(el => pon(el, inicio[el.dataset.ir]));
+      p.querySelectorAll(".nm, .ixg, .secs > span, .mf-cf .cfi").forEach(nm => { const ref = nm.querySelector(".ref[data-ref]"); if (ref) { hechos.add(ref); pon(nm, destDe(ref)); } });
       p.querySelectorAll(".ref[data-ref]").forEach(ref => { if (!hechos.has(ref)) pon(ref, destDe(ref)); });
       // la pestaña del margen lleva al principio de su sección; en la portada, «comestibles», «mortales», «tóxicas»
       const tab = p.querySelector(".tab");
@@ -1462,10 +1600,10 @@
       const n = num(p);
       if (p.classList.contains("cover")) { out.i.push([n, "Portada", 0]); return; }
       // una seta o, en las páginas de media, dos
-      const hs = [...p.querySelectorAll(".sp-head .name")];
+      const hs = [...p.querySelectorAll(".sp-head .name, .mf-n")];
       if (hs.length) {
         if (p.dataset.sec !== sec) { sec = p.dataset.sec; out.i.push([n, SECN[sec] || sec, 0]); }
-        hs.forEach(h => { const m = h.closest(".media"); out.i.push([n, h.textContent.trim(), 1, "", m ? m.dataset.id : (out.f[n] || [])[0] || ""]); });
+        hs.forEach(h => { const m = h.closest(".media, .mf"); out.i.push([n, h.textContent.trim(), 1, "", m ? m.dataset.id : (out.f[n] || [])[0] || ""]); });
         return;
       }
       const pt = p.querySelector(".pt"), kick = p.querySelector(".kicker");
