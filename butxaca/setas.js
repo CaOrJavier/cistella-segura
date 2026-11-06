@@ -532,6 +532,7 @@
           <li><span class="v st-comestible">${meses([9, 10, 11], [8, 12])}</span><span>Meses en que sale; en claro, solo algunos años.</span></li>
           <li><span class="v"><span class="rasgos en-linea"><span class="r-si"><i class="mk">${MARCA.si}</i></span><span class="r-no"><i class="mk">${MARCA.no}</i></span><span class="r-medio"><i class="mk">${MARCA.medio}</i></span></span></span><span>Cómo es: lo tiene, no lo tiene, solo en parte.</span></li>
           ${MINI ? "" : `<li><span class="v ley-ic">${ICON.pineda}${ICON.fulla}${ICON.prat}${ICON.fusta}${ICON.monte}</span><span>Dónde: pinos y abetos, árboles de hoja ancha, prados, madera, altitud.</span></li>`}
+          ${MINI ? "" : `<li><span class="v ley-ic ley-f3">${PIC.olor}${PIC.reloj}${PIC.lupa}</span><span>Olor, cuándo salen los síntomas y qué comprobar antes de cogerla.</span></li>`}
           <li><span class="v st-toxic grav">${gd(2)}<b>Grave</b></span><span>En las tóxicas: leve, moderada, grave o mortal.</span></li>
           <li><span class="v"><span class="refx">→ p. 12</span></span><span>Página de la seta con la que se confunde.</span></li>
         </ul>
@@ -872,11 +873,7 @@
     const alt = altitudTexto(alts.map(a => a.min ?? 0), alts.map(a => a.max), null);
     return `<div class="fila2"><ul class="rasgos en-linea">${items.map(([t, l]) => `<li class="r-${t}${t === "si" && l === "Volva" ? " alarma" : ""}"><i class="mk">${MARCA[t]}</i><span><b>${l}</b></span></li>`).join("")}</ul>${alt ? `<span class="dc-f">${ICON.monte}<span>${esc(alt)}</span></span>` : ""}${mesesHTML}</div>`;
   }
-  function fichaCaja(items, esporada, especies, conMeses = false) {
-    const dc = dondeCuandoHTML(especies);
-    return `<div class="ficha2"><div class="f2-col"><h3>${conMeses ? "Cómo es y cuándo sale" : "Cómo es"}</h3>${rasgosHTML(items, esporada)}${conMeses ? dc.cuando : ""}</div>
-      <div class="f2-col dc"><h3>Dónde</h3>${dc.donde}</div></div>`;
-  }
+
   // fotos: las tres en fila, iguales y casi cuadradas (la seta se ve entera; las alargadas la cortaban),
   // cada una con su texto debajo, en oscuro sobre blanco (dentro de la foto no se leía al imprimir).
   // etiquetas: en las parejas, el nombre de cada seta encima de su texto
@@ -958,57 +955,167 @@
         ${lede ? `<p class="lede">${esc(lede)}</p>` : ""}
       </header>`;
   };
-  // cuando la página no cabe se recorta por este orden; después, lo recortado vuelve si ha quedado sitio,
-  // por orden de importancia: «Compruebe», los rasgos, los textos enteros, el detalle de «Dónde» y la frase de arriba
-  function ajustaB(p, nombre, ...extra) {
-    const pasos = ["tight", ".lede", "dense", acortaCaps(40), "fotos-bajas", ".d-mas", acortaDif(80), ".cc-par", quitaUltimo(".conf li"), "denser", acortaDif(62), ".r-dato", acortaCaps(24), ".os", ".pc-t", ".truc", quitaUltimo(".checks li"), ...extra];
-    const lede = p.querySelector(".lede")?.outerHTML, mas = p.querySelector(".d-mas")?.outerHTML, truc = p.querySelector(".truc")?.outerHTML;
-    const pars = parecidos(p);
-    const pies = [...p.querySelectorAll(".ph3 figure")].map(f => f.querySelector(".pc-t")?.outerHTML || "");
-    const os = p.querySelector(".os"), osHTML = os?.outerHTML, osAntes = os?.nextElementSibling;
-    const claves = [...p.querySelectorAll(".checks li")].map(li => li.outerHTML);
-    fit(p, pasos, nombre);
-    const vuelve = (padre, html) => { if (!padre || !html) return false; padre.insertAdjacentHTML("beforeend", html); if (overflows(p)) { padre.lastElementChild.remove(); return false; } return true; };
-    if (truc && !p.querySelector(".truc")) vuelve(p.querySelector(".txt"), truc);
-    const ul = p.querySelector(".checks ul");
-    if (ul) for (const li of claves.slice(ul.children.length)) if (!vuelve(ul, li)) break;
-    devuelveParecidos(p, pars);
-    // el olor o sabor, en su sitio (detrás de los rasgos)
-    if (osHTML && !p.querySelector(".os") && osAntes && osAntes.isConnected) { osAntes.insertAdjacentHTML("beforebegin", osHTML); if (overflows(p)) osAntes.previousElementSibling.remove(); }
-    // los textos de las fotos, debajo de cada una (todos o ninguno)
-    if (!p.querySelector(".pc-t") && pies.some(Boolean)) {
-      const figs = [...p.querySelectorAll(".ph3 figure")];
-      figs.forEach((f, i) => pies[i] && f.insertAdjacentHTML("beforeend", pies[i]));
-      if (overflows(p)) p.querySelectorAll(".ph3 .pc-t").forEach(x => x.remove());
+
+  // =========================================================
+  // CUADERNO COMPLETO: FICHA «F3a» (elegida el 6-11-2026 entre las maquetas de butxaca/maquetas-a6.html)
+  // - arriba, a sangre, las tres fotos: la grande con el nombre encima y dos a su lado (si sobra sitio, crecen)
+  // - debajo, todo a lo ancho: dificultad y meses; «Cómo es» en una línea (✓ lo tiene, ✗ no); dónde y olor con
+  //   su icono; el peligro (gravedad y cuándo salen los síntomas); cómo reconocerla, una frase por línea;
+  //   las parecidas en tres columnas con su foto; y «Compruebe»
+  // =========================================================
+  const pic = x => `<svg viewBox="0 0 12 12" aria-hidden="true">${x}</svg>`;
+  const PIC = {
+    olor: pic('<path d="M6.5 1.1C5.9 4 3.3 6.4 3.3 8.5c0 1.1.9 2 2 2h1.9a1.9 1.9 0 0 0 .4-3.7" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>'),
+    reloj: pic('<circle cx="6" cy="6" r="4.8" fill="none" stroke="currentColor" stroke-width="1.25"/><path d="M6 3.1V6l2.1 1.4" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/>'),
+    alerta: pic('<path d="M6 .9 11.5 10.8H.5z"/><path d="M5.35 4.1h1.3l-.2 3.7h-.9zM5.35 8.5h1.3v1.3h-1.3z" fill="#fff"/>'),
+    lupa: pic('<circle cx="5" cy="5" r="3.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M7.6 7.6 11 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>')
+  };
+  const minus = t => String(t || "").charAt(0).toLowerCase() + String(t || "").slice(1);
+  const SECL = { comestibles: "Comestibles", toxicas: "Tóxicas", mortales: "Mortales" };
+  // latencia corta: «de 6 a 24 horas (típicamente 8–12)» → «6–24 h»; «entre 30 minutos y 6 horas» → «30 min – 6 h»
+  const UNID = { minuto: "min", minutos: "min", hora: "h", horas: "h", días: "días", dias: "días", semanas: "semanas" };
+  const latCorta = t => {
+    t = String(t || "").replace(/\s*\([^)]*\)/g, "");
+    const m = t.match(/(\d+)\s*(minutos?|horas?|días|semanas)?\s*(?:a|y|–|-)\s*(\d+)\s*(minutos?|horas?|días|semanas)/i);
+    if (!m) return t;
+    const u2 = UNID[m[4].toLowerCase()], u1 = m[2] ? UNID[m[2].toLowerCase()] : u2;
+    return u1 === u2 ? `${m[1]}–${m[3]} ${u2}` : `${m[1]} ${u1} – ${m[3]} ${u2}`;
+  };
+  // las tres fotos; la grande lleva el nombre encima (etiquetas: en las parejas, de qué seta es cada foto)
+  function fotosF3(ph, nombre, pillTxt, segunda, etiquetas = []) {
+    const fig = (f, cls, et) => (f ? `<figure class="${cls}"><img src="${G(f.g || f.t)}" alt=""${f.pos ? ` style="object-position:${f.pos}"` : ""}>${et ? `<span class="f3-et">${esc(et)}</span>` : ""}</figure>` : "");
+    return `<div class="f3-top crece">${fig(ph[0], "f3-main", etiquetas[0])}<div class="f3-pq">${fig(ph[1], "", etiquetas[1])}${fig(ph[2], "", etiquetas[2])}</div>
+      <header class="f3-nom"><span class="pill">${pillTxt}</span><h1 class="name">${nombre}</h1><p class="lat">${segunda}</p></header></div>`;
+  }
+  const metaF3 = (dn, dt, mesesHTML) => `<div class="f3-meta"><span class="dif">${dots(dn)}<b>${dt}</b></span>${mesesHTML}</div>`;
+  // «Cómo es» en una línea: ✓ lo tiene, ✗ no lo tiene, ◐ en parte (la volva, en rojo)
+  const rasLinea = (items, esporada) => {
+    const esp = String(esporada || "").trim().replace(/\.$/, "");
+    return `<p class="rl"><span class="lab">Cómo es</span>${items.map(([t, l, x]) => `<span class="ri r-${t}${t === "si" && l === "Volva" ? " alarma" : ""}"><span class="nw"><i class="mk">${MARCA[t]}</i><b>${l}</b></span>${x ? " " + esc(x) : ""}</span>`).join(" ")}${esp ? ` <span class="ri" data-q="6"><b>Esporada</b> ${esc(minus(esp))}</span>` : ""}</p>`;
+  };
+  // dónde: árboles (coníferas y frondosas), prados, madera y altitud, cada dato con su icono
+  function dondeF3(especies, conAltFrec = true) {
+    const arbs = especies.flatMap(e => e.ecologia?.arboles || []);
+    const h = new Set(especies.flatMap(e => habitatIcons(e).map(x => x[1])));
+    const out = [];
+    const con = arbolesDe(arbs, "conifera"), fro = arbolesDe(arbs, "frondosa");
+    if (con) out.push(["pineda", con]);
+    if (fro) out.push(["fulla", fro]);
+    if (h.has("prados")) out.push(["prat", "En prados"]);
+    if (h.has("madera")) out.push(["fusta", "Sobre madera"]);
+    const alts = especies.map(e => e.distribucion?.altitud).filter(a => a && a.max != null);
+    const alt = altitudTexto(alts.map(a => a.min ?? 0), alts.map(a => a.max), conAltFrec && especies.length === 1 ? FREC(especies[0].id) : null);
+    if (alt) out.push(["monte", alt]);
+    return out;
+  }
+  const irsF3 = (lista, os = "") => `<div class="irs">${lista.map(([ic, t]) => `<p class="ir">${ICON[ic]}<span>${esc(t)}</span></p>`).join("")}${os ? `<p class="ir" data-q="7">${PIC.olor}<span>${os.replace(/^<p class="os">|<\/p>$/g, "")}</span></p>` : ""}</div>`;
+  // peligro: gravedad, cuándo salen los síntomas, el síndrome y la causa
+  const toxF3 = (g, causaTxt, t) => `<div class="tx"><span class="tx-g">${PIC.alerta}${dots(g[0])}<b>${g[1]}</b></span>${t?.latencia ? `<span>${PIC.reloj}síntomas a las ${esc(latCorta(t.latencia))}</span>` : ""}${t?.sindrome ? `<span class="tx-s" data-q="4">${esc(t.sindrome.replace(/\s*\([^)]*\)/, ""))}</span>` : ""}<p class="tx-c" data-q="5">${esc(causaTxt)}</p></div>`;
+  // cómo reconocerla: una frase por línea, con su marca (en las que no se comen, el aviso)
+  const clavesF3 = (claves, ok, tituloTxt = "") => (claves.length ? `<div class="clw">${tituloTxt ? `<h3>${esc(tituloTxt)}</h3>` : ""}<ul class="cl${ok ? "" : " alarm"}">${claves.map((c, i) => `<li${i >= 3 ? ' data-q="5"' : ""}>${ok ? `<i class="mk">${MARCA.si}</i>` : PIC.alerta}<span>${esc(cortaFrase(c, 100))}</span></li>`).join("")}</ul></div>` : "");
+  // las que se le parecen: foto redonda, nombre, peligro y página; debajo, en qué se distingue (todas o ninguna)
+  function confsF3(confs, ok, propios) {
+    if (!confs.length) return "";
+    return `<div class="f3-conf"><h3>${ok ? "Cuidado: se confunde con" : "Se confunde con"}</h3><ul class="cfs">${confs.map((c, i) => {
+      const im = fotoConfG(c), d = primera(c.diferencia, 170);
+      return `<li class="cf3"${i === 2 ? ' data-q="4"' : ""}>${im ? `<img src="${im}" alt="">` : `<span class="nof"></span>`}<p><b>${nombreConf(c)}</b><br><span class="cf-tag cf-${c.peligro}">${PEL[c.peligro] || c.peligro}</span>${c.id && !propios.includes(c.id) ? " " + ref(c.id) : ""}</p><p class="cfd" data-q="3" data-g="cfd">${esc(cortaFrase(d, 62))}</p></li>`;
+    }).join("")}</ul></div>`;
+  }
+  const compruebeF3 = t => (t ? `<p class="cmp2" data-q="2">${PIC.lupa}<span><b>Compruebe:</b> ${esc(primera(t, 120))}</span></p>` : "");
+  // ajuste: si no cabe, letra un poco más pequeña y fuera lo menos importante (data-q, de 9 a 1; con data-g, todo el grupo);
+  // luego vuelve lo quitado que quepa y, si aún sobra sitio, las fotos de arriba crecen hasta llenar la página
+  function ajustaF3(p, nombre) {
+    const pasos = ["d1", 9, 8, "d2", 7, 6, 5, "d3", "d4", 4, 3, 2, 1];
+    const quitados = [];
+    for (const s of pasos) {
+      if (!overflows(p)) break;
+      if (typeof s === "string") { p.classList.add(s); continue; }
+      let l;
+      while (overflows(p) && (l = p.querySelectorAll(`[data-q="${s}"]`)).length) {
+        const el = l[l.length - 1], grupo = el.dataset.g ? [...p.querySelectorAll(`[data-g="${el.dataset.g}"]`)] : [el];
+        quitados.push(grupo.map(x => [x, x.parentNode, x.nextSibling]));
+        grupo.forEach(x => x.remove());
+      }
     }
-    for (const s of p.querySelectorAll(".cc-d, .pc-t")) { const corto = s.textContent; s.textContent = s.classList.contains("pc-t") ? capCorta(s.dataset.full, 60) : s.dataset.full; if (overflows(p)) s.textContent = corto; }
-    // las fotos, más altas (casi cuadradas) si caben
-    if (p.classList.contains("fotos-bajas")) { p.classList.remove("fotos-bajas"); if (overflows(p)) p.classList.add("fotos-bajas"); }
-    if (mas && !p.querySelector(".d-mas")) vuelve(p.querySelector(".dc"), mas);
-    if (lede && !p.querySelector(".lede")) vuelve(p.querySelector(".sp-head"), lede);
+    if (overflows(p)) { REPORT.overflow.push(`${nombre}: +${p.scrollHeight - p.clientHeight}px`); return; }
+    for (const grupo of quitados.reverse()) {
+      grupo.forEach(([el, padre, sig]) => padre.insertBefore(el, sig && sig.parentNode === padre ? sig : null));
+      if (overflows(p)) grupo.forEach(([el]) => el.remove());
+    }
+    for (const d of ["d4", "d3", "d2", "d1"]) {
+      if (!p.classList.contains(d)) continue;
+      p.classList.remove(d);
+      if (overflows(p)) { p.classList.add(d); break; }
+    }
+    const cr = p.querySelector(".crece"), pf = p.querySelector(".pf"), antes = pf?.previousElementSibling;
+    if (cr && antes) {
+      const libre = pf.offsetTop - (antes.offsetTop + antes.offsetHeight) - 8;
+      if (libre > 4) {
+        const h = cr.offsetHeight;
+        cr.style.height = Math.min(h + libre, h * 1.6) + "px";
+        if (overflows(p)) cr.style.height = "";
+      }
+    }
   }
   function fichaBolsillo(e) {
     const est = EST[e.comestibilidad.cat], ok = comestible(e);
-    const p = newPage(est.sec, `sp st-${est.st}${ok ? " edible" : ""} fb`);
+    const p = newPage(est.sec, `sp st-${est.st}${ok ? " edible" : ""} f3a`);
     PAGE_OF[e.id] = p;
     const [dn, dt] = DIF[e.identificacion?.dificultad] || [2, "Media"];
-    const otros = otrosEs(e);
     // fuera los rasgos que solo dicen «sin anillo ni volva»: ya van en «Cómo es» con su ✗
     const claves = (e.identificacion?.claves || []).filter(c => !/^\s*sin anillo( ni volva)?\.?\s*$|^\s*sin volva( ni anillo)?\.?\s*$/i.test(c));
-    const clavesHTML = claves.length ? `<div class="checks${ok ? "" : " alarm"}"><h3>${ok ? "Cómo reconocerla" : "Rasgos de alarma"}</h3><ul>${claves.map(c => `<li>${esc(c)}</li>`).join("")}</ul></div>` : "";
-    const t = e.toxicidad;
-    const tox = ok ? "" : `<div class="perill">${gravedadHTML(e)}${t ? `<p><span class="lab">${esc(t.sindrome)}</span>Síntomas ${esc(t.latencia)}. ${esc(hastaComa(t.sintomas, 95))}</p>` : ""}</div>`.replace(/(<span class="lab">[^<(]+?)\s*\([^)]*\)(<\/span>)/, "$1$2");
     const confs = [...(e.confusiones || [])].sort((a, b) => (ok ? SEV[a.peligro] - SEV[b.peligro] : SEV[b.peligro] - SEV[a.peligro])).slice(0, 3);
-    const clave = confs.find(c => c.donde)?.donde;
-    const truc = clave ? `<p class="truc"><span class="lab">Compruebe</span>${esc(primera(clave, 160))}</p>` : "";
-    const label = ok ? "Comestibles" : est.sec === "mortales" ? "Mortales" : "Tóxicas";
+    const t = e.toxicidad;
     p.insertAdjacentHTML("beforeend", `
-      ${cabeceraB(tituloHTML(e), est.pill, dn, dt, segundaLinea(e), meses(e.fenologia?.meses, e.fenologia?.excepcional), hasta(sinNormativa(e.comestibilidad.texto), 150))}
-      ${fotosB(PICK[e.id])}
-      ${fichaCaja(rasgosLista(e), e.morfologia?.esporada, [e])}
-      <div class="txt">${clavesHTML}${olorSabor(e, ok)}${tox}${confsCards(confs, ok, [e.id])}${truc}</div>
-      ${foot(label)}`);
-    ajustaB(p, e.id);
+      ${fotosF3(PICK[e.id] || [], tituloHTML(e), est.pill, segundaLinea(e))}
+      ${metaF3(dn, dt, meses(e.fenologia?.meses, e.fenologia?.excepcional))}
+      ${rasLinea(rasgosLista(e), e.morfologia?.esporada)}
+      ${irsF3(dondeF3([e]), olorSabor(e, ok))}
+      ${ok ? "" : toxF3(gravedad(e), causa(e), t)}
+      ${clavesF3(claves, ok)}
+      ${confsF3(confs, ok, [e.id])}
+      ${compruebeF3(confs.find(c => c.donde)?.donde)}
+      ${foot(SECL[est.sec])}`);
+    ajustaF3(p, e.id);
+  }
+  // parejas casi iguales, con la misma ficha: cada foto dice de qué seta es; las diferencias, en la tabla
+  function parejaF3(cfg) {
+    const [a, b] = cfg.ids.map(id => BY[id]);
+    const ok = comestible(a) && comestible(b);
+    const est = EST[[a, b].map(e => e.comestibilidad.cat).sort((x, y) => SEV[x] - SEV[y])[0]];
+    const p = newPage(est.sec, `sp st-${est.st}${ok ? " edible" : ""} pareja f3a`);
+    cfg.ids.forEach(id => (PAGE_OF[id] = p));
+    const cols = cfg.cols || [titulo(a), titulo(b)];
+    const fotos = cfg.fotos.map(([id, g, pie, pos]) => ({ ...((BY[id].fotos || []).find(f => f.g === g) || BY[id].fotos[0]), pie, pos, de: cols[cfg.ids.indexOf(id)] }));
+    fotos.forEach(f => EXTRA.push([cfg.nombre, f]));
+    const mesesU = [...new Set([...(a.fenologia?.meses || []), ...(b.fenologia?.meses || [])])];
+    const [dn, dt] = [a, b].map(e => DIF[e.identificacion?.dificultad] || [2, "Media"]).sort((x, y) => y[0] - x[0])[0];
+    const tabla = `<table class="cmp"><tr><th></th><th>${esc(cols[0])}</th><th>${esc(cols[1])}</th></tr>${cfg.filas.map(([k, x, y]) => `<tr><th>${esc(k)}</th><td>${esc(x)}</td><td>${esc(y)}</td></tr>`).join("")}</table>`;
+    const vistos = new Set();
+    const confs = [...(a.confusiones || []), ...(b.confusiones || [])]
+      .filter(c => !cfg.ids.includes(c.id) && !vistos.has(c.id || c.nombre) && vistos.add(c.id || c.nombre))
+      .sort((x, y) => (ok ? SEV[x.peligro] - SEV[y.peligro] : SEV[y.peligro] - SEV[x.peligro])).slice(0, 3);
+    // tóxicas: la peor de las dos (si las dos son igual de graves y por lo mismo, una sola)
+    let tox = "";
+    if (!ok) {
+      const g = [a, b].map(e => ({ e, g: gravedad(e), c: (cfg.causa || {})[e.id] || causa(e) })).sort((x, y) => y.g[0] - x.g[0]);
+      const t = g.map(x => x.e.toxicidad).find(Boolean);
+      tox = toxF3(g[0].g, g[0].c, t);
+    }
+    const esporada = a.morfologia?.esporada === b.morfologia?.esporada ? a.morfologia?.esporada : "";
+    const alt = dondeF3([a, b], false).filter(([ic]) => ic === "monte");
+    p.insertAdjacentHTML("beforeend", `
+      ${fotosF3(fotos, esc(cfg.nombre), SECL[est.sec], cfg.lat, fotos.map(f => f.de))}
+      ${metaF3(dn, dt, meses(mesesU))}
+      ${rasLinea(rasgosLista(a, false), esporada)}
+      ${tabla}
+      ${alt.length || cfg.hab ? irsF3([...(cfg.hab ? [["fulla", cfg.hab]] : []), ...alt]) : ""}
+      ${tox}
+      ${clavesF3(cfg.claves, ok, ok ? "Los dos" : "Rasgos de alarma de los dos")}
+      ${confsF3(confs, ok, cfg.ids)}
+      ${compruebeF3(cfg.compruebe)}
+      ${foot(SECL[est.sec])}`);
+    ajustaF3(p, "pareja " + cfg.nombre);
   }
 
   function fichaPage(e) {
@@ -1334,6 +1441,7 @@
   // Dos setas casi iguales en una página: lo común, una tabla con lo que las separa y sus confusiones juntas
   // (sirve para comestibles y para tóxicas: va en la sección de la más peligrosa de las dos)
   function parejaPage(cfg) {
+    if (!GUIA) return parejaF3(cfg);   // cuaderno completo: la ficha F3a
     const [a, b] = cfg.ids.map(id => BY[id]);
     const ok = comestible(a) && comestible(b);
     const est = EST[[a, b].map(e => e.comestibilidad.cat).sort((x, y) => SEV[x] - SEV[y])[0]];
@@ -1585,7 +1693,7 @@
       if (cs.visibility === "hidden" || cs.display === "none") continue;
       const up = cs.textTransform === "uppercase", fs = parseFloat(cs.fontSize), re = /\S+/g;
       // la columna en la que está: dos fotos o dos celdas vecinas no forman una sola línea
-      const col = nd.parentElement.closest("figure, td, th, .f2-col, .mf-fotos, .mf-t, .cvx-gr, .tab");
+      const col = nd.parentElement.closest("figure, td, th, .f2-col, .mf-fotos, .mf-t, .cvx-gr, .tab, .cf3");
       let m;
       while ((m = re.exec(nd.data))) {
         const rg = document.createRange(); rg.setStart(nd, m.index); rg.setEnd(nd, m.index + m[0].length);
@@ -1622,7 +1730,7 @@
         if (r.width && r.height) L.push([r3((r.left - pr.left) / pr.width), r3((r.top - pr.top) / pr.height), r3(r.width / pr.width), r3(r.height / pr.height), dest]);
       };
       // cada seta con la que se confunde (foto, nombre y texto) lleva a su página
-      p.querySelectorAll(".conf li").forEach(li => { const ref = li.querySelector(".ref[data-ref]"); if (ref) { hechos.add(ref); pon(li, destDe(ref)); } });
+      p.querySelectorAll(".conf li, .f3-conf li").forEach(li => { const ref = li.querySelector(".ref[data-ref]"); if (ref) { hechos.add(ref); pon(li, destDe(ref)); } });
       // en «Árboles y sus setas»: el nombre con su número
       // portada: «25 comestibles», «20 tóxicas», «9 mortales» llevan al principio de su sección
       p.querySelectorAll(".cover [data-ir]").forEach(el => pon(el, inicio[el.dataset.ir]));
@@ -1641,7 +1749,7 @@
       const n = num(p);
       if (p.classList.contains("cover")) { out.i.push([n, "Portada", 0]); return; }
       // una seta o, en las páginas de media, dos
-      const hs = [...p.querySelectorAll(".sp-head .name, .mf-n")];
+      const hs = [...p.querySelectorAll(".sp-head .name, .f3-nom .name, .mf-n")];
       if (hs.length) {
         if (p.dataset.sec !== sec) { sec = p.dataset.sec; out.i.push([n, SECN[sec] || sec, 0]); }
         hs.forEach(h => { const m = h.closest(".media, .mf"); out.i.push([n, h.textContent.trim(), 1, "", m ? m.dataset.id : (out.f[n] || [])[0] || ""]); });

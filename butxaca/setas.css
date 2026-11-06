@@ -518,3 +518,100 @@ html.libro-bolsillo {
 .mf-sos .sos-f li::before { content: "→"; position: absolute; left: 0; color: var(--deadly); }
 .mf-sos .sos-alarma { margin-top: auto; padding: 1mm 1.6mm; border-radius: 1mm; border: .3mm solid var(--deadly); color: var(--deadly); font-weight: 700; font-size: 5.9pt; }
 .mf-extra.dense .mf-x-t, .mf-extra.dense .sos-f li { font-size: 5.8pt; }
+
+/* =========================================================
+   Cuaderno completo: ficha «F3a» (fichaBolsillo y parejaF3 en setas.js)
+   las tres fotos arriba a sangre y, debajo, todo a lo ancho
+   ========================================================= */
+.f3a { padding: 0 6mm 4.5mm; font-size: 6.6pt; line-height: 1.22; }
+.f3a.d1 { font-size: 6.4pt; }
+.f3a.d2 { font-size: 6.2pt; line-height: 1.19; }
+.f3a.d3 { font-size: 6pt; line-height: 1.17; }
+.f3a.d4 { font-size: 5.8pt; line-height: 1.15; }
+.f3a > * { flex-shrink: 0; }
+.f3a.st-comestible { --st-tint: #eef3ea; }
+.f3a.st-precaucio { --st-tint: #eeeff7; }
+.f3a.st-toxic { --st-tint: #f8f0df; }
+.f3a.st-mortal { --st-tint: #f9e9e6; }
+/* las parecidas: en las comestibles, en rojo (el peligro es confundirlas); en las demás, en verde */
+.f3a.st-comestible, .f3a.st-precaucio { --cf: var(--deadly); }
+.f3a.st-toxic, .f3a.st-mortal { --cf: var(--ok); }
+.f3a h3 { font-size: 5.8pt; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--st); margin: 0 0 .6mm; }
+.f3a p { margin: 0; }
+.f3a .lab { font-size: 5.6pt; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--st); margin-right: 1mm; }
+.f3a .tab { z-index: 4; }
+
+/* las tres fotos, a sangre; el nombre sobre la grande */
+.f3-top { position: relative; display: grid; grid-template-columns: 2fr 1fr; gap: .8mm; height: 64mm; margin: 0 -6mm; }
+.f3a.d2 .f3-top { height: 57mm; }
+.f3a.d3 .f3-top { height: 51mm; }
+.f3a.d4 .f3-top { height: 46mm; }
+.f3-top figure { margin: 0; position: relative; overflow: hidden; min-height: 0; }
+.f3-top img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.f3-main::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgb(0 0 0 / 0) 52%, rgb(0 0 0 / .72)); }
+.f3-pq { display: grid; grid-template-rows: 1fr 1fr; gap: .8mm; min-height: 0; }
+.f3-nom { position: absolute; left: 6mm; right: 37mm; bottom: 4mm; z-index: 2; }
+.f3-nom .name { font-family: var(--display); font-weight: 800; font-size: 21pt; line-height: .95; letter-spacing: -.01em; color: #fff; margin: 1.2mm 0 0; }
+.f3-nom .lat { font-family: var(--display); font-size: 7pt; line-height: 1.2; color: rgb(255 255 255 / .92); margin-top: .7mm; }
+.f3-nom .pill { font-size: 5.6pt; padding: .45mm 1.6mm; border-radius: 1mm; letter-spacing: .06em; }
+/* parejas: de qué seta es cada foto */
+.f3-et { position: absolute; left: 1.2mm; top: 1.2mm; z-index: 2; padding: .2mm 1mm; border-radius: .6mm; background: rgb(255 255 255 / .9); color: var(--ink); font-size: 5.2pt; font-weight: 700; }
+.f3-main .f3-et { left: 6mm; top: 2mm; }
+
+.f3-meta { display: flex; align-items: center; justify-content: space-between; gap: 2mm; padding: 1.4mm 0 1.2mm; white-space: nowrap; }
+.f3-meta .dif { display: inline-flex; align-items: center; gap: .9mm; font-size: 5.8pt; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+.f3-meta .lvl i { width: 1.8mm; height: 1.8mm; }
+.f3-meta .mes span { width: 2.5mm; height: 3.3mm; font-size: 4.9pt; font-weight: 700; }
+
+/* «Cómo es» en una línea */
+.f3a .rl { margin: 0 0 1.2mm; }
+.f3a .ri { margin-right: .9mm; }
+.f3a .nw { white-space: nowrap; }
+.f3a .ri .mk { display: inline-block; position: relative; width: 2.4mm; height: 2.4mm; top: .35mm; margin-right: .3mm; }
+.f3a .mk svg { width: 100%; height: 100%; display: block; }
+.f3a .r-si .mk { color: var(--ok); }
+.f3a .r-no .mk { color: var(--deadly); }
+.f3a .r-no b { color: var(--muted); font-weight: 600; }
+.f3a .r-medio .mk { color: var(--warn); }
+.f3a .r-si.alarma .mk, .f3a .r-si.alarma b { color: var(--deadly); }
+
+/* dónde, altitud y olor, con su icono */
+.f3a .irs { display: flex; flex-wrap: wrap; gap: .5mm 3mm; margin: 0 0 1.3mm; }
+.f3a .ir { display: inline-flex; align-items: flex-start; gap: 1mm; }
+.f3a .ir > svg { width: 3.2mm; height: 3.2mm; flex: none; fill: var(--st); color: var(--st); margin-top: -.1mm; }
+.f3a .ir .lab { font-size: 5.3pt; }
+
+/* peligro */
+.f3a .tx { display: flex; flex-wrap: wrap; align-items: center; gap: .5mm 3mm; padding: 1.1mm 1.6mm; margin: 0 0 1.3mm; border: .3mm solid var(--st); border-radius: 1.4mm; background: var(--st-tint); }
+.f3a .tx > span { display: inline-flex; align-items: center; gap: .9mm; }
+.f3a .tx svg { width: 3.4mm; height: 3.4mm; flex: none; fill: var(--st); color: var(--st); }
+.f3a .tx .lvl i { width: 1.8mm; height: 1.8mm; }
+.f3a .tx-g b, .f3a .tx-s { color: var(--st); font-weight: 700; }
+.f3a .tx-c { width: 100%; font-size: .93em; }
+
+/* cómo reconocerla: una frase por línea */
+.f3a .cl { list-style: none; margin: 0 0 1.3mm; padding: 0; }
+.f3a .cl li { display: flex; gap: 1.1mm; align-items: flex-start; margin: .4mm 0; }
+.f3a .cl li > svg, .f3a .cl li > .mk { width: 2.8mm; height: 2.8mm; flex: none; margin-top: .15mm; position: static; }
+.f3a .cl li > .mk { color: var(--ok); }
+.f3a .cl.alarm li > svg { fill: var(--st); }
+.f3a .clw h3 { margin-bottom: .3mm; }
+
+/* parejas: la tabla de diferencias */
+.f3a .cmp { margin: 0 0 1.2mm; }
+
+/* las parecidas, con foto */
+.f3-conf { margin-bottom: 1.2mm; }
+.f3-conf h3 { color: var(--cf); }
+.f3a .cfs { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2mm 1.8mm; }
+.f3a .cf3 { display: grid; grid-template-columns: 9mm 1fr; column-gap: 1.3mm; align-items: center; }
+.f3a .cf3 img, .f3a .cf3 .nof { width: 9mm; height: 9mm; border-radius: 50%; object-fit: cover; border: .45mm solid var(--cf); background: var(--paper-2); grid-row: span 2; }
+.f3a .cf3 p { font-size: 5.9pt; line-height: 1.15; }
+.f3a .cf3 .cfd { grid-column: 1 / -1; color: var(--muted); font-size: 5.6pt; margin-top: .3mm; }
+.f3a .cf3 .ref { font-size: 5.8pt; }
+
+/* compruebe */
+.f3a .cmp2 { display: flex; gap: 1.2mm; align-items: flex-start; padding: 1mm 1.6mm; background: #f4ebd1; border-radius: 1.2mm; }
+.f3a .cmp2 svg { width: 3.3mm; height: 3.3mm; flex: none; color: var(--accent); }
+.ley-f3 svg { color: #4d6b45; }
+.f3a .f3-nom h1.name { color: #fff; }

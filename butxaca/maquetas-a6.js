@@ -10,7 +10,8 @@ const maquetas = () => {
   const MUESTRAS = ["cantharellus-cibarius", "rubroboletus-satanas", "amanita-phalloides"];
   const PAG = {};
   Object.entries((window.LIBROS_TXT || {}).bolsillo?.f || {}).forEach(([n, ids]) => ids.forEach(id => (PAG[id] = +n)));
-  const img = n => `../libros/bolsillo/p${String(n).padStart(3, "0")}.jpg`;
+  // la ficha de antes de la F3a (copia de libros/bolsillo del 6-11-2026: el cuaderno ya lleva la F3a)
+  const img = n => `maquetas-antes/p${String(n).padStart(3, "0")}.jpg`;
 
   // ---------- el contenido de una ficha, en datos ----------
   const SEC = { comestibles: "Comestibles", toxicas: "Tóxicas", mortales: "Mortales" };
@@ -514,7 +515,7 @@ const maquetas = () => {
   // LÁMINAS
   // =========================================================
   const PROP = [
-    { k: "0", f: actual, t: "Ficha completa", s: "La que hay ahora, sin cambios",
+    { k: "0", f: actual, t: "Ficha completa", s: "La que había antes de la F3a",
       idea: "Cabecera con nombre y meses, tres fotos iguales en fila, «Cómo es / Dónde» en dos columnas y debajo, en texto seguido, cómo reconocerla y las confusiones.",
       gana: ["Lo dice todo: es la más completa.", "Muy ordenada y regular: todas las fichas se parecen."],
       pierde: ["Mucho texto pequeño; cuesta encontrar algo de un vistazo.", "Las fotos son pequeñas para A6."] },
