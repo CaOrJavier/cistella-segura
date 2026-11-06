@@ -108,7 +108,7 @@ const maquetas = () => {
   function ajusta(pg) {
     const cajas = () => [pg, ...pg.querySelectorAll(".fit")];
     const sobra = () => cajas().some(el => el.scrollHeight > el.clientHeight + 1);
-    const pasos = ["d1", 9, 8, "d2", 7, 6, 5, "d3", 4, 3, 2, 1];
+    const pasos = ["d1", 9, 8, "d2", 7, 6, 5, "d3", "d4", 4, 3, 2, 1];
     const quitados = [];
     for (const s of pasos) {
       if (!sobra()) break;
@@ -126,7 +126,7 @@ const maquetas = () => {
       padre.insertBefore(el, sig && sig.parentNode === padre ? sig : null);
       if (sobra()) el.remove();
     }
-    for (const d of ["d3", "d2", "d1"]) {
+    for (const d of ["d4", "d3", "d2", "d1"]) {
       if (!pg.classList.contains(d)) continue;
       pg.classList.remove(d);
       if (sobra()) { pg.classList.add(d); break; }
@@ -279,6 +279,115 @@ const maquetas = () => {
   const colorEsp = t => /blanc/i.test(t) && !/crema|rosad|ocre/i.test(t) ? "#fff" : /crema|rosad/i.test(t) ? "#f3e2cf" : /ocre|amarill/i.test(t) ? "#d9b46a" : /herrumbr|parda|pardo|marr/i.test(t) ? "#8a5a2e" : /negr|púrp|viol/i.test(t) ? "#3b2b3a" : /oliv/i.test(t) ? "#7d6f3a" : "#ddd";
 
   // =========================================================
+  // SEGUNDA RONDA (F–K): FOTO GRANDE, TEXTO APRETADO Y, EN ALGUNAS, ADORNOS
+  // =========================================================
+  // texto compacto: cada bloque en un párrafo seguido, con su título delante (sin listas)
+  const minus = t => t.charAt(0).toLowerCase() + t.slice(1);
+  function compacto(d) {
+    const ras = d.rasgos.map(([t, l, x]) => `<span class="ri r-${t}${t === "si" && l === "Volva" ? " alarma" : ""}"><i class="mk">${S.MARCA[t]}</i><b>${l}</b>${x ? " " + esc(x) : ""}</span>`).join(" ")
+      + (d.esporada ? ` <span class="ri" data-q="6"><b>Esporada</b> ${esc(minus(d.esporada))}</span>` : "");
+    const donde = [...d.donde.map(x => x[1]), d.alt].filter(Boolean).map(esc).join("; ");
+    const t = d.tox;
+    return `
+      <p class="k"><span class="lab">Cómo es</span>${ras}</p>
+      <p class="k"><span class="lab">Dónde</span>${donde}.${d.detalle ? ` <span class="kmas" data-q="8">${esc(d.detalle)}</span>` : ""}</p>
+      <p class="k kcl${d.ok ? "" : " alarm"}"><span class="lab">${d.ok ? "Cómo reconocerla" : "Rasgos de alarma"}</span>${d.claves.map((c, i) => `<span class="kc"${i >= 3 ? ' data-q="5"' : ""}>${esc(c)}</span>`).join(" ")}</p>
+      ${d.os ? `<div data-q="7">${d.os.replace('class="os"', 'class="os k"')}</div>` : ""}
+      ${t ? `<p class="k ktox"><span class="lab">Gravedad</span>${S.dots(t.grav[0])} <b>${t.grav[1]}.</b> ${esc(t.causa)}${t.sindrome ? ` <span data-q="4"><span class="lab">${esc(t.sindrome)}</span>Síntomas ${esc(t.latencia)}. ${esc(t.sintomas)}</span>` : ""}</p>` : ""}
+      <div class="kconf"><p class="k"><span class="lab">${d.ok ? "Cuidado: se confunde con" : "Se confunde con"}</span></p>${d.confs.map((c, i) => `<p class="kcf"${i === 2 ? ' data-q="5"' : ""}><b>${c.nombre}</b> ${tag(c)} ${pagRef(c)} <span class="kd">${esc(S.cortaFrase(c.dif, 110))}</span></p>`).join("")}</div>
+      ${compruebe(d)}`;
+  }
+  const mesesCorto = d => d.mesesTxt.replace(/^De /, "").replace(" a ", "–");
+
+  // adornos (SVG; las medidas en mm, del tamaño de la página A6)
+  // marco clásico: doble filete con las esquinas hacia dentro y un rizo en cada una
+  const esquinaClasica = `<g class="orn"><path d="M6 15.5C10 15.5 11.4 11.6 9.4 10.2 8 9.2 6.8 10.6 7.8 11.6"/><path d="M15.5 6C15.5 10 11.6 11.4 10.2 9.4 9.2 8 10.6 6.8 11.6 7.8"/><path class="rl" d="M9.6 9.6l1.3-2.4 1.1 1.1-2.4 1.3 1.3-2.4M9.6 9.6l2.4-1.3"/><circle cx="7.4" cy="7.4" r=".9"/></g>`;
+  const marcoClasico = () => {
+    const L = 6, T = 6, R = 99, B = 142, r = 5;
+    const dentro = `M${L + r} ${T}H${R - r}A${r} ${r} 0 0 0 ${R} ${T + r}V${B - r}A${r} ${r} 0 0 0 ${R - r} ${B}H${L + r}A${r} ${r} 0 0 0 ${L} ${B - r}V${T + r}A${r} ${r} 0 0 0 ${L + r} ${T}Z`;
+    const rombo = (x, y) => `<path class="rb" d="M${x} ${y - 1.4}l1.4 1.4-1.4 1.4-1.4-1.4z"/>`;
+    return `<svg class="marco" viewBox="0 0 105 148" aria-hidden="true"><rect class="fl" x="3.6" y="3.6" width="97.8" height="140.8"/><path class="fl2" d="${dentro}"/>
+      ${esquinaClasica}<g transform="translate(105 0) scale(-1 1)">${esquinaClasica}</g><g transform="translate(0 148) scale(1 -1)">${esquinaClasica}</g><g transform="translate(105 148) scale(-1 -1)">${esquinaClasica}</g>
+      ${rombo(52.5, 3.6)}${rombo(3.6, 74)}${rombo(101.4, 74)}</svg>`;
+  };
+  // orla: filete con un rombo y dos rizos en el centro
+  const orla = (w = 46) => `<svg class="orla" viewBox="0 0 60 8" style="width:${w}mm" aria-hidden="true"><path class="o-l" d="M1 4H23M37 4H59"/><path class="o-c" d="M23 4c1.6-2.6 4.2-2.6 4.6-.6M37 4c-1.6-2.6-4.2-2.6-4.6-.6M23 4c1.6 2.6 4.2 2.6 4.6.6M37 4c-1.6 2.6-4.2 2.6-4.6.6"/><path class="o-r" d="M30 1.3l2.7 2.7L30 6.7 27.3 4z"/></svg>`;
+  // esquinas modernistas: un latigazo que se enrosca, hojas y bayas, del color del grupo
+  const esquinaModernista = `<g class="mod" transform="translate(3 3) scale(.75)"><path class="m1" d="M3.5 46C3.5 22 7 9 18 5.6 25 3.6 32 4.4 46 4"/><path class="m2" d="M7 34C8.5 21 14.5 13.5 23.5 12.6c5.2-.5 7.2 3.6 4.2 5.6-2.6 1.7-5.4-.6-3.4-2.4"/><path class="m2" d="M12 7.6c4.4 3.2 5.6 8 4.4 12"/><path class="hj" d="M8.6 25.5c.6-5 4.4-8 8.2-7.2-1.2 4.2-4.6 6.6-8.2 7.2z"/><path class="hj" d="M16.4 8.8c3.8-2.4 8.2-2 10 .4-3.6 2-7.2 1.8-10-.4z"/><circle class="by" cx="31.5" cy="8.6" r="1.15"/><circle class="by" cx="34.4" cy="10.6" r=".8"/><circle class="by lado" cx="7.6" cy="38.6" r="1"/><circle class="by lado" cx="10" cy="41.6" r=".7"/></g>`;
+  const marcoModernista = () => `<svg class="marco mod-m" viewBox="0 0 105 148" aria-hidden="true">
+    ${esquinaModernista}<g transform="translate(105 0) scale(-1 1)">${esquinaModernista}</g><g class="abajo" transform="translate(0 148) scale(1 -1)">${esquinaModernista}</g><g class="abajo" transform="translate(105 148) scale(-1 -1)">${esquinaModernista}</g>
+    <path class="m1" d="M37.5 6H67.5M5.6 37.5V110.5M99.4 37.5V110.5M37.5 142H67.5"/><path class="by" d="M52.5 3.8l2.2 2.2-2.2 2.2-2.2-2.2z"/><path class="by" d="M52.5 139.8l2.2 2.2-2.2 2.2-2.2-2.2z"/><path class="by" d="M3.4 74l2.2-2.2 2.2 2.2-2.2 2.2z"/><path class="by" d="M97.2 74l2.2-2.2 2.2 2.2-2.2 2.2z"/></svg>`;
+
+  // ---------- F · foto alta y texto en dos columnas ----------
+  function mF(d) {
+    const [f1, f2, f3] = d.fotos;
+    return `<section class="pg mF st-${d.st}" data-id="${d.id}">
+      <div class="f-hero crece">${foto(f1, "f-main")}<div class="f-nom">${pill(d)}<h1>${d.nombre}</h1><p class="lat">${d.segunda}</p></div>
+        <div class="f-pq">${foto(f2)}${foto(f3)}</div></div>
+      <div class="f-meta">${dif(d)}${mesesTira(d)}</div>
+      <div class="kk k2">${compacto(d)}</div>${pie(d)}</section>`;
+  }
+
+  // ---------- G · marco clásico con esquinas ----------
+  function mG(d) {
+    const [f1, f2, f3] = d.fotos;
+    return `<section class="pg mG st-${d.st}" data-id="${d.id}">${marcoClasico()}
+      <header class="g-head"><p class="g-k"><span>${d.est.pill}</span> · ${S.dots(d.dn)} ${d.dt}</p><h1>${d.nombre}</h1><p class="lat">${d.segunda}</p>${orla(40)}</header>
+      <div class="g-fotos crece">${foto(f1, "g-big")}<div class="g-pq">${foto(f2)}${foto(f3)}</div></div>
+      <div class="g-meta">${mesesTira(d)}</div>
+      <div class="kk k2">${compacto(d)}</div>
+      <footer class="pf g-pf"><span class="pn">${d.pag}</span></footer></section>`;
+  }
+
+  // ---------- H · arco y medallones ----------
+  function mH(d) {
+    const [f1, f2, f3] = d.fotos;
+    return `<section class="pg mH st-${d.st}" data-id="${d.id}">
+      <div class="h-arco crece">${foto(f1, "h-main")}${foto(f2, "h-med h-m1")}${foto(f3, "h-med h-m2")}</div>
+      <header class="h-head"><h1>${d.nombre}</h1><p class="lat">${d.segunda}</p>${orla(52)}<p class="h-k">${pill(d)}${dif(d)}${mesesTira(d)}</p></header>
+      <div class="kk">${compacto(d)}</div>${pie(d)}</section>`;
+  }
+
+  // ---------- I · álbum de campo: esquineros, cinta y notas a mano ----------
+  function mI(d) {
+    const [f1, f2, f3] = d.fotos;
+    const esq = `<i class="esq e1"></i><i class="esq e2"></i><i class="esq e3"></i><i class="esq e4"></i>`;
+    const nota = f1?.pie ? S.capCorta(f1.pie, 34).replace(/[.…]$/, "") : "";
+    return `<section class="pg mI st-${d.st}" data-id="${d.id}">
+      <header class="i-head"><div><h1>${d.nombre}</h1><p class="lat">${d.segunda}</p></div><div class="i-k">${pill(d)}<span class="mano">${esc(d.dt.toLowerCase())} · ${esc(mesesCorto(d))}</span></div></header>
+      <div class="i-fotos crece">
+        <div class="i-f i-1"><img src="${f1.src}" alt="">${esq}</div>
+        ${f2 ? `<div class="i-f i-2"><img src="${f2.src}" alt=""><i class="cinta"></i></div>` : ""}
+        ${f3 ? `<div class="i-f i-3"><img src="${f3.src}" alt=""><i class="cinta"></i></div>` : ""}
+        ${nota ? `<p class="mano i-nota">↑ ${esc(minus(nota))}</p>` : ""}
+      </div>
+      <div class="kk k2">${compacto(d)}</div>${pie(d)}</section>`;
+  }
+
+  // ---------- J · modernista: esquinas con hojas y el nombre en una cinta ----------
+  function mJ(d) {
+    const [f1, f2, f3] = d.fotos;
+    return `<section class="pg mJ st-${d.st}" data-id="${d.id}">${marcoModernista()}
+      <div class="j-fotos crece">${foto(f1, "j-main")}<div class="j-pq">${foto(f2)}${foto(f3)}</div></div>
+      <div class="j-cinta"><h1>${d.nombre}</h1></div>
+      <p class="lat j-lat">${d.segunda}</p>
+      <p class="j-meta">${pill(d)}${dif(d)}${mesesTira(d)}</p>
+      <div class="kk k2">${compacto(d)}</div>
+      <footer class="pf j-pf"><span class="pn">${d.pag}</span></footer></section>`;
+  }
+
+  // ---------- K · la foto de fondo, a toda página, y el texto en un panel ----------
+  function mK(d) {
+    const [f1, f2, f3] = d.fotos;
+    return `<section class="pg mK st-${d.st}" data-id="${d.id}">${foto(f1, "k-fondo")}
+      <div class="k-top">${pill(d)}<h1>${d.nombre}</h1><p class="lat">${d.segunda}</p></div>
+      <div class="k-hueco"></div>
+      <div class="k-panel"><div class="k-pq">${foto(f2)}${foto(f3)}</div>
+        <p class="k-meta">${dif(d)}${mesesTira(d)}</p>
+        <div class="kk k2">${compacto(d)}</div>${pie(d)}</div></section>`;
+  }
+
+  // =========================================================
   // LÁMINAS
   // =========================================================
   const PROP = [
@@ -307,32 +416,65 @@ const maquetas = () => {
       gana: ["Enseña a mirar las partes: muy didáctica.", "Anillo y volva saltan a la vista (o que no los tiene)."],
       pierde: ["El dibujo es esquemático: no sirve para las setas con formas raras (bolas, corales, colmenillas).", "Menos texto de reconocimiento."] }
   ];
+  const PROP2 = [
+    { k: "F", f: mF, t: "Foto alta", s: "Foto grande y texto en dos columnas",
+      idea: "Media página de foto a sangre, con el nombre encima y las otras dos fotos montadas sobre el borde. Debajo, todo el texto seguido y apretado, en dos columnas.",
+      gana: ["La foto más grande con casi todo el texto.", "Sencilla: sirve igual para todas las setas."],
+      pierde: ["Texto pequeño y seguido, sin listas.", "Gasta tinta (foto a sangre)."] },
+    { k: "G", f: mG, t: "Marco clásico", s: "Doble filete con esquinas",
+      idea: "Como una lámina de libro antiguo: un marco de doble filete con las esquinas hacia dentro y un rizo en cada una, el nombre centrado con una orla y las fotos con paspartú.",
+      gana: ["Elegante, de libro de verdad.", "El marco no gasta casi tinta."],
+      pierde: ["El marco quita unos milímetros a cada lado.", "Algo menos de texto que F."] },
+    { k: "H", f: mH, t: "Arco y medallones", s: "Lámina de botánica",
+      idea: "La foto principal dentro de un arco con doble filo de color y las otras dos en medallones redondos sobre las esquinas. Nombre centrado con orla y el texto en una columna.",
+      gana: ["Muy decorativa sin recargar.", "La foto grande se ve entera."],
+      pierde: ["El arco recorta las esquinas de la foto.", "Una sola columna: líneas largas."] },
+    { k: "I", f: mI, t: "Álbum de campo", s: "Esquineros, cinta y notas a mano",
+      idea: "Como un álbum de fotos o un diario de campo: la foto grande un poco torcida con esquineros, las otras dos pegadas con cinta y notas escritas a mano.",
+      gana: ["Cercana y divertida; parece hecha a mano.", "Fotos grandes."],
+      pierde: ["Las fotos torcidas tapan un poco las otras.", "Menos seria para un libro de seguridad."] },
+    { k: "J", f: mJ, t: "Modernista", s: "Esquinas con hojas y cinta",
+      idea: "Esquinas con latigazos, hojas y bayas del color del grupo (verde, naranja o rojo), la foto con las esquinas de arriba redondeadas y el nombre en una cinta con picos.",
+      gana: ["La más adornada: muy vistosa.", "El color del grupo en el marco avisa sin leer."],
+      pierde: ["Mucho adorno en una página pequeña.", "El texto queda más estrecho."] },
+    { k: "K", f: mK, t: "Foto de fondo", s: "Toda la página es la foto",
+      idea: "La foto ocupa la página entera; el nombre va arriba, sobre la foto, y el texto en un panel blanco abajo, con las otras dos fotos asomando por encima.",
+      gana: ["La foto más grande posible.", "Muy llamativa al hojear."],
+      pierde: ["Gasta mucha tinta.", "Según la foto, el panel tapa parte de la seta."] }
+  ];
   const D = MUESTRAS.map(id => datos(S.BY[id]));
   const lamina = (cls, html) => { raiz.insertAdjacentHTML("beforeend", `<section class="lam ${cls}">${html}</section>`); return raiz.lastElementChild; };
   const marca = `<p class="lam-pie">Setas esenciales · cuaderno completo A6 · propuestas de maquetación de la ficha · ${new Date().toLocaleDateString("es-ES")}</p>`;
+  const letra = p => (p.k === "0" ? "Ahora" : p.k);
 
-  // portada: las 6 con la misma seta, para verlas de un vistazo
-  const comparativa = (d, n) => lamina("cmp", `
-    <header class="lam-h"><span class="lam-n">${n}</span><div><h2>${esc(d.nombreTxt)}: las seis maquetas</h2><p>La misma ficha (${SEC[d.sec].toLowerCase()}) en cada propuesta, al 60 %. Las láminas siguientes las muestran a tamaño real.</p></div></header>
-    <div class="cmp-grid">${PROP.map(p => `<div class="cmp-c"><p class="cmp-t"><b>${p.k === "0" ? "Ahora" : p.k}</b> ${esc(p.t)}</p><div class="esc">${p.f(d)}</div></div>`).join("")}</div>${marca}`);
-
+  // cada ronda: la comestible con las seis maquetas juntas, cada maqueta a tamaño real y las otras dos setas juntas
   let n = 1;
-  comparativa(D[0], n++);
-  PROP.forEach(p => {
-    lamina("prop", `
-      <aside class="lam-txt">
-        <span class="lam-k">${p.k === "0" ? "Ahora" : p.k}</span>
-        <h2>${esc(p.t)}</h2><p class="lam-s">${esc(p.s)}</p>
-        <p>${esc(p.idea)}</p>
-        <h4 class="g">A favor</h4><ul>${p.gana.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
-        <h4 class="p">En contra</h4><ul>${p.pierde.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
-        <p class="lam-nota">Lámina ${n} · tamaño real (A6, 105 × 148 mm). Comestible a la izquierda, mortal a la derecha; la tóxica, en la lámina ${PROP.length + 2}.</p>
-      </aside>
-      <div class="lam-pgs">${p.f(D[0])}${p.f(D[2])}</div>${marca}`);
-    n++;
-  });
-  comparativa(D[1], n++);
-  comparativa(D[2], n++);
+  function ronda(nombre, props) {
+    const comparativa = d => lamina("cmp", `
+      <header class="lam-h"><span class="lam-n">${n++}</span><p class="lam-r">${esc(nombre)}</p><div><h2>${esc(d.nombreTxt)}: las seis maquetas</h2><p>La misma ficha (${SEC[d.sec].toLowerCase()}) en cada propuesta, al 60 %. Las láminas siguientes las muestran a tamaño real.</p></div></header>
+      <div class="cmp-grid">${props.map(p => `<div class="cmp-c"><p class="cmp-t"><b>${letra(p)}</b> ${esc(p.t)}</p><div class="esc">${p.f(d)}</div></div>`).join("")}</div>${marca}`);
+    const tox = n + props.length + 1;
+    comparativa(D[0]);
+    props.forEach(p => {
+      lamina("prop", `
+        <aside class="lam-txt">
+          <p class="lam-r">${esc(nombre)}</p>
+          <span class="lam-k">${letra(p)}</span>
+          <h2>${esc(p.t)}</h2><p class="lam-s">${esc(p.s)}</p>
+          <p>${esc(p.idea)}</p>
+          <h4 class="g">A favor</h4><ul>${p.gana.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+          <h4 class="p">En contra</h4><ul>${p.pierde.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+          <p class="lam-nota">Lámina ${n} · tamaño real (A6, 105 × 148 mm). Comestible a la izquierda, mortal a la derecha; la tóxica, en la lámina ${tox}.</p>
+        </aside>
+        <div class="lam-pgs">${p.f(D[0])}${p.f(D[2])}</div>${marca}`);
+      n++;
+    });
+    comparativa(D[1]);
+    comparativa(D[2]);
+  }
+  // la ronda nueva primero
+  ronda("Segunda ronda · foto grande", PROP2);
+  ronda("Primera ronda", PROP);
 
   // ajuste de cada página (después de cargar las fotos, que no cambian el alto: todas tienen su caja fija)
   const pgs = [...document.querySelectorAll(".pg:not(.img)")];
