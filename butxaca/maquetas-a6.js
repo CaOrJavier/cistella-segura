@@ -115,16 +115,17 @@ const maquetas = () => {
       if (typeof s === "string") { pg.classList.add(s); continue; }
       let l;
       while (sobra() && (l = pg.querySelectorAll(`[data-q="${s}"]`)).length) {
-        const el = l[l.length - 1];
-        quitados.push([el, el.parentNode, el.nextSibling]);
-        el.remove();
+        // con data-g, se quitan (y vuelven) todos los del grupo a la vez: las diferencias de las parecidas, todas o ninguna
+        const el = l[l.length - 1], grupo = el.dataset.g ? [...pg.querySelectorAll(`[data-g="${el.dataset.g}"]`)] : [el];
+        quitados.push(grupo.map(x => [x, x.parentNode, x.nextSibling]));
+        grupo.forEach(x => x.remove());
       }
     }
     if (sobra()) { pg.classList.add("desborda"); console.warn("No cabe:", pg.dataset.id, pg.className); return; }
     // si ha sobrado sitio, vuelve lo quitado (lo más importante primero) y luego la letra más grande
-    for (const [el, padre, sig] of quitados.reverse()) {
-      padre.insertBefore(el, sig && sig.parentNode === padre ? sig : null);
-      if (sobra()) el.remove();
+    for (const grupo of quitados.reverse()) {
+      grupo.forEach(([el, padre, sig]) => padre.insertBefore(el, sig && sig.parentNode === padre ? sig : null));
+      if (sobra()) grupo.forEach(([el]) => el.remove());
     }
     for (const d of ["d4", "d3", "d2", "d1"]) {
       if (!pg.classList.contains(d)) continue;
@@ -388,6 +389,98 @@ const maquetas = () => {
   }
 
   // =========================================================
+  // TERCERA RONDA (F1–F3): LA F CON FOTOS PEQUEÑAS MÁS GRANDES Y MENOS TEXTO (ICONOS)
+  // =========================================================
+  const pic = x => `<svg viewBox="0 0 12 12" aria-hidden="true">${x}</svg>`;
+  const PIC = {
+    // una seta entera: con el anillo colgando del pie, o con la base metida en un saco (volva)
+    anillo: pic('<path d="M.7 4.9C1.6 2.2 3.6.9 6 .9s4.4 1.3 5.3 4z"/><path d="M5.1 4.9h1.8v6.6H5.1z"/><path d="M3.3 6.2h5.4l1.1 2H2.2z"/>'),
+    volva: pic('<path d="M.7 4.9C1.6 2.2 3.6.9 6 .9s4.4 1.3 5.3 4z"/><path d="M5.1 4.9h1.8v5H5.1z"/><path d="M2.8 8.4c0 2.3 1.2 3.2 3.2 3.2s3.2-.9 3.2-3.2l-1 .9-.9-1.1-.7 1-.6-1-.6 1-.7-1-.9 1.1z"/>'),
+    olor: pic('<path d="M6.5 1.1C5.9 4 3.3 6.4 3.3 8.5c0 1.1.9 2 2 2h1.9a1.9 1.9 0 0 0 .4-3.7" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>'),
+    reloj: pic('<circle cx="6" cy="6" r="4.8" fill="none" stroke="currentColor" stroke-width="1.25"/><path d="M6 3.1V6l2.1 1.4" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/>'),
+    alerta: pic('<path d="M6 .9 11.5 10.8H.5z"/><path d="M5.35 4.1h1.3l-.2 3.7h-.9zM5.35 8.5h1.3v1.3h-1.3z" fill="#fff"/>'),
+    lupa: pic('<circle cx="5" cy="5" r="3.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M7.6 7.6 11 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>')
+  };
+  const LATEX_C = { rojo: "#8e1b2a", naranja: "#e0791e", blanco: "#ffffff", blanco_a_amarillo: "#f2df8a" };
+  const gota = c => pic(`<path d="M6 .8S2.4 5.4 2.4 8a3.6 3.6 0 0 0 7.2 0C9.6 5.4 6 .8 6 .8z" fill="${c}" stroke="#39423b" stroke-width=".6"/>`);
+  const disco = c => pic(`<circle cx="6" cy="6" r="4.6" fill="${c}" stroke="#39423b" stroke-width=".7"/><circle cx="6" cy="6" r="1.4" fill="#39423b" fill-opacity=".18"/>`);
+  const HIM_PIC = { laminas: "lamines", poros: "porus", pliegues: "plecs", aguijones: "agullons" };
+
+  // los rasgos, en iconos: [tipo (si/no/medio/dato), icono, título, detalle]
+  function rasgosIco(d) {
+    const c = d.car, him = c.himenoforo, out = [];
+    if (S.LAB_HIM[him]) out.push(["si", S.ICON[HIM_PIC[him]], S.LAB_HIM[him], S.DEBAJO[d.id]]);
+    else if (him) out.push(["no", S.ICON.lamines, "Sin láminas", S.DEBAJO[d.id]]);
+    if (S.LAB_HIM[him]) {
+      if (c.anillo) out.push(["si", PIC.anillo, "Anillo", S.ANILLO[d.id]]);
+      else if (S.ANILLO_PARCIAL[d.id]) out.push(["medio", PIC.anillo, "Anillo", S.ANILLO_PARCIAL[d.id]]);
+      else out.push(["no", PIC.anillo, "Sin anillo", ""]);
+      out.push(c.volva ? ["si", PIC.volva, "Volva", S.VOLVA[d.id]] : ["no", PIC.volva, "Sin volva", ""]);
+    }
+    if (c.latex) out.push(["dato", gota(LATEX_C[c.latex] || "#fff"), "Látex", S.LATEX[c.latex]]);
+    if (d.esporada) out.push(["dato", disco(colorEsp(d.esporada)), "Esporada", minus(d.esporada)]);
+    return out;
+  }
+  const chip = ([t, ic, l, x]) => `<div class="chip c-${t}${t === "si" && l === "Volva" ? " alarma" : ""}"><span class="ci">${ic}${t === "dato" ? "" : `<i class="bd">${S.MARCA[t]}</i>`}</span><span class="ct"><b>${l}</b>${x ? `<small data-q="6">${esc(x)}</small>` : ""}</span></div>`;
+  const chips = (d, cls = "") => { const r = rasgosIco(d); return `<div class="chips ${cls}" style="--n:${r.length}">${r.map(chip).join("")}</div>`; };
+  // dónde y cuándo, cada dato con su icono
+  const dondeIco = (d, conMeses = false) => [...d.donde, ...(d.alt ? [["monte", d.alt]] : []), ...(conMeses && d.mesesTxt ? [["calendari", d.mesesTxt]] : [])]
+    .map(([ic, t]) => `<p class="ir">${S.ICON[ic]}<span>${esc(t)}</span></p>`).join("");
+  const olorIco = d => (d.os ? `<p class="ir" data-q="7">${PIC.olor}<span>${d.os.replace(/^<p class="os">|<\/p>$/g, "")}</span></p>` : "");
+  // los rasgos para reconocerla, cortos y cada uno en su línea, con su marca
+  const clavesIco = d => `<ul class="cl${d.ok ? "" : " alarm"}">${d.claves.map((c, i) => `<li${i >= 3 ? ' data-q="5"' : ""}>${d.ok ? `<i class="mk">${S.MARCA.si}</i>` : PIC.alerta}<span>${esc(S.cortaFrase(c, 100))}</span></li>`).join("")}</ul>`;
+  // latencia corta: «de 6 a 24 horas (típicamente 8–12)» → «6–24 h»
+  const UN = { minuto: "min", minutos: "min", hora: "h", horas: "h", días: "días", dias: "días", semanas: "semanas" };
+  const latCorta = t => {
+    t = String(t || "").replace(/\s*\([^)]*\)/g, "");
+    const m = t.match(/(\d+)\s*(minutos?|horas?|días|semanas)?\s*(?:a|y|–|-)\s*(\d+)\s*(minutos?|horas?|días|semanas)/i);
+    if (!m) return t;
+    const u2 = UN[m[4].toLowerCase()], u1 = m[2] ? UN[m[2].toLowerCase()] : u2;
+    return u1 === u2 ? `${m[1]}–${m[3]} ${u2}` : `${m[1]} ${u1} – ${m[3]} ${u2}`;
+  };
+  const toxIco = d => (d.tox ? `<div class="tx"><span class="tx-g">${PIC.alerta}${S.dots(d.tox.grav[0])}<b>${d.tox.grav[1]}</b></span>${d.tox.latencia ? `<span>${PIC.reloj}síntomas a las ${esc(latCorta(d.tox.latencia))}</span>` : ""}${d.tox.sindrome ? `<span class="tx-s" data-q="4">${esc(d.tox.sindrome)}</span>` : ""}<p class="tx-c" data-q="5">${esc(d.tox.causa)}</p></div>` : "");
+  // las que se le parecen: foto redonda, nombre, etiqueta y página; la diferencia, corta
+  const confsIco = (d, cols = 3) => `<div class="cfx"><h3>${d.ok ? "Cuidado: se confunde con" : "Se confunde con"}</h3><div class="cfs" style="--c:${cols}">${d.confs.map((c, i) => `<div class="cf3"${i === 2 ? ' data-q="4"' : ""}>${c.foto ? `<img src="${c.foto}" alt="">` : `<span class="nof"></span>`}<p><b>${c.nombre}</b><br>${tag(c)} ${pagRef(c)}</p><p class="cfd" data-q="3" data-g="cfd">${esc(S.cortaFrase(c.dif, 62))}</p></div>`).join("")}</div></div>`;
+  const comprIco = d => (d.compruebe ? `<p class="cmp2" data-q="2">${PIC.lupa}<span><b>Compruebe:</b> ${esc(S.primera(d.compruebe, 120))}</span></p>` : "");
+  const nombreFoto = d => `<div class="f-nom">${pill(d)}<h1>${d.nombre}</h1><p class="lat">${d.segunda}</p></div>`;
+
+  // ---------- F1 · F con fotos pequeñas grandes y fila de iconos ----------
+  function mF1(d) {
+    const [f1, f2, f3] = d.fotos;
+    return `<section class="pg ic mF1 st-${d.st}" data-id="${d.id}">
+      <div class="f-hero crece">${foto(f1, "f-main")}${nombreFoto(d)}<div class="f1-pq">${foto(f2)}${foto(f3)}</div></div>
+      <div class="f1-meta">${dif(d)}${mesesTira(d)}</div>
+      ${chips(d)}
+      <div class="irs">${dondeIco(d)}${olorIco(d)}</div>
+      ${toxIco(d)}${clavesIco(d)}
+      ${confsIco(d)}${comprIco(d)}${pie(d)}</section>`;
+  }
+
+  // ---------- F2 · F con tira de fotos y ficha técnica ----------
+  function mF2(d) {
+    const [f1, f2, f3] = d.fotos;
+    return `<section class="pg ic mF2 st-${d.st}" data-id="${d.id}">
+      <div class="f-hero crece">${foto(f1, "f-main")}${nombreFoto(d)}</div>
+      <div class="f2-fotos">${foto(f2)}${foto(f3)}</div>
+      <div class="f2-meta">${dif(d)}${mesesTira(d)}</div>
+      <div class="f2-tec"><div>${chips(d, "fila")}</div><div class="irs col">${dondeIco(d)}${olorIco(d)}</div></div>
+      ${toxIco(d)}${clavesIco(d)}
+      ${confsIco(d)}${comprIco(d)}${pie(d)}</section>`;
+  }
+
+  // ---------- F3 · F con las tres fotos arriba y columna de iconos ----------
+  function mF3(d) {
+    const [f1, f2, f3] = d.fotos;
+    return `<section class="pg ic mF3 st-${d.st}" data-id="${d.id}">
+      <div class="f3-top crece">${foto(f1, "f3-main")}<div class="f3-pq">${foto(f2)}${foto(f3)}</div>${nombreFoto(d)}</div>
+      <div class="f2-meta">${dif(d)}${mesesTira(d)}</div>
+      <div class="f3-body">
+        <aside class="f3-side">${chips(d, "fila")}</aside>
+        <div class="f3-main-t"><div class="irs">${dondeIco(d)}${olorIco(d)}</div>${toxIco(d)}${clavesIco(d)}${confsIco(d, 1)}${comprIco(d)}</div>
+      </div>${pie(d)}</section>`;
+  }
+
+  // =========================================================
   // LÁMINAS
   // =========================================================
   const PROP = [
@@ -442,6 +535,20 @@ const maquetas = () => {
       gana: ["La foto más grande posible.", "Muy llamativa al hojear."],
       pierde: ["Gasta mucha tinta.", "Según la foto, el panel tapa parte de la seta."] }
   ];
+  const PROP3 = [
+    { k: "F1", f: mF1, t: "Foto alta con iconos", s: "Fotos pequeñas grandes y fila de iconos",
+      idea: "La F con las dos fotos pequeñas mucho más grandes. Los rasgos pasan a iconos (láminas, anillo, volva, látex, esporada) con una marca verde o roja; dónde, altitud y olor, cada uno con su icono; las parecidas, con foto.",
+      gana: ["Se ve de un vistazo si tiene anillo o volva.", "Casi nada de texto seguido: frases cortas, una por línea."],
+      pierde: ["Hay que aprender los iconos (van en la página de «Antes de salir»).", "Algo menos de detalle que la F."] },
+    { k: "F2", f: mF2, t: "Tira de fotos", s: "Las tres fotos grandes y ficha técnica",
+      idea: "La foto grande arriba y, debajo, las otras dos a todo el ancho, igual de grandes entre sí. Luego una ficha técnica en dos columnas: los rasgos en iconos a la izquierda y dónde y cuándo a la derecha.",
+      gana: ["Las fotos pequeñas, las más grandes de todas las propuestas.", "Ficha ordenada como una tabla."],
+      pierde: ["Las fotos ocupan media página larga: menos sitio para las parecidas.", "En las fichas largas se quita el detalle de las diferencias."] },
+    { k: "F3", f: mF3, t: "Columna de iconos", s: "Tres fotos arriba y los rasgos al lado",
+      idea: "Las tres fotos juntas arriba, a sangre (la grande y dos a su lado). Debajo, una columna estrecha con los rasgos en iconos, uno debajo de otro, y al lado el resto: dónde, cómo reconocerla, peligro y parecidas.",
+      gana: ["Los rasgos siempre en el mismo sitio, como una tabla para repasar.", "Las tres fotos se ven a la vez."],
+      pierde: ["La columna de texto es más estrecha.", "Foto principal algo más estrecha que en F1."] }
+  ];
   const D = MUESTRAS.map(id => datos(S.BY[id]));
   const lamina = (cls, html) => { raiz.insertAdjacentHTML("beforeend", `<section class="lam ${cls}">${html}</section>`); return raiz.lastElementChild; };
   const marca = `<p class="lam-pie">Setas esenciales · cuaderno completo A6 · propuestas de maquetación de la ficha · ${new Date().toLocaleDateString("es-ES")}</p>`;
@@ -449,10 +556,12 @@ const maquetas = () => {
 
   // cada ronda: la comestible con las seis maquetas juntas, cada maqueta a tamaño real y las otras dos setas juntas
   let n = 1;
-  function ronda(nombre, props) {
+  // ref: maquetas de antes que salen en las comparativas para tenerlas al lado (sin lámina propia)
+  function ronda(nombre, props, ref = []) {
+    const todas = [...ref, ...props], cuantas = ["", "una", "dos", "tres", "cuatro", "cinco", "seis"][todas.length] || todas.length;
     const comparativa = d => lamina("cmp", `
-      <header class="lam-h"><span class="lam-n">${n++}</span><p class="lam-r">${esc(nombre)}</p><div><h2>${esc(d.nombreTxt)}: las seis maquetas</h2><p>La misma ficha (${SEC[d.sec].toLowerCase()}) en cada propuesta, al 60 %. Las láminas siguientes las muestran a tamaño real.</p></div></header>
-      <div class="cmp-grid">${props.map(p => `<div class="cmp-c"><p class="cmp-t"><b>${letra(p)}</b> ${esc(p.t)}</p><div class="esc">${p.f(d)}</div></div>`).join("")}</div>${marca}`);
+      <header class="lam-h"><span class="lam-n">${n++}</span><p class="lam-r">${esc(nombre)}</p><div><h2>${esc(d.nombreTxt)}: las ${cuantas} maquetas</h2><p>La misma ficha (${SEC[d.sec].toLowerCase()}) en cada propuesta, al 60 %. Las láminas siguientes las muestran a tamaño real.</p></div></header>
+      <div class="cmp-grid${todas.length <= 4 ? " c2" : ""}">${todas.map(p => `<div class="cmp-c"><p class="cmp-t"><b>${letra(p)}</b> ${esc(p.t)}</p><div class="esc">${p.f(d)}</div></div>`).join("")}</div>${marca}`);
     const tox = n + props.length + 1;
     comparativa(D[0]);
     props.forEach(p => {
@@ -472,7 +581,8 @@ const maquetas = () => {
     comparativa(D[1]);
     comparativa(D[2]);
   }
-  // la ronda nueva primero
+  // la ronda más nueva primero
+  ronda("Tercera ronda · la F con iconos", PROP3, [PROP2[0]]);
   ronda("Segunda ronda · foto grande", PROP2);
   ronda("Primera ronda", PROP);
 
