@@ -1660,7 +1660,16 @@
     // cuaderno: letra de texto con más ojo, para que se lea bien impresa en pequeño
     ...(GUIA ? [] : ['400 7pt "Fira Sans Condensed"', '500 7pt "Fira Sans Condensed"', '600 7pt "Fira Sans Condensed"', '700 7pt "Fira Sans Condensed"', 'italic 400 7pt "Fira Sans Condensed"', 'italic 500 7pt "Fira Sans Condensed"'])
   ];
+  // con window.CUADERNO_MODO = "maquetas" (butxaca/maquetas-a6.html) no se monta el libro: solo se dejan a mano
+  // los datos y textos de cada ficha para probar otras maquetaciones de página con el mismo contenido
+  const expone = () => {
+    window.SETAS = { esc, cap, G, BY, TODAS, PICK, EST, PEL, SEV, DIF, ICON, MARCA, DEBAJO, LAB_HIM, ANILLO, ANILLO_PARCIAL, VOLVA, LATEX,
+      comestible, titulo, tituloHTML, segundaLinea, segundosConf, nombreConf, rasgosLista, rasgosHTML, dondeCuandoHTML, arbolesDe,
+      altitudTexto, FREC, habitatIcons, gravedad, causa, olorSabor, primera, hasta, hastaComa, cortaFrase, sinNormativa, pieEs,
+      capCorta, fotoConfG, meses, dots, overflows };
+    document.dispatchEvent(new CustomEvent("setas-listo"));
+  };
   Promise.all(fonts.map(f => document.fonts.load(f).catch(() => null)))
     .then(() => document.fonts.ready)
-    .then(build);
+    .then(window.CUADERNO_MODO === "maquetas" ? expone : build);
 })();

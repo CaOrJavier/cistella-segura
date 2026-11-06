@@ -50,4 +50,6 @@ foreach ($n in 32, 20) {
   Print-Pdf (Join-Path $root "butxaca\setas-mini-$n.html") (Join-Path $root "offline\setas-esenciales-mini-$n.pdf")
   Print-Pdf (Join-Path $root "butxaca\setas-mini-$n-imprimir-a4.html") (Join-Path $root "offline\setas-esenciales-mini-$n-imprimir-A4.pdf")
 }
+# Propuestas de maquetacion de la ficha del cuaderno completo A6 (laminas A4 apaisadas para compararlas)
+Print-Pdf (Join-Path $root 'butxaca\maquetas-a6.html') (Join-Path $root 'offline\setas-esenciales-maquetas-A6.pdf')
 # Paginas del lector de la web (libros/<libro>/): python tools/libro-lector.py <html> <libro> <pdf> (ver el archivo)
