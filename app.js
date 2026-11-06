@@ -694,8 +694,9 @@
     ...cuaderno("mini20", "setas-esenciales-mini-20", { pag: 20, url: "setas-esenciales-mini-20-A5" }, [7.2, 7.2, 7.1, 7.2]),
     { guia: "esencial", ed: "A5", uso: "Para leer en el móvil o la tableta, o llevarlo a la copistería: A5 a color, con espiral o grapado.", mb: 29.0, pag: 84, url: "offline/setas-guia-esencial-A5.pdf" },
     { guia: "esencial", ed: "Para imprimir en casa (A4)", uso: "21 hojas A4 apaisadas a doble cara (borde corto), en dos cuadernillos de 11 y 10 hojas: cada uno se dobla por la mitad y se grapa.", mb: 29.0, url: "offline/setas-guia-esencial-imprimir-A4.pdf" },
-    { guia: "bolsillo", ed: "En catalán · 50 setas", uso: "Quadern de butxaca, 72 páginas A6 (las muestras de arriba son de la edición en castellano).", mb: 15.4, pag: 72, url: "offline/cistella-segura-butxaca.pdf" },
-    { guia: "bolsillo", ed: "En catalán, para imprimir en casa (A4)", uso: "9 hojas A4, un solo cuadernillo.", mb: 15.7, url: "offline/cistella-segura-butxaca-imprimir-A4.pdf" },
+    // el mismo cuaderno en catalán (butxaca/bolets*.html)
+    ...cuaderno("bolsillo", "bolets-essencials-butxaca", { pag: 52, url: "bolets-essencials-A5" }, [22.2, 22.2, 21.9, 22.1]).map((x) => ({ ...x, ed: "En catalán · " + x.ed })),
+    { guia: "bolsillo", ed: "Edición anterior en catalán · 50 setas", uso: "Quadern de butxaca Cistella Segura, 72 páginas A6.", mb: 15.4, pag: 72, url: "offline/cistella-segura-butxaca.pdf" },
   ];
   // cómo imprimir en casa los cuadernos: en A5, hojas A4 dobladas (n hojas); el A6, en una línea
   const imprimirA5 = (n) => `<details class="caja como-imprimir"><summary><b>Cómo imprimirlo en casa</b></summary><ol>
@@ -765,7 +766,7 @@
   // Qué se guarda. Siempre: la web, los datos, las fuentes, las miniaturas, el texto de los libros y el cuaderno de bolsillo
   // entero en el idioma de la web (para leerlo en el bosque). Con «todas»: también las fotos y todas las páginas en grande.
   function archivosSinInternet(arbol, todas) {
-    const cuaderno = window.IDIOMA === "ca" ? "butxaca" : "bolsillo";
+    const cuaderno = window.IDIOMA === "ca" ? "bolets" : "bolsillo";
     const muestra = (g, n) => ((MUESTRAS[g] || {}).pags || []).some(([m]) => m === n);
     return arbol.filter((x) => x.type === "blob").filter(({ path: p }) => {
       if (/^(index\.html|app\.js|app\.css|i18n\.js|manifest\.webmanifest|icono-\d+\.png)$/.test(p) || /^(datos|extra|fonts)\//.test(p) ||

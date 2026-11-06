@@ -5,7 +5,8 @@
    - Como un lector de libros del móvil: la página entera en la pantalla y se pasa deslizándola a un lado o tocando
      el borde (en pantallas anchas, dos páginas enfrentadas). Doble toque o dos dedos para ampliar.
      Abajo, la página en la que se está, una barra para saltar y las fichas de la web de las setas de esa página.
-   - El cuaderno completo tiene dos ediciones: en castellano (bolsillo) y en catalán (butxaca). El botón PDF baja el A5. */
+   - El cuaderno completo tiene dos ediciones: en castellano (bolsillo) y en catalán (bolets, el mismo cuaderno con los
+     textos en catalán). El quadern de butxaca antiguo (butxaca, 50 bolets) sigue aquí, sin botón ES · CA. El botón PDF baja el A5. */
 (function () {
   "use strict";
   const CA = window.IDIOMA === "ca";
@@ -38,9 +39,11 @@
 
   const LIBROS = {
     bolsillo: { tit: "Setas esenciales · cuaderno completo", sub: CA ? "52 pàgines · 54 bolets" : "52 páginas · 54 setas", n: 52,
-      pdf: "offline/setas-esenciales-A5.pdf", ed: "es", otra: "butxaca" },
+      pdf: "offline/setas-esenciales-A5.pdf", ed: "es", otra: "bolets" },
+    bolets: { tit: "Bolets essencials · quadern complet", sub: CA ? "52 pàgines · 54 bolets" : "52 páginas · 54 setas · en catalán", n: 52,
+      pdf: "offline/bolets-essencials-A5.pdf", ed: "ca", otra: "bolsillo" },
     butxaca: { tit: "Cistella Segura · quadern de butxaca", sub: CA ? "72 pàgines · 50 bolets" : "72 páginas · 50 setas · en catalán", n: 72,
-      pdf: "offline/cistella-segura-butxaca.pdf", ed: "ca", otra: "bolsillo" },
+      pdf: "offline/cistella-segura-butxaca.pdf" },
     mini32: { tit: "Setas esenciales · cuaderno mini (32 páginas)", sub: CA ? "32 pàgines · 54 bolets" : "32 páginas · 54 setas", n: 32,
       pdf: "offline/setas-esenciales-mini-32-A5.pdf" },
     mini20: { tit: "Setas esenciales · cuaderno mini (20 páginas)", sub: CA ? "20 pàgines · 54 bolets" : "20 páginas · 54 setas", n: 20,
@@ -56,7 +59,7 @@
     set(g, n) { try { const o = this.todo(); o[g] = n; localStorage.setItem("setas:leer", JSON.stringify(o)); } catch (e) { /* sin almacenamiento */ } },
   };
   // el cuaderno completo se abre en el idioma de la web
-  const porIdioma = (g) => (g === "bolsillo" && CA ? "butxaca" : g);
+  const porIdioma = (g) => (g === "bolsillo" && CA ? "bolets" : g);
 
   // ---------- texto del libro (libros/<libro>/texto.js) ----------
   const textos = {};
@@ -136,7 +139,7 @@
       <div class="lec-barra">
         <a class="lec-volver" href="#/libros" title="${esc(T.volver)}"><span aria-hidden="true">←</span> <span class="lec-txt">${esc(T.volver)}</span></a>
         <div class="lec-tit" translate="no"><b>${esc(L.tit)}</b><small>${esc(L.sub)}</small></div>
-        ${otra ? `<div class="lec-ed" role="group" aria-label="${esc(T.edicion)}">${["bolsillo", "butxaca"].map((g) => `<button type="button" data-ed="${g}" aria-pressed="${g === S.g}" title="${esc(LIBROS[g].ed === "ca" ? T.edCA : T.edES)}">${LIBROS[g].ed.toUpperCase()}</button>`).join("")}</div>` : ""}
+        ${otra ? `<div class="lec-ed" role="group" aria-label="${esc(T.edicion)}">${["bolsillo", "bolets"].map((g) => `<button type="button" data-ed="${g}" aria-pressed="${g === S.g}" title="${esc(LIBROS[g].ed === "ca" ? T.edCA : T.edES)}">${LIBROS[g].ed.toUpperCase()}</button>`).join("")}</div>` : ""}
         <div class="lec-herr">
           <button type="button" data-panel="indice" title="${esc(T.indice)}"><span aria-hidden="true">☰</span><span class="lec-txt">${esc(T.indice)}</span></button>
           <button type="button" data-panel="buscar" title="${esc(T.buscar)}"><span aria-hidden="true">⌕</span><span class="lec-txt">${esc(T.buscar)}</span></button>

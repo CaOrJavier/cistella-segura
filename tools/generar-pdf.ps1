@@ -50,6 +50,11 @@ foreach ($n in 32, 20) {
   Print-Pdf (Join-Path $root "butxaca\setas-mini-$n.html") (Join-Path $root "offline\setas-esenciales-mini-$n.pdf")
   Print-Pdf (Join-Path $root "butxaca\setas-mini-$n-imprimir-a4.html") (Join-Path $root "offline\setas-esenciales-mini-$n-imprimir-A4.pdf")
 }
+# El mismo cuaderno completo en catalan (Bolets essencials): butxaca\bolets*.html, textos de datos\ca.js y butxaca\setas-ca.js
+Print-Pdf (Join-Path $root 'butxaca\bolets.html') (Join-Path $root 'offline\bolets-essencials-butxaca.pdf')
+Print-Pdf (Join-Path $root 'butxaca\bolets-imprimir-a4.html') (Join-Path $root 'offline\bolets-essencials-butxaca-imprimir-A4.pdf')
+Print-Pdf (Join-Path $root 'butxaca\bolets-a5.html') (Join-Path $root 'offline\bolets-essencials-A5.pdf')
+Print-Pdf (Join-Path $root 'butxaca\bolets-a5-imprimir-a4.html') (Join-Path $root 'offline\bolets-essencials-A5-imprimir-A4.pdf')
 # Propuestas de maquetacion de la ficha del cuaderno completo A6 (laminas A4 apaisadas para compararlas)
 Print-Pdf (Join-Path $root 'butxaca\maquetas-a6.html') (Join-Path $root 'offline\setas-esenciales-maquetas-A6.pdf')
 # Paginas del lector de la web (libros/<libro>/): python tools/libro-lector.py <html> <libro> <pdf> (ver el archivo)

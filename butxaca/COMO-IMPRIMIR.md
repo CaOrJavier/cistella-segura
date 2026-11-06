@@ -5,9 +5,10 @@ Los cuadernos de *Setas esenciales* se imprimen sobre todo en **A5** (14,8 × 21
 | Cuaderno | A5 para leer o la copistería | A5 para imprimir en casa (A4 doblada) | A6 | A6 para imprimir en casa (A4 cortada) |
 |---|---|---|---|---|
 | **Completo** (54 setas, una por página, 52 págs.) | `setas-esenciales-A5.pdf` | `setas-esenciales-A5-imprimir-A4.pdf` · 13 hojas | `setas-esenciales-bolsillo.pdf` | `setas-esenciales-bolsillo-imprimir-A4.pdf` · 7 hojas |
+| **Completo en catalán** (*Bolets essencials*, el mismo) | `bolets-essencials-A5.pdf` | `bolets-essencials-A5-imprimir-A4.pdf` · 13 hojas | `bolets-essencials-butxaca.pdf` | `bolets-essencials-butxaca-imprimir-A4.pdf` · 7 hojas |
 | **Mini 32** (dos por página, 32 págs.) | `setas-esenciales-mini-32-A5.pdf` | `setas-esenciales-mini-32-A5-imprimir-A4.pdf` · 8 hojas | `setas-esenciales-mini-32.pdf` | `setas-esenciales-mini-32-imprimir-A4.pdf` · 4 hojas |
 | **Mini 20** (tres por página, 20 págs.) | `setas-esenciales-mini-20-A5.pdf` | `setas-esenciales-mini-20-A5-imprimir-A4.pdf` · 5 hojas | `setas-esenciales-mini-20.pdf` | `setas-esenciales-mini-20-imprimir-A4.pdf` · 3 hojas |
-| **Cistella Segura** (catalán, 50 bolets, 72 págs.) | — | — | `cistella-segura-butxaca.pdf` | `cistella-segura-butxaca-imprimir-A4.pdf` · 9 hojas |
+| **Cistella Segura** (edición anterior en catalán, 50 bolets, 72 págs.) | — | — | `cistella-segura-butxaca.pdf` | `cistella-segura-butxaca-imprimir-A4.pdf` · 9 hojas |
 
 ## En casa, en A5 (archivos `...-A5-imprimir-A4.pdf`)
 

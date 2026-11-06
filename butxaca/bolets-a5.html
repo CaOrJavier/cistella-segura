@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bolets essencials · Quadern complet (A5)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,500;0,700;0,800;1,500;1,700&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;0,800;1,400;1,500&family=Fira+Sans+Condensed:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Caveat:wght@600;700&display=block">
+<link rel="stylesheet" href="butxaca.css">
+<link rel="stylesheet" href="setas.css">
+<link rel="stylesheet" href="a5.css">
+</head>
+<body>
+<main id="book"></main>
+<script src="../datos/db.js"></script>
+<script src="../datos/breve.js"></script>
+<script src="../datos/fotos-confusiones.js"></script>
+<script src="../datos/altitud.js"></script>
+<!-- en catalán: el original en castellano se guarda (para lo que se decide leyendo el texto) y los datos se traducen
+     con el diccionario de la web; lo que escribe setas.js, con setas-ca.js (y los textos de la web, CA.ui) -->
+<script>window.DB_ES = structuredClone(window.DB);</script>
+<script src="../datos/ca.js"></script>
+<script>window.IDIOMA = "ca"; window.LLIBRE_IDIOMA = "ca"; window.CA_UI = window.CA.ui; window.CA.ui = {};</script>
+<script src="../i18n.js"></script>
+<script src="setas-ca.js"></script>
+<script src="a5.js"></script>
+<script src="setas.js"></script>
+</body>
+</html>

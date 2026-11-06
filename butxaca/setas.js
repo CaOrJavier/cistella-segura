@@ -20,6 +20,53 @@
   // Cuadernos mini (butxaca/setas-mini-32.html y setas-mini-20.html, y sus versiones -a5): las mismas 54 setas,
   // pero 2 o 3 por página y con lo justo (foto, nombres, meses, cómo es, rasgos, dónde y con qué se confunde)
   const MINI = window.CUADERNO_MODO === "mini" ? (+window.MINI_POR_PAGINA === 3 ? 3 : 2) : 0;
+  // Cuaderno en catalán (butxaca/bolets*.html): los datos llegan ya traducidos (datos/ca.js con i18n.js; el original
+  // en castellano queda en window.DB_ES, para lo que se decide leyendo el texto, como la gravedad o si el olor es
+  // peculiar) y lo que escribe este archivo se traduce al meterlo en la página, con el diccionario de
+  // butxaca/setas-ca.js y el de la web (CA.ui): así se mide y se ajusta cada página ya en catalán
+  const CAT = window.LLIBRE_IDIOMA === "ca";
+  if (CAT) {
+    document.documentElement.lang = "ca";
+    const DIC = Object.assign({}, window.CA_UI || {}, window.SETAS_CA || {});
+    const NUM = /\d+(?:[.,]\d+)*/g;
+    // entradas con {x}: cualquier texto en medio (que también se traduce, si se puede)
+    const PATS = Object.keys(DIC).filter(k => k.includes("{x}"))
+      .map(k => [new RegExp("^" + k.split("{x}").map(x => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("(.+?)") + "$"), DIC[k]]);
+    const busca = t => {
+      if (DIC[t] !== undefined) return DIC[t];
+      const nums = t.match(NUM);
+      if (nums) { const v = DIC[t.replace(NUM, "{n}")]; if (v !== undefined) { let i = 0; return v.replace(/\{n\}/g, () => nums[i++] ?? ""); } }
+      for (const [re, v] of PATS) {
+        const m = t.match(re);
+        if (m) { let i = 1; return v.replace(/\{x\}/g, () => { const x = m[i++]; return busca(x) ?? x; }); }
+      }
+      return undefined;
+    };
+    // lo que no está en el diccionario (para repasarlo: window.CA_FALTA)
+    const FALTA = window.CA_FALTA = new Set();
+    const tr = s => {
+      const t = s.trim().replace(/\s+/g, " ");
+      if (!/[a-záéíóúñü]/i.test(t)) return s;
+      const r = busca(t);
+      if (r === undefined) { FALTA.add(t); return s; }
+      return s.match(/^\s*/)[0] + r + s.match(/\s*$/)[0];
+    };
+    const ih = Object.getOwnPropertyDescriptor(Element.prototype, "innerHTML"), tpl = document.createElement("template");
+    // los nombres científicos (en cursiva) no se tocan
+    const trHTML = h => {
+      ih.set.call(tpl, h);
+      const w = document.createTreeWalker(tpl.content, NodeFilter.SHOW_TEXT);
+      let n;
+      while ((n = w.nextNode())) if (!n.parentElement?.closest("i, [translate=no]")) n.nodeValue = tr(n.nodeValue);
+      return ih.get.call(tpl);
+    };
+    const ins = Element.prototype.insertAdjacentHTML;
+    Element.prototype.insertAdjacentHTML = function (pos, h) { return ins.call(this, pos, trHTML(h)); };
+    Object.defineProperty(Element.prototype, "innerHTML", { configurable: true, get: ih.get, set(h) { ih.set.call(this, trHTML(h)); } });
+  }
+  // el texto original en castellano de una especie (en catalán, para decidir; en castellano, la misma)
+  const ES_DE = CAT && window.DB_ES ? Object.fromEntries(window.DB_ES.especies.map(e => [e.id, e])) : {};
+  const enES = e => ES_DE[e.id] || e;
   // el cuaderno de bolsillo lleva su propia letra para texto pequeño (setas.css, .libro-bolsillo)
   document.documentElement.classList.add(GUIA ? "libro-guia" : "libro-bolsillo");
   if (MINI) document.documentElement.classList.add("libro-mini", "mini-" + MINI);
@@ -155,7 +202,7 @@
   const PEL = { mortal: "mortal", toxica: "tóxica", no_comestible: "no comestible", condicionada: "condicionada", comestible: "comestible", sin_interes: "sin interés" };
   const SEV = { mortal: 0, toxica: 1, no_comestible: 2, sin_interes: 2.5, condicionada: 3, comestible: 4 };
   const DIF = { baja: [1, "Fácil"], media: [2, "Media"], alta: [3, "Difícil"] };
-  const MESL = ["E", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
+  const MESL = [CAT ? "G" : "E", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
   const HIM_ICON = { laminas: "lamines", poros: "porus", pliegues: "plecs", aguijones: "agullons", liso: "plecs" };
 
   const comestible = e => ["comestible", "condicionada"].includes(e.comestibilidad.cat);
@@ -169,18 +216,20 @@
   // ---------- nombres ----------
   // libros en castellano: el nombre principal es el castellano y el catalán va de segundo, junto al científico
   // (si no tiene nombre popular en castellano, el principal es el catalán)
-  const titulo = e => cap(e.nombres.es[0] || e.nombres.ca[0]) || e.nombre;
+  // (en catalán, al revés: el catalán primero y el castellano de segundo)
+  const PRI = n => (CAT ? n.ca : n.es) || [], SEG = n => (CAT ? n.es : n.ca) || [];
+  const titulo = e => cap(PRI(e.nombres)[0] || SEG(e.nombres)[0]) || e.nombre;
   const sinNombre = e => !e.nombres.ca[0] && !e.nombres.es[0];
   const tituloHTML = e => (sinNombre(e) ? `<i>${esc(e.nombre)}</i>` : esc(titulo(e)));
   // la línea de debajo del nombre: científico y nombres en catalán (los que no son ya el principal)
-  const segundaLinea = (e, nCa = 2) => [sinNombre(e) ? "" : `<i>${esc(e.nombre)}</i>`, ...(e.nombres.es[0] ? e.nombres.ca.slice(0, nCa) : e.nombres.ca.slice(1, nCa)).map(esc)].filter(Boolean).join(" · ");
+  const segundaLinea = (e, nCa = 2) => [sinNombre(e) ? "" : `<i>${esc(e.nombre)}</i>`, ...(PRI(e.nombres)[0] ? SEG(e.nombres).slice(0, nCa) : SEG(e.nombres).slice(1, nCa)).map(esc)].filter(Boolean).join(" · ");
   // otros nombres en castellano (arriba a la derecha)
-  const otrosEs = e => (e.nombres.es[0] ? e.nombres.es.slice(1, 2) : []);
-  const nombreConf = c => { const x = c.id && TODAS[c.id]; if (x) return tituloHTML(x); return c.es || c.ca ? esc(cap(c.es || c.ca)) : `<i>${esc(c.nombre)}</i>`; };
+  const otrosEs = e => (PRI(e.nombres)[0] ? PRI(e.nombres).slice(1, 2) : []);
+  const nombreConf = c => { const x = c.id && TODAS[c.id]; if (x) return tituloHTML(x); const n = CAT ? c.ca || c.es : c.es || c.ca; return n ? esc(cap(n)) : `<i>${esc(c.nombre)}</i>`; };
   // lo que va debajo de un nombre que hace de título: «catalán · científico» (lo que no sea ya el principal)
   const dosMas = (es, ca, sci) => [es && ca ? esc(ca) : "", (es || ca) && sci ? `<i>${esc(sci)}</i>` : ""].filter(Boolean).join(" · ");
-  const segundosDe = x => dosMas(x.nombres.es[0], x.nombres.ca[0], x.nombre);
-  const segundosConf = c => { const x = c.id && TODAS[c.id]; return x ? segundosDe(x) : dosMas(c.es, c.ca, c.nombre); };
+  const segundosDe = x => dosMas(PRI(x.nombres)[0], SEG(x.nombres)[0], x.nombre);
+  const segundosConf = c => { const x = c.id && TODAS[c.id]; return x ? segundosDe(x) : CAT ? dosMas(c.ca, c.es, c.nombre) : dosMas(c.es, c.ca, c.nombre); };
 
   // ---------- iconos ----------
   const svg = d => `<svg viewBox="0 0 12 12" aria-hidden="true">${d}</svg>`;
@@ -215,7 +264,7 @@
   };
   // quita las frases sobre la normativa de venta (RD 30/2009): no sirven en el monte
   // (y los trozos sin letras que quedan al cortar, como el «).» de «Inocybe sp.).»)
-  const sinNormativa = t => (String(t || "").match(/[^.!?]+[.!?]+(\s|$)/g) || [String(t || "")]).filter(f => !/RD\s?30\/2009|anexo del RD|venta/i.test(f) && /[a-záéíóúñü]{2}/i.test(f)).join("").trim() || String(t || "");
+  const sinNormativa = t => (String(t || "").match(/[^.!?]+[.!?]+(\s|$)/g) || [String(t || "")]).filter(f => !/RD\s?30\/2009|anexo del RD|annex del RD|venta|venda/i.test(f) && /[a-záéíóúñü]{2}/i.test(f)).join("").trim() || String(t || "");
   // la primera frase, solo hasta el primer «;» si así cabe («Copa irregular y alta; la parte…» → «Copa irregular y alta.»)
   const cortaClausula = (t, max) => {
     const s = primera(t, 999), c = s.split(/;\s/)[0].replace(/[.,:]$/, "");
@@ -230,10 +279,13 @@
     for (const x of partes.slice(1)) { if ((out + "; " + x).length > max) break; out += "; " + x; }
     return out.length <= max ? out + "." : primera(s, max);
   };
-  const lista = arr =>(arr.length <= 1 ? arr.join("") : arr.slice(0, -1).join(", ") + " y " + arr[arr.length - 1]);
+  const lista = arr =>(arr.length <= 1 ? arr.join("") : arr.slice(0, -1).join(", ") + (CAT ? " i " : " y ") + arr[arr.length - 1]);
+  const Y_OTROS = CAT ? " i altres" : " y otros";
+  const nomArb = a => (CAT ? a.nombres.ca[0] || a.nombres.es[0] : a.nombres.es[0]);
 
   // ---------- tóxicas: qué gravedad tiene y por qué ----------
   function gravedad(e) {
+    e = enES(e);
     const cat = e.comestibilidad.cat, t = e.toxicidad || {};
     if (cat === "mortal") return [3, "Mortal"];
     if (cat === "toxica") return /intens|grave|muerte|rabdomi|muscar|neurot/i.test([e.comestibilidad.texto, t.sindrome, t.sintomas].join(" ")) ? [2, "Grave"] : [1, "Moderada"];
@@ -251,26 +303,29 @@
     [/gastro/i, "Irrita el estómago y el intestino."]
   ];
   function causa(e) {
-    const s = e.toxicidad?.sindrome || "";
+    const s = enES(e).toxicidad?.sindrome || "";
     const c = CAUSA.find(([re]) => re.test(s));
     if (c) return c[1];
     const fr = String(e.comestibilidad.texto || "").match(/[^.!?]+[.!?]+(\s|$)/g) || [e.comestibilidad.texto || ""];
-    return (fr.find(f => /gastro|digest|molest|trastorn/i.test(f)) || fr[0]).trim();
+    return (fr.find(f => /gastro|digest|molest|molèst|trastorn/i.test(f)) || fr[0]).trim();
   }
   const gravedadHTML = e => {
     const [n, t] = gravedad(e);
     return `<p class="grav"><span class="lab">Gravedad</span><span class="gd">${[1, 2, 3].map(i => `<i class="${i <= n ? "on" : ""}"></i>`).join("")}</span><b>${t}.</b> ${esc(causa(e))}</p>`;
   };
   // olor y sabor, solo si son peculiares (harina, anís, picante, amargo…); fuera los avisos entre paréntesis
-  const AVISO = /\s*\((?:[^)]*(?:dato|subjetiv|diagnóstic|pruebe)[^)]*)\)/gi;
+  const AVISO = /\s*\((?:[^)]*(?:dato|dada|subjetiv|subjectiu|subjectiv|diagnóstic|diagnòstic|pruebe|tasti|provi)[^)]*)\)/gi;
   const PECULIAR = /harin|anís|almendra|albaricoque|rábano|carroña|tinta|fenol|picante|amarg|avellana|ajo|dulzón|perfumad|yodo/i;
   function olorSabor(e, ok) {
-    const m = e.morfologia || {};
+    // se decide con el texto en castellano (mE) y se escribe en el idioma del libro (m)
+    const m = e.morfologia || {}, mE = enES(e).morfologia || {};
     const lim = s => String(s || "").replace(AVISO, "").trim().replace(/\.$/, "");
-    const o = lim(m.olor), s = lim(m.sabor) || (/amarg/i.test(m.carne || "") ? "Algo amargo" : "");
+    const amargo = !lim(mE.sabor) && /amarg/i.test(mE.carne || "");
+    const o = lim(m.olor), s = lim(m.sabor) || (amargo ? (CAT ? "Una mica amarg" : "Algo amargo") : "");
+    const sE = lim(mE.sabor) || (amargo ? "Algo amargo" : "");
     const partes = [];
-    if (PECULIAR.test(o) && !/poco diagnóstico/i.test(m.olor || "")) partes.push(`<span class="lab">Olor</span>${esc(o)}.`);
-    if (PECULIAR.test(s)) partes.push(`<span class="lab">Sabor</span>${esc(s)}${ok ? "" : " (no la pruebe)"}.`);
+    if (PECULIAR.test(lim(mE.olor)) && !/poco diagnóstico/i.test(mE.olor || "")) partes.push(`<span class="lab">Olor</span>${esc(o)}.`);
+    if (PECULIAR.test(sE)) partes.push(`<span class="lab">Sabor</span>${esc(s)}${ok ? "" : CAT ? " (no la tasti)" : " (no la pruebe)"}.`);
     return partes.length ? `<p class="os">${partes.join(" ")}</p>` : "";
   }
 
@@ -388,7 +443,7 @@
 
   // árboles de una especie, con el nombre repetido agrupado: «pino carrasco, laricio y silvestre»
   function arboles(e, max = 5) {
-    const ns = (e.ecologia?.arboles || []).filter(a => a.rel !== "ocasional").map(a => ARB[a.id]?.nombres.es[0]).filter(Boolean);
+    const ns = (e.ecologia?.arboles || []).filter(a => a.rel !== "ocasional").map(a => ARB[a.id] && nomArb(ARB[a.id])).filter(Boolean);
     const out = [];
     let prev = "";
     for (const n of ns.slice(0, max)) {
@@ -396,7 +451,7 @@
       out.push(w === prev && r.length ? r.join(" ") : n);
       prev = w;
     }
-    return out.length ? lista(out) + (ns.length > max ? " y otros" : "") : "";
+    return out.length ? lista(out) + (ns.length > max ? Y_OTROS : "") : "";
   }
   function habitatIcons(e) {
     const eco = e.ecologia || {};
@@ -405,7 +460,7 @@
     if (g.has("conifera")) out.push(["pineda", "coníferas"]);
     if (g.has("frondosa")) out.push(["fulla", "frondosas"]);
     if ((eco.habitats || []).some(h => /prado|pasto|parques|huertos|dunas/.test(h))) out.push(["prat", "prados"]);
-    if ((eco.sustrato || []).some(s => /madera/.test(s))) out.push(["fusta", "madera"]);
+    if ((enES(e).ecologia?.sustrato || []).some(s => /madera/.test(s))) out.push(["fusta", "madera"]);
     return out;
   }
   // Dónde sale, en palabras (antes eran iconos que no se entendían):
@@ -686,7 +741,7 @@
       fotos.forEach(([f]) => EXTRA.push(["Árboles", f]));
       return `<article class="bosc${fotos.length ? " cf" : ""}">
         ${fotos.length ? `<div class="bosc-fotos">${fotos.map(([f, t]) => `<figure><img src="${G(f.t)}" alt=""><figcaption>${t}</figcaption></figure>`).join("")}</div>` : ""}
-        <div class="bosc-txt"><h3>${esc(cap(a.nombres.es[0]))} <small>${esc(a.nombres.ca[0] || "")}${a.nombre ? ` · <i>${esc(a.nombre)}</i>` : ""}</small></h3>
+        <div class="bosc-txt"><h3>${esc(cap(nomArb(a)))} <small>${esc((CAT ? a.nombres.es[0] : a.nombres.ca[0]) || "")}${a.nombre ? ` · <i>${esc(a.nombre)}</i>` : ""}</small></h3>
         <p class="curt">${esc(GUIA ? primera(a.reconocer?.distancia, 120) : cortaClausula(a.reconocer?.distancia, 85))}</p>
         ${ok.length ? `<p class="ll ok"><span class="lab">Busque</span>${ok.map(nm).join(", ")}</p>` : ""}
         ${ko.length ? `<p class="ll ko"><span class="lab">Cuidado</span>${ko.map(nm).join(", ")}</p>` : ""}</div>
@@ -827,11 +882,11 @@
   }
   // árboles de un grupo, con el nombre repetido agrupado: «Pino carrasco, laricio y silvestre»
   function arbolesDe(lista_, grupo, max = 4) {
-    const ns = [...new Set(lista_.filter(a => a.rel !== "ocasional" && ARB[a.id]?.grupo === grupo).map(a => ARB[a.id].nombres.es[0]).filter(Boolean))];
+    const ns = [...new Set(lista_.filter(a => a.rel !== "ocasional" && ARB[a.id]?.grupo === grupo).map(a => nomArb(ARB[a.id])).filter(Boolean))];
     const out = [];
     let prev = "";
     for (const n of ns.slice(0, max)) { const [w, ...r] = n.split(" "); out.push(w === prev && r.length ? r.join(" ") : n); prev = w; }
-    return out.length ? cap(lista(out)) + (ns.length > max ? " y otros" : "") : "";
+    return out.length ? cap(lista(out)) + (ns.length > max ? Y_OTROS : "") : "";
   }
   // altitud: de dónde a dónde y, si hay bastantes registros, la franja donde más se encuentra
   // (window.ALTITUD, de ../datos/altitud.js: registros de GBIF en Cataluña y la altura del terreno en cada punto)
@@ -973,11 +1028,11 @@
   const minus = t => String(t || "").charAt(0).toLowerCase() + String(t || "").slice(1);
   const SECL = { comestibles: "Comestibles", toxicas: "Tóxicas", mortales: "Mortales" };
   // latencia corta: «de 6 a 24 horas (típicamente 8–12)» → «6–24 h»; «entre 30 minutos y 6 horas» → «30 min – 6 h»
-  const UNID = { minuto: "min", minutos: "min", hora: "h", horas: "h", días: "días", dias: "días", semanas: "semanas" };
+  const UNID = { minuto: "min", minutos: "min", minut: "min", minuts: "min", hora: "h", horas: "h", hores: "h", días: CAT ? "dies" : "días", dias: CAT ? "dies" : "días", dies: "dies", semanas: CAT ? "setmanes" : "semanas", setmanes: "setmanes" };
   const latCorta = t => {
     t = String(t || "").replace(/\s*\([^)]*\)/g, "");
-    const m = t.match(/(\d+)\s*(minutos?|horas?|días|semanas)?\s*(?:a|y|–|-)\s*(\d+)\s*(minutos?|horas?|días|semanas)/i);
-    if (!m) return t;
+    const m = t.match(/(\d+)\s*(minutos?|minuts?|horas?|hores|días|dies|semanas|setmanes)?\s*(?:a|y|i|–|-)\s*(\d+)\s*(minutos?|minuts?|horas?|hores|días|dies|semanas|setmanes)/i);
+    if (!m) return CAT ? t.replace(/^de\s+/i, "") : t;
     const u2 = UNID[m[4].toLowerCase()], u1 = m[2] ? UNID[m[2].toLowerCase()] : u2;
     return u1 === u2 ? `${m[1]}–${m[3]} ${u2}` : `${m[1]} ${u1} – ${m[3]} ${u2}`;
   };
@@ -1063,7 +1118,7 @@
     PAGE_OF[e.id] = p;
     const [dn, dt] = DIF[e.identificacion?.dificultad] || [2, "Media"];
     // fuera los rasgos que solo dicen «sin anillo ni volva»: ya van en «Cómo es» con su ✗
-    const claves = (e.identificacion?.claves || []).filter(c => !/^\s*sin anillo( ni volva)?\.?\s*$|^\s*sin volva( ni anillo)?\.?\s*$/i.test(c));
+    const claves = (e.identificacion?.claves || []).filter(c => !/^\s*(sin|sense) (anillo|anell)( ni volva)?\.?\s*$|^\s*(sin|sense) volva( ni (anillo|anell))?\.?\s*$/i.test(c));
     const confs = [...(e.confusiones || [])].sort((a, b) => (ok ? SEV[a.peligro] - SEV[b.peligro] : SEV[b.peligro] - SEV[a.peligro])).slice(0, 3);
     const t = e.toxicidad;
     p.insertAdjacentHTML("beforeend", `
@@ -1743,7 +1798,7 @@
       if (L.length) out.l[n] = L;
     });
     Object.entries(PAGE_OF).forEach(([id, p]) => { if (id.startsWith("sec:")) return; const n = num(p); (out.f[n] = out.f[n] || []).push(id); });
-    const SECN = { comestibles: "Comestibles", mortales: "Mortales", toxicas: "Tóxicas" };
+    const SECN = CAT ? { comestibles: "Comestibles", mortales: "Mortals", toxicas: "Tòxics" } : { comestibles: "Comestibles", mortales: "Mortales", toxicas: "Tóxicas" };
     let sec = "";
     pages.forEach(p => {
       const n = num(p);
