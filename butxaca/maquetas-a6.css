@@ -513,3 +513,48 @@ body { margin: 0; background: #8f958a; font-family: var(--sans); color: var(--in
 .mF3 .f-nom { right: 37mm; }
 .f3-body { display: grid; grid-template-columns: 30mm 1fr; gap: 2.6mm; }
 .f3-side .chips.fila .chip { padding: .9mm 1mm; gap: 2.2mm; }
+
+/* =========================================================
+   CUARTA RONDA (F3a–F3d): la F3 sin la columna de iconos
+   ========================================================= */
+.rl { margin: 0 0 1.2mm !important; }
+.rl .lab { margin-right: 1mm; }
+.rl .ri { margin-right: .9mm; white-space: normal; }
+.rl .ri .mk { width: 2.4mm; height: 2.4mm; top: .35mm; margin-right: .3mm; }
+.rl .r-no b { color: var(--muted); font-weight: 600; }
+.rl .r-si.alarma b, .rl .r-si.alarma .mk { color: var(--deadly); }
+.mF3 .f2-meta { padding: 1.4mm 0 1.2mm; }
+.blq h3 { margin-bottom: .5mm; }
+
+/* F3b: dos columnas que se reparten solas */
+.f3b-cols { column-count: 2; column-gap: 3.4mm; column-rule: .2mm solid var(--line); }
+.f3b-cols > * { break-inside: avoid; }
+.f3b-cols .irs.col { margin-bottom: 1.3mm; }
+
+/* F3c: las parecidas, en la columna de la izquierda, con foto más grande */
+.f3c-body { display: grid; grid-template-columns: 29mm 1fr; gap: 2.8mm; }
+.f3c-izq { padding-right: 2.6mm; border-right: .25mm solid var(--line); }
+.f3c-izq .cfx { height: 100%; display: flex; flex-direction: column; margin: 0; }
+.f3c-izq .cfs { flex: 1; align-content: space-around; }
+.cfx.grande .cf3 { grid-template-columns: 1fr; justify-items: center; text-align: center; row-gap: .5mm; }
+.cfx.grande .cf3 img, .cfx.grande .cf3 .nof { width: 12.5mm; height: 12.5mm; grid-row: auto; }
+.cfx.grande .cf3 .cfd { font-size: 5.4pt; line-height: 1.12; }
+.cfx.grande .cf3 .cfd { grid-column: 1; }
+
+/* F3d: el nombre en una banda de color debajo de las fotos */
+.mF3d .f3-main::after { display: none; }
+.f3d-banda { margin: 0 -6mm 1.6mm; padding: 2.2mm 6mm 2mm; background: var(--st); color: #fff; display: flex; justify-content: space-between; align-items: flex-end; gap: 2mm; }
+.mF3d .f3d-banda h1 { color: #fff; font-size: 19pt; }
+.mF3d .f3d-banda .lat { color: rgb(255 255 255 / .9); }
+.f3d-k { display: flex; flex-direction: column; align-items: flex-end; gap: 1mm; }
+.f3d-k .pill { background: #fff; color: var(--st); }
+.f3d-k .lvl i { border-color: #fff; }
+.f3d-k .lvl i.on { background: #fff; }
+.f3d-k .mes span { background: rgb(255 255 255 / .16); color: rgb(255 255 255 / .7); }
+.f3d-k .mes span.on { background: #fff; color: var(--st); }
+.f3d-k .mes span.ex { background: rgb(255 255 255 / .45); color: var(--st); }
+.rl .nw { white-space: nowrap; }
+/* F3c: los bloques de la derecha, repartidos en todo el alto (sin hueco abajo) */
+.f3c-der { display: flex; flex-direction: column; justify-content: space-between; }
+.f3c-der > * { margin-bottom: 0 !important; }
+.f3c-der > * + * { margin-top: 1.2mm; }

@@ -440,7 +440,7 @@ const maquetas = () => {
   };
   const toxIco = d => (d.tox ? `<div class="tx"><span class="tx-g">${PIC.alerta}${S.dots(d.tox.grav[0])}<b>${d.tox.grav[1]}</b></span>${d.tox.latencia ? `<span>${PIC.reloj}síntomas a las ${esc(latCorta(d.tox.latencia))}</span>` : ""}${d.tox.sindrome ? `<span class="tx-s" data-q="4">${esc(d.tox.sindrome)}</span>` : ""}<p class="tx-c" data-q="5">${esc(d.tox.causa)}</p></div>` : "");
   // las que se le parecen: foto redonda, nombre, etiqueta y página; la diferencia, corta
-  const confsIco = (d, cols = 3) => `<div class="cfx"><h3>${d.ok ? "Cuidado: se confunde con" : "Se confunde con"}</h3><div class="cfs" style="--c:${cols}">${d.confs.map((c, i) => `<div class="cf3"${i === 2 ? ' data-q="4"' : ""}>${c.foto ? `<img src="${c.foto}" alt="">` : `<span class="nof"></span>`}<p><b>${c.nombre}</b><br>${tag(c)} ${pagRef(c)}</p><p class="cfd" data-q="3" data-g="cfd">${esc(S.cortaFrase(c.dif, 62))}</p></div>`).join("")}</div></div>`;
+  const confsIco = (d, cols = 3, cls = "") => `<div class="cfx ${cls}"><h3>${d.ok ? "Cuidado: se confunde con" : "Se confunde con"}</h3><div class="cfs" style="--c:${cols}">${d.confs.map((c, i) => `<div class="cf3"${i === 2 ? ' data-q="4"' : ""}>${c.foto ? `<img src="${c.foto}" alt="">` : `<span class="nof"></span>`}<p><b>${c.nombre}</b><br>${tag(c)} ${pagRef(c)}</p><p class="cfd" data-q="3" data-g="cfd">${esc(S.cortaFrase(c.dif, 62))}</p></div>`).join("")}</div></div>`;
   const comprIco = d => (d.compruebe ? `<p class="cmp2" data-q="2">${PIC.lupa}<span><b>Compruebe:</b> ${esc(S.primera(d.compruebe, 120))}</span></p>` : "");
   const nombreFoto = d => `<div class="f-nom">${pill(d)}<h1>${d.nombre}</h1><p class="lat">${d.segunda}</p></div>`;
 
@@ -479,6 +479,36 @@ const maquetas = () => {
         <div class="f3-main-t"><div class="irs">${dondeIco(d)}${olorIco(d)}</div>${toxIco(d)}${clavesIco(d)}${confsIco(d, 1)}${comprIco(d)}</div>
       </div>${pie(d)}</section>`;
   }
+
+  // =========================================================
+  // CUARTA RONDA (F3a–F3d): LA F3 SIN LA COLUMNA DE ICONOS DE LOS RASGOS
+  // (los rasgos, en una línea con su ✓ / ✗; el sitio, para las fotos y las parecidas)
+  // =========================================================
+  const rasLinea = d => `<p class="rl"><span class="lab">Cómo es</span>${d.rasgos.map(([t, l, x]) => `<span class="ri r-${t}${t === "si" && l === "Volva" ? " alarma" : ""}"><span class="nw"><i class="mk">${S.MARCA[t]}</i><b>${l}</b></span>${x ? " " + esc(x) : ""}</span>`).join(" ")}${d.esporada ? ` <span class="ri" data-q="6"><b>Esporada</b> ${esc(minus(d.esporada))}</span>` : ""}</p>`;
+  const tresFotos = (d, conNombre = true) => {
+    const [f1, f2, f3] = d.fotos;
+    return `<div class="f3-top crece">${foto(f1, "f3-main")}<div class="f3-pq">${foto(f2)}${foto(f3)}</div>${conNombre ? nombreFoto(d) : ""}</div>`;
+  };
+  const metaF3 = d => `<div class="f2-meta">${dif(d)}${mesesTira(d)}</div>`;
+
+  // ---------- F3a · todo a lo ancho ----------
+  const mF3a = d => `<section class="pg ic mF3 mF3a st-${d.st}" data-id="${d.id}">${tresFotos(d)}${metaF3(d)}
+      ${rasLinea(d)}<div class="irs">${dondeIco(d)}${olorIco(d)}</div>${toxIco(d)}${clavesIco(d)}${confsIco(d, 3)}${comprIco(d)}${pie(d)}</section>`;
+
+  // ---------- F3b · dos columnas que se reparten solas ----------
+  const mF3b = d => `<section class="pg ic mF3 mF3b st-${d.st}" data-id="${d.id}">${tresFotos(d)}${metaF3(d)}
+      ${rasLinea(d)}
+      <div class="f3b-cols"><div class="irs col">${dondeIco(d)}${olorIco(d)}</div>${toxIco(d)}<div class="blq"><h3>${d.ok ? "Cómo reconocerla" : "Rasgos de alarma"}</h3>${clavesIco(d)}</div>${confsIco(d, 1)}${comprIco(d)}</div>${pie(d)}</section>`;
+
+  // ---------- F3c · las parecidas en la columna de la izquierda ----------
+  const mF3c = d => `<section class="pg ic mF3 mF3c st-${d.st}" data-id="${d.id}">${tresFotos(d)}${metaF3(d)}
+      <div class="f3c-body"><aside class="f3c-izq">${confsIco(d, 1, "grande")}</aside>
+        <div class="f3c-der">${rasLinea(d)}<div class="irs col">${dondeIco(d)}${olorIco(d)}</div>${toxIco(d)}${clavesIco(d)}${comprIco(d)}</div></div>${pie(d)}</section>`;
+
+  // ---------- F3d · el nombre en una banda de color, debajo de las fotos ----------
+  const mF3d = d => `<section class="pg ic mF3 mF3d st-${d.st}" data-id="${d.id}">${tresFotos(d, false)}
+      <div class="f3d-banda"><div><h1>${d.nombre}</h1><p class="lat">${d.segunda}</p></div><div class="f3d-k">${pill(d)}${dif(d)}${mesesTira(d)}</div></div>
+      ${rasLinea(d)}<div class="irs">${dondeIco(d)}${olorIco(d)}</div>${toxIco(d)}${clavesIco(d)}${confsIco(d, 3)}${comprIco(d)}${pie(d)}</section>`;
 
   // =========================================================
   // LÁMINAS
@@ -549,6 +579,24 @@ const maquetas = () => {
       gana: ["Los rasgos siempre en el mismo sitio, como una tabla para repasar.", "Las tres fotos se ven a la vez."],
       pierde: ["La columna de texto es más estrecha.", "Foto principal algo más estrecha que en F1."] }
   ];
+  const PROP4 = [
+    { k: "F3a", f: mF3a, t: "Todo a lo ancho", s: "Las tres fotos y el texto a todo el ancho",
+      idea: "La F3 sin la columna de iconos: los rasgos en una sola línea con su ✓ o ✗, y debajo dónde, peligro, cómo reconocerla y las parecidas en tres columnas con foto. Si sobra sitio, las fotos crecen.",
+      gana: ["Sin huecos: el texto ocupa todo el ancho.", "Las fotos se llevan el sitio que sobra."],
+      pierde: ["Las líneas son largas.", "Los rasgos, en texto (más pequeños que los iconos)."] },
+    { k: "F3b", f: mF3b, t: "Dos columnas", s: "Bloques que se reparten solos",
+      idea: "Los rasgos en una línea y, debajo, los bloques (dónde, peligro, cómo reconocerla, parecidas y compruebe) en dos columnas que se reparten solas para que acaben a la misma altura.",
+      gana: ["Líneas cortas y sin huecos.", "Cada bloque entero en una columna."],
+      pierde: ["El orden de lectura baja por una columna y sigue en la otra.", "Las parecidas pueden quedar partidas de su título si no caben."] },
+    { k: "F3c", f: mF3c, t: "Parecidas al lado", s: "La columna izquierda, para las que se le parecen",
+      idea: "La columna de la izquierda ya no lleva iconos: lleva las setas con que se confunde, con foto redonda grande, una debajo de otra. A la derecha, los rasgos en una línea, dónde, peligro, cómo reconocerla y compruebe.",
+      gana: ["Las parecidas se ven mucho: fotos grandes.", "La columna se reparte en toda la altura: sin hueco abajo."],
+      pierde: ["La columna de la derecha es más estrecha.", "Si solo hay una o dos parecidas, quedan muy separadas."] },
+    { k: "F3d", f: mF3d, t: "Banda de color", s: "Fotos limpias y el nombre debajo",
+      idea: "Las tres fotos sin nada encima y, justo debajo, una banda del color del grupo con el nombre, la etiqueta, la dificultad y los meses. Luego todo a lo ancho, como la F3a.",
+      gana: ["Las fotos se ven enteras, sin el nombre encima.", "La banda de color dice el grupo de un vistazo."],
+      pierde: ["La banda ocupa algo de alto.", "Gasta más tinta."] }
+  ];
   const D = MUESTRAS.map(id => datos(S.BY[id]));
   const lamina = (cls, html) => { raiz.insertAdjacentHTML("beforeend", `<section class="lam ${cls}">${html}</section>`); return raiz.lastElementChild; };
   const marca = `<p class="lam-pie">Setas esenciales · cuaderno completo A6 · propuestas de maquetación de la ficha · ${new Date().toLocaleDateString("es-ES")}</p>`;
@@ -582,6 +630,7 @@ const maquetas = () => {
     comparativa(D[2]);
   }
   // la ronda más nueva primero
+  ronda("Cuarta ronda · la F3 sin iconos de rasgos", PROP4, [PROP3[2]]);
   ronda("Tercera ronda · la F con iconos", PROP3, [PROP2[0]]);
   ronda("Segunda ronda · foto grande", PROP2);
   ronda("Primera ronda", PROP);
